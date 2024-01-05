@@ -59,7 +59,7 @@ export default function Home(): JSX.Element {
 									your Spa & Wellness Business with Us!
 								</span>
 							</h1>
-							<p className="mr-5">
+							<p className="mr-5 text-secondary">
 								We are here to promote and protect business
 								entities, practitioners, stakeholders, and
 								consumers of the Beauty, Spa and Wellness
@@ -90,7 +90,7 @@ export default function Home(): JSX.Element {
 									Who We Are
 								</h2>
 
-								<p className="mx-auto mt-2 md:w-3/4">
+								<p className="mx-auto mt-2 md:w-3/4 text-secondary">
 									At SPAs, we&prime;re more than just a
 									network - we&prime;re a community of
 									passionate professionals shaping the future

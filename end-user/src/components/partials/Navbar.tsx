@@ -86,7 +86,7 @@ export default function Navbar(): JSX.Element {
 
 			<div
 				className={`${
-					isMenuOpen ? "h-screen bg-primary" : "h-0 bg-primary/60"
+					isMenuOpen ? "h-screen bg-white" : "h-0 bg-white"
 				} absolute inset-0 overflow-hidden duration-300 lg:hidden`}
 			>
 				{/* close menu */}
