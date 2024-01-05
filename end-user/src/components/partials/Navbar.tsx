@@ -3,7 +3,7 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import NavLink from "@/components/utils/Navlink";
+import NavLink from "@/components/utils/NavLink";
 import Logo from "@/components/utils/Logo";
 
 type NavLink = {

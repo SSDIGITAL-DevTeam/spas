@@ -91,10 +91,10 @@ export default function Home(): JSX.Element {
 								</h2>
 
 								<p className="mx-auto mt-2 md:w-3/4">
-									At SPAs, we're more than just a network -
-									we're a community of passionate
-									professionals shaping the future of Beauty,
-									Spa, and Wellness in Singapore.
+									At SPAs, we&prime;re more than just a
+									network - we&prime;re a community of
+									passionate professionals shaping the future
+									of Beauty, Spa, and Wellness in Singapore.
 								</p>
 								<div className="grid justify-center">
 									<p className="bg-[#F0F6FF] w-max py-2 px-6 rounded-full">
@@ -141,13 +141,13 @@ export default function Home(): JSX.Element {
 										</h2>
 										<p className="text-secondary">
 											Your growth is our priority. Whether
-											you're a seasoned owner or a budding
-											therapist, SPAS is designed to be
-											the catalyst for your professional
-											journey. We empower Spa Therapists
-											to be World-class Spa Professionals
-											through delivering world-class Spa
-											Experiences.
+											you&prime;re a seasoned owner or a
+											budding therapist, SPAS is designed
+											to be the catalyst for your
+											professional journey. We empower Spa
+											Therapists to be World-class Spa
+											Professionals through delivering
+											world-class Spa Experiences.
 										</p>
 									</div>
 								</div>
@@ -217,7 +217,7 @@ export default function Home(): JSX.Element {
 										/>
 									</div>
 								</div>
-								<div className="m-2"></div>
+								<div className="mx-2"></div>
 								<div className="w-1/3  hidden lg:block">
 									<div>
 										<Image
