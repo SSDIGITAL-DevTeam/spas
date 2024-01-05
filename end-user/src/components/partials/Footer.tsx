@@ -107,8 +107,8 @@ export default function Footer(): JSX.Element {
 
 					<div className="flex justify-center">
 						<p className="text-center">
-							&copy; {new Date().getFullYear()} SPAS. Hak cipta
-							dilindungi.
+							&copy; {new Date().getFullYear()} SPAS. All Rights
+							Reserved.
 						</p>
 					</div>
 				</div>
