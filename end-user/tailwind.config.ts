@@ -1,0 +1,34 @@
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+          primary: '#2127BC',
+          secondary: '#002966',
+          tertiary: '#343666',
+          quaternary: '#1A75FF',
+      },
+      container: {
+          center: true,
+          padding: {
+              DEFAULT: '1rem',
+              sm: '2rem',
+              lg: '4rem',
+              xl: '5rem',
+              '2xl': '6rem',
+          },
+      },
+      fontFamily: {
+          'intern': ['Inter', 'sans-serif']
+      },
+    },
+  },
+  plugins: [],
+}
+export default config
