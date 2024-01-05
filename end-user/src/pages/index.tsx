@@ -82,7 +82,7 @@ export default function Home(): JSX.Element {
 
 			<main>
 				{/* WHO WE ARE */}
-				<section className="pb-0 lg:pb-0 lg:py-16">
+				<section className="pb-0 lg:pb-14 lg:py-16">
 					<div className="container">
 						<div className="flex flex-col gap-y-8">
 							<header className="flex flex-col gap-y-4 text-center">
@@ -201,7 +201,7 @@ export default function Home(): JSX.Element {
 					<div className="container">
 						<div className="lg:grid-col-2 grid-col-1 grid gap-y-8 lg:gap-x-16">
 							<div className="lg:flex lg:flex-row">
-								<div className="w-1/3 px-5 hidden lg:block">
+								<div className="w-1/3 hidden lg:block">
 									<div>
 										<Image
 											className="lg:block"
@@ -217,7 +217,8 @@ export default function Home(): JSX.Element {
 										/>
 									</div>
 								</div>
-								<div className="w-1/3 px-5 hidden lg:block">
+								<div className="m-2"></div>
+								<div className="w-1/3  hidden lg:block">
 									<div>
 										<Image
 											className="lg:block"
@@ -233,7 +234,7 @@ export default function Home(): JSX.Element {
 										/>
 									</div>
 								</div>
-								<div className="lg:w-3/4">
+								<div className="lg:w-3/4 px-5">
 									<h2 className="at-left bg-gradient text-black font-semibold w-fit max-w-sm text-2xl leading-snug md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-4xl xl:leading-tight">
 										Why Join Us
 									</h2>
