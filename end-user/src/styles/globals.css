@@ -9,12 +9,16 @@
     html {
       @apply scroll-smooth font-intern text-primary;
     }
+
+    body {
+      @applay font-intern;
+    }
 }
     
 @layer components {
 
   .btn-1 {
-    @apply bg-tertiary rounded-lg px-8 py-4 font-bold uppercase;
+    @apply bg-tertiary rounded-lg px-6 py-3 text-white font-bold uppercase w-max cursor-pointer;
   }
 
   .btn-2 {
