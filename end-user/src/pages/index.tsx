@@ -12,7 +12,7 @@ import img4 from "@/assets/homepage-assets/rectangle-148.webp";
 import BlogImg1 from "@/assets/homepage-assets/Replace Image.webp";
 import BlogImg2 from "@/assets/homepage-assets/Replace Image-1.webp";
 import BlogImg3 from "@/assets/homepage-assets/Replace Image-2.webp";
-import KeepBg from "@/assets/homepage-assets/keep.webp";
+import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Image from "next/image";
 
 export default function Home(): JSX.Element {
