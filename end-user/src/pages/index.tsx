@@ -9,13 +9,17 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
+import BlogImg1 from "@/assets/homepage-assets/Replace Image.webp";
+import BlogImg2 from "@/assets/homepage-assets/Replace Image-1.webp";
+import BlogImg3 from "@/assets/homepage-assets/Replace Image-2.webp";
+import KeepBg from "@/assets/homepage-assets/keep.webp";
 import Image from "next/image";
 
 export default function Home(): JSX.Element {
 	return (
 		<>
 			<Head>
-				<title>SPAS</title>
+				<title>SPAS | Homepage</title>
 				<meta name="author" content="SPAS" />
 
 				<meta name="title" content="Beranda" />
@@ -201,40 +205,41 @@ export default function Home(): JSX.Element {
 					<div className="container">
 						<div className="lg:grid-col-2 grid-col-1 grid gap-y-8 lg:gap-x-16">
 							<div className="lg:flex lg:flex-row">
-								<div className="w-1/3 hidden lg:block">
+								<div className="grid grid-cols-2 gap-4 mb-10">
 									<div>
-										<Image
-											className="lg:block"
-											src={img1}
-											alt="Tentang Kami"
-										/>
+										<div>
+											<Image
+												className="lg:block"
+												src={img1}
+												alt="Tentang Kami"
+											/>
+										</div>
+										<div className="mt-5">
+											<Image
+												className="lg:block"
+												src={img4}
+												alt="Tentang Kami"
+											/>
+										</div>
 									</div>
-									<div className="mt-5">
-										<Image
-											className="lg:block"
-											src={img4}
-											alt="Tentang Kami"
-										/>
+									<div>
+										<div>
+											<Image
+												className="lg:block"
+												src={img3}
+												alt="Tentang Kami"
+											/>
+										</div>
+										<div className="mt-5">
+											<Image
+												className="lg:block"
+												src={img2}
+												alt="Tentang Kami"
+											/>
+										</div>
 									</div>
 								</div>
-								<div className="mx-2"></div>
-								<div className="w-1/3  hidden lg:block">
-									<div>
-										<Image
-											className="lg:block"
-											src={img3}
-											alt="Tentang Kami"
-										/>
-									</div>
-									<div className="mt-5">
-										<Image
-											className="lg:block"
-											src={img2}
-											alt="Tentang Kami"
-										/>
-									</div>
-								</div>
-								<div className="lg:w-3/4 px-5">
+								<div className="lg:w-3/4 lg:px-5">
 									<h2 className="at-left bg-gradient text-black font-semibold w-fit max-w-sm text-2xl leading-snug md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-4xl xl:leading-tight">
 										Why Join Us
 									</h2>
@@ -291,7 +296,7 @@ export default function Home(): JSX.Element {
 				</section>
 
 				{/* MEMBERSHIP BENEFITS */}
-				<section className="pb-8 lg:pb-0 lg:py-16">
+				<section className="pb-8 lg:pb-0 lg:py-0">
 					<div className="container">
 						<div className="flex flex-col gap-y-8">
 							<header className="flex flex-col gap-y-4 text-center">
@@ -321,7 +326,7 @@ export default function Home(): JSX.Element {
 										</p>
 									</div>
 								</div>
-								<div className="border-x-2">
+								<div className="lg:border-x-2">
 									<div className="grid justify-center">
 										<Image
 											className="w-md rounded-lg"
@@ -363,7 +368,7 @@ export default function Home(): JSX.Element {
 								</div>
 							</div>
 							<div className="flex justify-center">
-								<p className="text-center font-semibold w-1/2">
+								<p className="text-center font-semibold lg:w-1/2">
 									Our membership benefits is more than that.
 									Become a member today and unlock a world of
 									opportunities in the Beauty, Spa, and
@@ -374,6 +379,244 @@ export default function Home(): JSX.Element {
 								<a className="btn-1 capitalize">
 									See Membership Details
 								</a>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* BLOG */}
+				<section className="pb-14 lg:pb-14 lg:py-20">
+					<div className="container">
+						<div className="flex flex-col gap-y-8">
+							<header className="flex flex-col gap-y-4 text-center">
+								<h2 className="at-center mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
+									Latest News
+								</h2>
+
+								<p className="mx-auto mt-2 md:w-3/4 text-secondary">
+									Our blog is more than just a collection of
+									articles - it&prime;s a hub of ideas,
+									inspiration, and thought-provoking
+									discussions.
+								</p>
+								<div className="grid justify-center">
+									<p className="bg-[#F0F6FF] w-max py-2 px-6 rounded-full">
+										Blog
+									</p>
+								</div>
+							</header>
+
+							<div className="lg:flex lg:flex-row text-center">
+								<div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
+										<div className="grid justify-center">
+											<Image
+												className="rounded-lg"
+												src={BlogImg1}
+												alt="BlogImg1"
+												priority={true}
+											/>
+										</div>
+										<div className="mt-5 space-y-3 text-left">
+											<h2 className="font-semibold text-[#3E3232]">
+												Progressing The Wellness
+												Industry Through Professional
+												Recognition
+											</h2>
+											<p className="text-secondary text-black/80">
+												Lorem ipsum dolor sit amet
+												consectetur adipisicing elit.
+												Nostrum reiciendis consequatur
+												labore corporis a, distinctio
+												nemo eaque sequi, fugiat
+												incidunt omnis rem recusandae
+												consequuntur? Cupiditate, iste!
+												Minus, minima odit. Voluptate.
+											</p>
+										</div>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-row gap-4">
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														UI/UX
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														Studio
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														Web Design
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														2+
+													</p>
+												</div>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
+										<div className="grid justify-center">
+											<Image
+												className="rounded-lg"
+												src={BlogImg2}
+												alt="BlogImg2"
+												priority={true}
+											/>
+										</div>
+										<div className="mt-5 space-y-3 text-left">
+											<h2 className="font-semibold text-[#3E3232]">
+												Coup for Singapore Exhibitors
+												for SPAS for Dubai&prime;s
+												Beauty Wellness & Spa Show
+											</h2>
+											<p className="text-secondary text-black/80">
+												Lorem ipsum dolor sit amet
+												consectetur adipisicing elit.
+												Nostrum reiciendis consequatur
+												labore corporis a, distinctio
+												nemo eaque sequi, fugiat
+												incidunt omnis rem recusandae
+												consequuntur? Cupiditate, iste!
+												Minus, minima odit. Voluptate.
+											</p>
+										</div>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-row gap-4">
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														UI/UX
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														Studio
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														Web Design
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														2+
+													</p>
+												</div>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
+										<div className="grid justify-center">
+											<Image
+												className="rounded-lg"
+												src={BlogImg3}
+												alt="BlogImg3"
+												priority={true}
+											/>
+										</div>
+										<div className="mt-5 space-y-3 text-left">
+											<h2 className="font-semibold text-[#3E3232]">
+												Blue Ocean Strategy Talk for the
+												Spa & Wellness Industry
+											</h2>
+											<p className="text-secondary text-black/80">
+												Lorem ipsum dolor sit amet
+												consectetur adipisicing elit.
+												Nostrum reiciendis consequatur
+												labore corporis a, distinctio
+												nemo eaque sequi, fugiat
+												incidunt omnis rem recusandae
+												consequuntur? Cupiditate, iste!
+												Minus, minima odit. Voluptate.
+											</p>
+										</div>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-row gap-4">
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														UI/UX
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														Studio
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														Web Design
+													</p>
+												</div>
+												<div>
+													<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full">
+														2+
+													</p>
+												</div>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div className="flex justify-center">
+								<a className="btn-1 capitalize">Read more</a>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* KEEP UP TO DATE WITH US */}
+				<section className="pb-12 lg:pb-14">
+					<div className="container">
+						<div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
+							<div className="space-y-3 p-9">
+								<h2 className="text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-secondary font-semibold">
+									Keep Up-to-Date with Us
+								</h2>
+								<p className="text-secondary lg:w-3/4">
+									Stay in the loop with the latest industry
+									news, events, and community updates. Follow
+									us on and be a part of the ongoing dialogue
+									in the world of Beauty, Spa, and Wellness.
+								</p>
+								<div className="">
+									<form className="mt-8">
+										<div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
+											<input
+												type="text"
+												className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
+												placeholder="Your e-mail address"
+											/>
+											<input
+												type="submit"
+												value="Subscribe"
+												className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer"
+											/>
+										</div>
+									</form>
+								</div>
+							</div>
+							<div className="absolute right-0 top-0 hidden lg:block">
+								<Image
+									className="w-72 rounded-lg"
+									src={KeepBg}
+									alt="KeepBg"
+									priority={true}
+								/>
 							</div>
 						</div>
 					</div>

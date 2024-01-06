@@ -6,15 +6,15 @@ export default function Footer(): JSX.Element {
 		<footer className="mt-auto animate-shiny border-t py-4 lg:py-8">
 			<div className="container">
 				<div className="flex flex-col gap-y-8">
-					<div className="flex flex-col gap-y-8 xl:flex-row xl:justify-between xl:gap-x-16">
+					<div className="flex flex-col gap-y-8 xl:flex-row xl:justify-between xl:gap-x-16 text-black">
 						<div className="flex flex-col gap-y-4 md:max-w-sm">
 							<Logo />
-							<p>
+							<p className="text-secondary">
 								We love working with ambitious people. Let's
 								build something great together now.
 							</p>
 
-							<ul className="flex gap-x-4 text-2xl">
+							<ul className="flex gap-x-4 text-2xl text-secondary">
 								<li>
 									<a
 										href="https://www.linkedin.com/company/the-butterlfy/"
@@ -44,12 +44,12 @@ export default function Footer(): JSX.Element {
 							</ul>
 						</div>
 
-						<div className="flex flex-col gap-y-8 md:flex-row md:justify-between xl:w-2/5 xl:gap-x-16">
+						<div className="flex flex-col gap-y-8 md:flex-row md:justify-between xl:gap-x-16">
 							<div className="flex flex-col gap-y-4 md:max-w-sm">
 								<strong>Company</strong>
 
 								<nav>
-									<ul className="flex flex-col gap-y-2">
+									<ul className="flex flex-col gap-y-2 text-secondary">
 										<li>About</li>
 										<li>Careers</li>
 										<li>News</li>
@@ -62,7 +62,7 @@ export default function Footer(): JSX.Element {
 							<div className="flex flex-col gap-y-4 md:max-w-sm">
 								<strong>Support</strong>
 
-								<ul className="flex flex-col gap-y-2">
+								<ul className="flex flex-col gap-y-2 text-secondary">
 									<li>Help Center</li>
 									<li>Status</li>
 									<li>Report a Bug</li>
@@ -73,7 +73,7 @@ export default function Footer(): JSX.Element {
 							<div className="flex flex-col gap-y-4 md:max-w-sm">
 								<strong>Contact Us</strong>
 
-								<ul className="flex flex-col gap-y-2">
+								<ul className="flex flex-col gap-y-2 text-secondary">
 									<li>
 										<a
 											className="ml-2"
@@ -105,11 +105,22 @@ export default function Footer(): JSX.Element {
 
 					<hr />
 
-					<div className="flex justify-center">
-						<p className="text-center">
-							&copy; {new Date().getFullYear()} SPAS. All Rights
-							Reserved.
-						</p>
+					<div className="flex justify-between">
+						<div>
+							<p className="text-center text-secondary">
+								&copy; {new Date().getFullYear()} SPAS. All
+								Rights Reserved.
+							</p>
+						</div>
+						<div>
+							<a className="mx-2" href="#">
+								Terms of Service
+							</a>
+							&#124;
+							<a className="mx-2" href="#">
+								Privacy Policy
+							</a>	
+						</div>
 					</div>
 				</div>
 			</div>
