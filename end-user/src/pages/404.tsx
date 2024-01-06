@@ -7,34 +7,18 @@ export default function NotFound(): JSX.Element {
 		<>
 			{/* meta section */}
 			<Head>
-				<title>Page Not Found - Feel the World Class Tour</title>
+				<title>Page Not Found</title>
 
-				<meta
-					name="title"
-					content="Winphuket - Feel the World Class Phuket Tour"
-				/>
+				<meta name="title" content="SPAS" />
 
-				<meta
-					name="description"
-					content="Unleash the boundless adventures to create unforgettable memories by exploring exciting
-                            destinations and activities that suits to your wildest wanderlust"
-				/>
-				<meta
-					name="keyword"
-					content="phuket, tour, entertainment, paradise"
-				/>
+				<meta name="description" content="spas" />
+				<meta name="keyword" content="psasp, services" />
 
-				<meta
-					property="og:title"
-					content="Winphuket - Feel the World Class Phuket Tour"
-				/>
+				<meta property="og:title" content="SPAS" />
 
 				<meta property="og:type" content="website" />
 
-				<meta
-					property="og:image"
-					content="https://winphuket.com/winphuket-meta-image.webp"
-				/>
+				<meta property="og:image" content="" />
 			</Head>
 			{/* end of meta section */}
 

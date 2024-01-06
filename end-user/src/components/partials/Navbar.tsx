@@ -61,10 +61,10 @@ export default function Navbar(): JSX.Element {
 		<nav
 			className={`${
 				scrollTop > 0 ? "shadow" : "shadow-none"
-			} fixed bg-white/25 backdrop-blur top-0 z-30 h-20 w-full duration-300 lg:h-24`}
+			} fixed bg-white top-0 z-30 h-20 w-full duration-300 lg:h-24`}
 		>
 			{/* mobile nav */}
-			<div className="flex h-full items-center justify-between bg-white/25 backdrop-blur p-4 lg:p-8 lg:hidden">
+			<div className="flex h-full items-center justify-between bg-white p-4 lg:p-8 lg:hidden">
 				{/* open menu */}
 				<Bars3Icon
 					onClick={() => setIsMenuOpen(true)}

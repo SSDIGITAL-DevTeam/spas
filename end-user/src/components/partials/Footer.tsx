@@ -1,27 +1,37 @@
 import { JSX } from "react";
+import Image from "next/image";
 import Logo from "@/components/utils/Logo";
+import Ig from "@/assets/images/instagram.png";
+import Fb from "@/assets/images/Facebook.png";
+import Linked from "@/assets/images/linkedin.png";
 
 export default function Footer(): JSX.Element {
 	return (
 		<footer className="mt-auto animate-shiny border-t py-4 lg:py-8">
 			<div className="container">
 				<div className="flex flex-col gap-y-8">
-					<div className="flex flex-col gap-y-8 xl:flex-row xl:justify-between xl:gap-x-16">
+					<div className="flex flex-col gap-y-8 xl:flex-row xl:justify-between xl:gap-x-16 text-black">
 						<div className="flex flex-col gap-y-4 md:max-w-sm">
 							<Logo />
-							<p>
-								We love working with ambitious people. Let's
-								build something great together now.
+							<p className="text-secondary">
+								We love working with ambitious people.
+								Let&rsquo;s build something great together now.
 							</p>
 
-							<ul className="flex gap-x-4 text-2xl">
+							<ul className="flex gap-x-4 text-2xl text-secondary">
 								<li>
 									<a
 										href="https://www.linkedin.com/company/the-butterlfy/"
 										target="_blank"
 										rel="noopener noreferrer"
-										aria-label="Link to The Butterfly Linkedin"
+										aria-label="Link to The SPAS Linkedin"
 									></a>
+									<Image
+										className="rounded-lg"
+										src={Linked}
+										alt="Linked"
+										priority={true}
+									/>
 								</li>
 
 								<li>
@@ -29,8 +39,14 @@ export default function Footer(): JSX.Element {
 										href="https://www.facebook.com/profile.php?id=61550755322576"
 										target="_blank"
 										rel="noopener noreferrer"
-										aria-label="Link to The Butterfly Facebook"
+										aria-label="Link to The SPAS Facebook"
 									></a>
+									<Image
+										className="rounded-lg"
+										src={Fb}
+										alt="Fb"
+										priority={true}
+									/>
 								</li>
 
 								<li>
@@ -38,18 +54,24 @@ export default function Footer(): JSX.Element {
 										href="https://www.instagram.com/thebutterflyid/"
 										target="_blank"
 										rel="noopener noreferrer"
-										aria-label="Link to The Butterfly Instagram"
+										aria-label="Link to The SPAS Instagram"
 									></a>
+									<Image
+										className="rounded-lg"
+										src={Ig}
+										alt="Ig"
+										priority={true}
+									/>
 								</li>
 							</ul>
 						</div>
 
-						<div className="flex flex-col gap-y-8 md:flex-row md:justify-between xl:w-2/5 xl:gap-x-16">
+						<div className="flex flex-col gap-y-8 md:flex-row md:justify-between xl:gap-x-16">
 							<div className="flex flex-col gap-y-4 md:max-w-sm">
 								<strong>Company</strong>
 
 								<nav>
-									<ul className="flex flex-col gap-y-2">
+									<ul className="flex flex-col gap-y-2 text-secondary">
 										<li>About</li>
 										<li>Careers</li>
 										<li>News</li>
@@ -62,9 +84,9 @@ export default function Footer(): JSX.Element {
 							<div className="flex flex-col gap-y-4 md:max-w-sm">
 								<strong>Support</strong>
 
-								<ul className="flex flex-col gap-y-2">
+								<ul className="flex flex-col gap-y-2 text-secondary">
 									<li>Help Center</li>
-									<li>Status</li>
+									{/* <li>Status</li> */}
 									<li>Report a Bug</li>
 									<li>Chat Support</li>
 								</ul>
@@ -73,7 +95,7 @@ export default function Footer(): JSX.Element {
 							<div className="flex flex-col gap-y-4 md:max-w-sm">
 								<strong>Contact Us</strong>
 
-								<ul className="flex flex-col gap-y-2">
+								<ul className="flex flex-col gap-y-2 text-secondary">
 									<li>
 										<a
 											className="ml-2"
@@ -105,11 +127,22 @@ export default function Footer(): JSX.Element {
 
 					<hr />
 
-					<div className="flex justify-center">
-						<p className="text-center">
-							&copy; {new Date().getFullYear()} SPAS. All Rights
-							Reserved.
-						</p>
+					<div className="lg:flex justify-between">
+						<div>
+							<p className="text-center text-secondary">
+								&copy; {new Date().getFullYear()} SPAS. All Hak
+								Cipta.
+							</p>
+						</div>
+						<div className="text-center mt-2 lg:mt-0">
+							<a className="mx-2" href="#">
+								Terms of Service
+							</a>
+							&#124;
+							<a className="mx-2" href="#">
+								Privacy Policy
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>

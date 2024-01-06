@@ -22,7 +22,7 @@
   }
 
   .btn-2 {
-    @apply bg-quaternary rounded-lg px-8 py-4 font-bold uppercase;
+    @apply bg-quaternary rounded-lg px-6 py-3 font-bold uppercase;
   }
 
 }

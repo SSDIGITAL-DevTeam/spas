@@ -9,13 +9,17 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
+import BlogImg1 from "@/assets/homepage-assets/Replace Image.webp";
+import BlogImg2 from "@/assets/homepage-assets/Replace Image-1.webp";
+import BlogImg3 from "@/assets/homepage-assets/Replace Image-2.webp";
+import KeepBg from "@/assets/homepage-assets/keep.webp";
 import Image from "next/image";
 
 export default function Home(): JSX.Element {
 	return (
 		<>
 			<Head>
-				<title>SPAS</title>
+				<title>SPAS | Homepage</title>
 				<meta name="author" content="SPAS" />
 
 				<meta name="title" content="Beranda" />
@@ -49,10 +53,10 @@ export default function Home(): JSX.Element {
 			</Head>
 
 			{/* HERO */}
-			<header className="pb-10 lg:pb-0 pt-32">
+			<header className="pb-14 lg:pb-18 pt-32">
 				<div className="container">
 					<div className="flex flex-col md:flex-row md:items-center">
-						<div className="flex flex-col gap-y-4 md:min-w-1/2">
+						<div className="flex flex-col gap-y-4 md:w-1/2">
 							<h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
 								Elevate{" "}
 								<span className="text-black">
@@ -65,10 +69,12 @@ export default function Home(): JSX.Element {
 								consumers of the Beauty, Spa and Wellness
 								Industry in Singapore.
 							</p>
-							<a className="btn-1">JOIN SPAS</a>
+							<a className="btn-1 block my-4 w-full text-center lg:w-max">
+								JOIN SPAS
+							</a>
 						</div>
 
-						<div className="mt-8">
+						<div className="mt-8 md:w-1/2">
 							<Image
 								className="w-screen rounded-lg"
 								src={Hero}
@@ -85,12 +91,12 @@ export default function Home(): JSX.Element {
 				<section className="pb-0 lg:pb-14 lg:py-16">
 					<div className="container">
 						<div className="flex flex-col gap-y-8">
-							<header className="flex flex-col gap-y-4 text-center">
-								<h2 className="mini-underline at-center mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
+							<header className="space-y-5 flex flex-col text-center">
+								<h2 className="mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
 									Who We Are
 								</h2>
 
-								<p className="mx-auto mt-2 md:w-3/4 text-secondary">
+								<p className="mx-auto md:w-3/4 text-secondary">
 									At SPAs, we&prime;re more than just a
 									network - we&prime;re a community of
 									passionate professionals shaping the future
@@ -103,7 +109,7 @@ export default function Home(): JSX.Element {
 								</div>
 							</header>
 
-							<div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-2">
+							<div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-2 mt-5">
 								<div>
 									<Image
 										className="w-md rounded-lg"
@@ -115,7 +121,7 @@ export default function Home(): JSX.Element {
 										<h2 className="font-semibold">
 											Fostering Collaboration
 										</h2>
-										<p className="text-secondary">
+										<p className="text-secondary text-justify">
 											We believe in the power of
 											collaboration. By bringing together
 											spa and wellness professionals,
@@ -139,7 +145,7 @@ export default function Home(): JSX.Element {
 										<h2 className="font-semibold">
 											Empowering Growth
 										</h2>
-										<p className="text-secondary">
+										<p className="text-secondary text-justify">
 											Your growth is our priority. Whether
 											you&prime;re a seasoned owner or a
 											budding therapist, SPAS is designed
@@ -162,7 +168,7 @@ export default function Home(): JSX.Element {
 										<h2 className="font-semibold">
 											Enabling Innovation
 										</h2>
-										<p className="text-secondary">
+										<p className="text-secondary text-justify">
 											Through SPAS, we aim to be a hub of
 											innovation, where ideas are born,
 											tested, and refined. By fostering an
@@ -182,7 +188,7 @@ export default function Home(): JSX.Element {
 										<h2 className="font-semibold">
 											Give Recognition
 										</h2>
-										<p className="text-secondary">
+										<p className="text-secondary text-justify">
 											SPAs is a platform where Singaporean
 											therapists find recognition and
 											support by validating their crucial
@@ -199,91 +205,66 @@ export default function Home(): JSX.Element {
 				{/* WHY JOIN US */}
 				<section className="py-16 pb-14">
 					<div className="container">
-						<div className="lg:grid-col-2 grid-col-1 grid gap-y-8 lg:gap-x-16">
-							<div className="lg:flex lg:flex-row">
-								<div className="w-1/3 hidden lg:block">
-									<div>
-										<Image
-											className="lg:block"
-											src={img1}
-											alt="Tentang Kami"
-										/>
+						<div className="flex flex-col lg:flex-row">
+							<div className="grid grid-cols-2 gap-5 mb-10 lg:w-1/2">
+								<div className="space-y-5">
+									<Image src={img1} alt="Tentang Kami" />
+									<Image src={img4} alt="Tentang Kami" />
+								</div>
+								<div className="space-y-5">
+									<Image src={img3} alt="Tentang Kami" />
+									<Image src={img2} alt="Tentang Kami" />
+								</div>
+							</div>
+							<div className="lg:w-1/2 lg:px-10 space-y-8">
+								<h2 className="at-left bg-gradient text-black font-semibold w-fit max-w-sm text-2xl leading-snug md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-4xl xl:leading-tight">
+									Why Join Us
+								</h2>
+								<div className="mt-6 space-y-4 text-base lg:flex lg:flex-row">
+									<div className="mr-5 mt-4 space-y-2">
+										<h2 className="font-semibold">
+											Validation
+										</h2>
+										<p className="text-secondary">
+											Gain recognition for your skills and
+											expertise in the spa and wellness
+											industry.
+										</p>
 									</div>
-									<div className="mt-5">
-										<Image
-											className="lg:block"
-											src={img4}
-											alt="Tentang Kami"
-										/>
+									<div className="space-y-2">
+										<h2 className="font-semibold">
+											Connections
+										</h2>
+										<p className="text-secondary">
+											Gain recognition for your skills and
+											expertise in the spa and wellness
+											industry.
+										</p>
 									</div>
 								</div>
-								<div className="mx-2"></div>
-								<div className="w-1/3  hidden lg:block">
-									<div>
-										<Image
-											className="lg:block"
-											src={img3}
-											alt="Tentang Kami"
-										/>
-									</div>
-									<div className="mt-5">
-										<Image
-											className="lg:block"
-											src={img2}
-											alt="Tentang Kami"
-										/>
+								<div className="mt-6 space-y-4 text-base">
+									<div className="mr-5 mt-4 space-y-2">
+										<h2 className="font-semibold">
+											Knowledge Exchange
+										</h2>
+										<p className="text-secondary">
+											Access a treasure trove of insights
+											and ideas to stay ahead in your
+											field.
+										</p>
 									</div>
 								</div>
-								<div className="lg:w-3/4 px-5">
-									<h2 className="at-left bg-gradient text-black font-semibold w-fit max-w-sm text-2xl leading-snug md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-4xl xl:leading-tight">
-										Why Join Us
-									</h2>
-									<div className="mt-6 space-y-4 text-base flex flex-row">
-										<div className="mr-5 mt-4 space-y-2">
-											<h2 className="font-semibold">
-												Validation
-											</h2>
-											<p className="text-secondary">
-												Gain recognition for your skills
-												and expertise in the spa and
-												wellness industry.
-											</p>
-										</div>
-										<div className="space-y-2">
-											<h2 className="font-semibold">
-												Connections
-											</h2>
-											<p className="text-secondary">
-												Gain recognition for your skills
-												and expertise in the spa and
-												wellness industry.
-											</p>
-										</div>
+								<div className="mt-6 space-y-4 text-base">
+									<div className="mb-8">
+										<p className="text-secondary">
+											Join us on SPAS and take your
+											journey in the Beauty, Spa, and
+											Wellness industry to new heights.
+										</p>
 									</div>
-									<div className="mt-6 space-y-4 text-base">
-										<div className="mr-5 mt-4 space-y-2">
-											<h2 className="font-semibold">
-												Knowledge Exchange
-											</h2>
-											<p className="text-secondary">
-												Access a treasure trove of
-												insights and ideas to stay ahead
-												in your field.
-											</p>
-										</div>
-									</div>
-									<div className="mt-6 space-y-4 text-base">
-										<div className="mb-8">
-											<p className="text-secondary">
-												Join us on SPAS and take your
-												journey in the Beauty, Spa, and
-												Wellness industry to new
-												heights.
-											</p>
-										</div>
-
-										<a className="btn-1 mt-8">JOIN SPAS</a>
-									</div>
+									<a className="btn-1 block w-full lg:w-max text-center">
+										JOIN SPAS
+									</a>
 								</div>
 							</div>
 						</div>
@@ -291,7 +272,7 @@ export default function Home(): JSX.Element {
 				</section>
 
 				{/* MEMBERSHIP BENEFITS */}
-				<section className="pb-8 lg:pb-0 lg:py-16">
+				<section className="pb-14 lg:pb-0 lg:py-0">
 					<div className="container">
 						<div className="flex flex-col gap-y-8">
 							<header className="flex flex-col gap-y-4 text-center">
@@ -300,41 +281,41 @@ export default function Home(): JSX.Element {
 								</h2>
 							</header>
 
-							<div className="lg:flex lg:flex-row text-center py-6">
+							<div className="flex flex-col lg:flex-row text-center py-6 gap-8 items-center lg:justify-between">
 								<div>
-									<div className="grid justify-center">
+									<div className="">
 										<Image
-											className="w-md rounded-lg"
+											className="w-md rounded-lg mx-auto"
 											src={Ficon1}
 											alt="Ficon1"
 											priority={true}
 										/>
 									</div>
-									<div className="mt-5 space-y-3">
+									<div className="space-y-3">
 										<h2 className="font-semibold">
 											Networking Events
 										</h2>
-										<p className="text-secondary p-3">
+										<p className="text-secondary p-3 max-w-xs">
 											Attend exclusive events to connect
 											with industry leaders and fellow
 											professionals.
 										</p>
 									</div>
 								</div>
-								<div className="border-x-2">
-									<div className="grid justify-center">
+								<div className="lg:border-x-2 px-10">
+									<div className="">
 										<Image
-											className="w-md rounded-lg"
+											className="w-md rounded-lg mx-auto"
 											src={Ficon1}
 											alt="Ficon1"
 											priority={true}
 										/>
 									</div>
-									<div className="mt-5 space-y-3">
+									<div className="space-y-3">
 										<h2 className="font-semibold">
 											Resource Hub
 										</h2>
-										<p className="text-secondary p-3">
+										<p className="text-secondary p-3 max-w-xs">
 											Access a rich repository of
 											resources, from business insights to
 											the latest wellness trends.
@@ -342,19 +323,19 @@ export default function Home(): JSX.Element {
 									</div>
 								</div>
 								<div>
-									<div className="grid justify-center">
+									<div className="">
 										<Image
-											className="w-md rounded-lg"
+											className="w-md rounded-lg mx-auto"
 											src={Ficon1}
 											alt="Ficon1"
 											priority={true}
 										/>
 									</div>
-									<div className="mt-5 space-y-3">
+									<div className="space-y-3">
 										<h2 className="font-semibold">
 											Profile Showcase
 										</h2>
-										<p className="text-secondary p-3">
+										<p className="text-secondary p-3 max-w-xs">
 											Showcase your expertise with a
 											personalized profile, boosting your
 											visibility.
@@ -363,17 +344,212 @@ export default function Home(): JSX.Element {
 								</div>
 							</div>
 							<div className="flex justify-center">
-								<p className="text-center font-semibold w-1/2">
+								<p className="text-center font-semibold lg:w-1/2">
 									Our membership benefits is more than that.
+									<br />
 									Become a member today and unlock a world of
 									opportunities in the Beauty, Spa, and
 									Wellness community.
 								</p>
 							</div>
 							<div className="flex justify-center">
-								<a className="btn-1 capitalize">
+								<a className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max">
 									See Membership Details
 								</a>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* BLOG */}
+				<section className="pb-14 lg:pb-14 lg:py-20">
+					<div className="container">
+						<div className="flex flex-col gap-y-8">
+							<header className="flex flex-col gap-y-4 text-center">
+								<h2 className="at-center mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
+									Latest News
+								</h2>
+
+								<p className="mx-auto mt-2 md:w-3/4 text-secondary">
+									Our blog is more than just a collection of
+									articles - it&prime;s a hub of ideas,
+									inspiration, and thought-provoking
+									discussions.
+								</p>
+								<div className="grid justify-center">
+									<p className="bg-[#F0F6FF] w-max py-2 px-6 rounded-full">
+										Blog
+									</p>
+								</div>
+							</header>
+
+							<div className="flex flex-col lg:flex-row text-center">
+								<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
+										<div className="grid justify-center">
+											<Image
+												className="rounded-lg"
+												src={BlogImg1}
+												alt="BlogImg1"
+												priority={true}
+											/>
+										</div>
+										<div className="mt-5 space-y-3 text-left">
+											<h2 className="font-semibold text-[#3E3232]">
+												Progressing The Wellness
+												Industry Through Professional
+												Recognition
+											</h2>
+											<p className="text-secondary text-black/80">
+												Progressing The Wellness
+												Industry Through Professional
+												Recognition.
+											</p>
+										</div>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-wrap gap-4">
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													UI/UX
+												</p>
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Studio
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Web Design
+												</p>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
+										<div className="grid justify-center">
+											<Image
+												className="rounded-lg"
+												src={BlogImg2}
+												alt="BlogImg2"
+												priority={true}
+											/>
+										</div>
+										<div className="mt-5 space-y-3 text-left">
+											<h2 className="font-semibold text-[#3E3232]">
+												Coup for Singapore Exhibitors
+												for SPAS for Dubai&prime;s
+												Beauty Wellness & Spa Show
+											</h2>
+											<p className="text-secondary text-black/80">
+												Coup for Singapore Exhibitors
+												from the Spa & Wellness
+												Association (Singapore).
+											</p>
+										</div>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-wrap gap-4">
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													UI/UX
+												</p>
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Studio
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Web Design
+												</p>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
+										<div className="grid justify-center">
+											<Image
+												className="rounded-lg"
+												src={BlogImg3}
+												alt="BlogImg3"
+												priority={true}
+											/>
+										</div>
+										<div className="mt-5 space-y-3 text-left">
+											<h2 className="font-semibold text-[#3E3232]">
+												Blue Ocean Strategy Talk for the
+												Spa & Wellness Industry
+											</h2>
+											<p className="text-secondary text-black/80">
+												Blue Ocean Strategy Talk for the
+												Spa & Wellness Industry.
+											</p>
+										</div>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-wrap gap-4">
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													UI/UX
+												</p>
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Studio
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Web Design
+												</p>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div className="flex justify-center mt-10">
+								<a className="btn-1 block capitalize text-center w-full lg:w-max">
+									Read more
+								</a>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* KEEP UP TO DATE WITH US */}
+				<section className="pb-12 lg:pb-14">
+					<div className="container">
+						<div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
+							<div className="space-y-3 p-9">
+								<h2 className="text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-secondary font-semibold">
+									Keep Up-to-Date with Us
+								</h2>
+								<p className="text-secondary lg:w-3/4">
+									Stay in the loop with the latest industry
+									news, events, and community updates. Follow
+									us on and be a part of the ongoing dialogue
+									in the world of Beauty, Spa, and Wellness.
+								</p>
+								<div className="">
+									<form className="mt-8">
+										<div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
+											<input
+												type="text"
+												className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
+												placeholder="Your e-mail address"
+											/>
+											<input
+												type="submit"
+												value="Subscribe"
+												className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer"
+											/>
+										</div>
+									</form>
+								</div>
+							</div>
+							<div className="absolute right-0 top-0 hidden lg:block">
+								<Image
+									className="w-72 rounded-lg"
+									src={KeepBg}
+									alt="KeepBg"
+									priority={true}
+								/>
 							</div>
 						</div>
 					</div>
