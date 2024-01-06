@@ -1,5 +1,9 @@
 import { JSX } from "react";
+import Image from "next/image";
 import Logo from "@/components/utils/Logo";
+import Ig from "@/assets/images/instagram.png";
+import Fb from "@/assets/images/Facebook.png";
+import Linked from "@/assets/images/linkedin.png";
 
 export default function Footer(): JSX.Element {
 	return (
@@ -10,8 +14,8 @@ export default function Footer(): JSX.Element {
 						<div className="flex flex-col gap-y-4 md:max-w-sm">
 							<Logo />
 							<p className="text-secondary">
-								We love working with ambitious people. Let's
-								build something great together now.
+								We love working with ambitious people.
+								Let&rsquo;s build something great together now.
 							</p>
 
 							<ul className="flex gap-x-4 text-2xl text-secondary">
@@ -20,8 +24,14 @@ export default function Footer(): JSX.Element {
 										href="https://www.linkedin.com/company/the-butterlfy/"
 										target="_blank"
 										rel="noopener noreferrer"
-										aria-label="Link to The Butterfly Linkedin"
+										aria-label="Link to The SPAS Linkedin"
 									></a>
+									<Image
+										className="rounded-lg"
+										src={Linked}
+										alt="Linked"
+										priority={true}
+									/>
 								</li>
 
 								<li>
@@ -29,8 +39,14 @@ export default function Footer(): JSX.Element {
 										href="https://www.facebook.com/profile.php?id=61550755322576"
 										target="_blank"
 										rel="noopener noreferrer"
-										aria-label="Link to The Butterfly Facebook"
+										aria-label="Link to The SPAS Facebook"
 									></a>
+									<Image
+										className="rounded-lg"
+										src={Fb}
+										alt="Fb"
+										priority={true}
+									/>
 								</li>
 
 								<li>
@@ -38,8 +54,14 @@ export default function Footer(): JSX.Element {
 										href="https://www.instagram.com/thebutterflyid/"
 										target="_blank"
 										rel="noopener noreferrer"
-										aria-label="Link to The Butterfly Instagram"
+										aria-label="Link to The SPAS Instagram"
 									></a>
+									<Image
+										className="rounded-lg"
+										src={Ig}
+										alt="Ig"
+										priority={true}
+									/>
 								</li>
 							</ul>
 						</div>
@@ -64,7 +86,7 @@ export default function Footer(): JSX.Element {
 
 								<ul className="flex flex-col gap-y-2 text-secondary">
 									<li>Help Center</li>
-									<li>Status</li>
+									{/* <li>Status</li> */}
 									<li>Report a Bug</li>
 									<li>Chat Support</li>
 								</ul>
@@ -105,21 +127,21 @@ export default function Footer(): JSX.Element {
 
 					<hr />
 
-					<div className="flex justify-between">
+					<div className="lg:flex justify-between">
 						<div>
 							<p className="text-center text-secondary">
 								&copy; {new Date().getFullYear()} SPAS. All
 								Rights Reserved.
 							</p>
 						</div>
-						<div>
+						<div className="text-center mt-2 lg:mt-0">
 							<a className="mx-2" href="#">
 								Terms of Service
 							</a>
 							&#124;
 							<a className="mx-2" href="#">
 								Privacy Policy
-							</a>	
+							</a>
 						</div>
 					</div>
 				</div>
