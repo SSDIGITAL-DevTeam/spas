@@ -130,8 +130,8 @@ export default function Footer(): JSX.Element {
 					<div className="lg:flex justify-between">
 						<div>
 							<p className="text-center text-secondary">
-								&copy; {new Date().getFullYear()} SPAS. All
-								Rights Reserved.
+								&copy; {new Date().getFullYear()} SPAS. All Hak
+								Cipta.
 							</p>
 						</div>
 						<div className="text-center mt-2 lg:mt-0">
