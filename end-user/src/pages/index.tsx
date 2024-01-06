@@ -409,14 +409,15 @@ export default function Home(): JSX.Element {
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													UI/UX
-												</p>
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Studio
+													Beauty
 												</p>
 
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Web Design
+													Yoga
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Hair Salon
 												</p>
 											</div>
 											<div className="text-sm text-secondary text-left p-2">
@@ -448,14 +449,15 @@ export default function Home(): JSX.Element {
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													UI/UX
-												</p>
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Studio
+													Beauty
 												</p>
 
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Web Design
+													Yoga
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Hair Salon
 												</p>
 											</div>
 											<div className="text-sm text-secondary text-left p-2">
@@ -485,14 +487,15 @@ export default function Home(): JSX.Element {
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													UI/UX
-												</p>
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Studio
+													Beauty
 												</p>
 
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Web Design
+													Yoga
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Hair Salon
 												</p>
 											</div>
 											<div className="text-sm text-secondary text-left p-2">
