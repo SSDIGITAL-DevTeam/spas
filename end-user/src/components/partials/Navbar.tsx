@@ -22,7 +22,7 @@ const navLinks: NavLink[] = [
 	},
 	{
 		name: "Therapist",
-		path: "/theraphist",
+		path: "/therapist",
 	},
 	{
 		name: "Event & Media",
