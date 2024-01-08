@@ -305,8 +305,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={GroupImg5}
-												alt="GroupImg5"
+												src={GroupImg4}
+												alt="GroupImg4"
 												priority={true}
 											/>
 										</div>
@@ -320,8 +320,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={GroupImg1}
-												alt="GroupImg1"
+												src={GroupImg5}
+												alt="GroupImg5"
 												priority={true}
 											/>
 										</div>

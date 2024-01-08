@@ -116,8 +116,8 @@ export default function Footer(): JSX.Element {
 
 									<li>
 										<a className="ml-2" href="#">
-											3891 Ranchview Dr. Richardson, CA
-											62639
+											360 Orchard Road 07-05 International
+											Building, Singapore
 										</a>
 									</li>
 								</ul>
