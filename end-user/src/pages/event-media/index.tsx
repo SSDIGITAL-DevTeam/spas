@@ -40,6 +40,11 @@ export default function EventMedia(): JSX.Element {
 				/>
 			</Head>
 			<main>
+				{/* HERO */}
+				<header className="pb-24 lg:pb-0">
+					<div className="container"></div>
+				</header>
+
 				{/* BLOG */}
 				<section className="pb-14 lg:pb-14 lg:py-28">
 					<div className="container">
