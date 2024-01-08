@@ -84,7 +84,7 @@ export default function AboutUs(): JSX.Element {
         {/* Our Missions */}
         <section className="pb-14 lg:pb-24">
           <div className="container">
-            <h2 className="text-black text-4xl font-bold text-center mb-16">
+            <h2 className="text-black text-2xl md:text-4xl font-bold text-center mb-16">
               Our Missions
             </h2>
 
@@ -93,7 +93,7 @@ export default function AboutUs(): JSX.Element {
                 <Image
                   src={AssetMission1}
                   alt="Mission 1"
-                  className="object-cover rounded-md"
+                  className="object-cover rounded-md w-full"
                 />
                 <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
                   <span className="text-black font-bold">
@@ -111,7 +111,7 @@ export default function AboutUs(): JSX.Element {
                 <Image
                   src={AssetMission2}
                   alt="Mission 1"
-                  className="object-cover rounded-md"
+                  className="object-cover rounded-md w-full"
                 />
                 <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
                   <span className="text-black font-bold">
@@ -129,7 +129,7 @@ export default function AboutUs(): JSX.Element {
                 <Image
                   src={AssetMission3}
                   alt="Mission 1"
-                  className="object-cover rounded-md"
+                  className="object-cover rounded-md w-full"
                 />
                 <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
                   <span className="text-black font-bold">
@@ -147,7 +147,7 @@ export default function AboutUs(): JSX.Element {
                 <Image
                   src={AssetMission4}
                   alt="Mission 1"
-                  className="object-cover rounded-md"
+                  className="object-cover rounded-md w-full"
                 />
                 <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
                   <span className="text-black font-bold">Give Recognition</span>
