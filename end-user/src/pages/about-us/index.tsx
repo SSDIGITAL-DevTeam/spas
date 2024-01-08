@@ -100,8 +100,9 @@ export default function AboutUs(): JSX.Element {
                     Fostering Collaboration
                   </span>
                   <p className="text-black text-xs">
-                    Download torrents from verified or trusted uploaders. If
-                    you're a BitTorrent user looking
+                    We believe that collaboration is the cornerstone of success.
+                    We strive to create an environment where diverse minds come
+                    together and share ideas.
                   </p>
                 </div>
               </div>
@@ -117,8 +118,9 @@ export default function AboutUs(): JSX.Element {
                     Empowering Growth
                   </span>
                   <p className="text-black text-xs">
-                    Download torrents from verified or trusted uploaders. If
-                    you're a BitTorrent user looking
+                    We are dedicated to empowering every individual associated
+                    with SPAS to reach their full potential through mentorship
+                    and skill development programs.
                   </p>
                 </div>
               </div>
@@ -134,8 +136,9 @@ export default function AboutUs(): JSX.Element {
                     Enabling Innovation
                   </span>
                   <p className="text-black text-xs">
-                    Download torrents from verified or trusted uploaders. If
-                    you're a BitTorrent user looking
+                    SPAS thrives on the spirit of continuous improvement and
+                    exploration. We encourage bold ideas, embrace change, and
+                    turn innovative concepts into reality.
                   </p>
                 </div>
               </div>
@@ -149,8 +152,9 @@ export default function AboutUs(): JSX.Element {
                 <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
                   <span className="text-black font-bold">Give Recognition</span>
                   <p className="text-black text-xs">
-                    Download torrents from verified or trusted uploaders. If
-                    you're a BitTorrent user looking
+                    We celebrate achievements, big and small, to create a
+                    culture where everyone feels appreciated. Your hard work and
+                    dedication do not go unnoticed.
                   </p>
                 </div>
               </div>
