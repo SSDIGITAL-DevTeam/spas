@@ -45,11 +45,6 @@ export default function Home(): JSX.Element {
 					property="og:image"
 					content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
 				/>
-
-				<meta
-					name="google-site-verification"
-					content="EhcruQmZ534ovq8BFx9Fvi7ipJ7v1YVTPANGyYT05Ag"
-				/>
 			</Head>
 
 			{/* HERO */}
