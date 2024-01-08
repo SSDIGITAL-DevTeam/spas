@@ -144,15 +144,16 @@ export default function Contact(): JSX.Element {
 
 											<li>
 												<a className="ml-2" href="#">
-													3891 Ranchview Dr.
-													Richardson, CA 62639
+													360 Orchard Road 07-05
+													International Building,
+													Singapore
 												</a>
 											</li>
 										</ul>
 									</div>
 									<div>
 										<iframe
-											src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3346.6367663020533!2d-96.61666632520685!3d32.98698377322782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c1c846a181d41%3A0xe1167132cabc18bd!2sHeptic!5e0!3m2!1sid!2sid!4v1704706977015!5m2!1sid!2sid"
+											src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7817643671033!2d103.8310023!3d1.3060711999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da198d053a8b83%3A0xbda05168a851fede!2s360%20Orchard%20Rd%2C%20%2307%2005%20International%20Building%2C%20Singapore%20238869!5e0!3m2!1sen!2sid!4v1704712708437!5m2!1sen!2sid"
 											className="w-full min-h-80"
 										></iframe>
 									</div>
