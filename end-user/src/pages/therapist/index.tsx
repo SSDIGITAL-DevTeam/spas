@@ -93,7 +93,7 @@ export default function Therapist(): JSX.Element {
 								</p>
 							</header>
 
-							<div className="flex flex-col lg:flex-row text-center py-6 gap-8 items-center lg:justify-between">
+							<div className="flex flex-col lg:flex-row text-center py-6 gap-8 items-center lg:justify-center">
 								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6">
 									<div className="space-y-6">
 										<div className="">
