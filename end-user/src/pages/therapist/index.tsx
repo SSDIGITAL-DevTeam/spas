@@ -43,7 +43,7 @@ export default function Therapist(): JSX.Element {
 			</Head>
 
 			{/* HERO */}
-			<header className="pb-14 lg:pb-18 pt-32">
+			<header className="pb-14 lg:pb-18 pt-24">
 				<div className="container">
 					<div className="flex flex-col md:flex-row md:items-center">
 						<div className="flex flex-col gap-y-4 md:w-1/2">
