@@ -34,7 +34,7 @@ const navLinks: NavLink[] = [
 	},
 	{
 		name: "Contact Us",
-		path: "/contact us",
+		path: "/contact-us",
 	},
 ];
 

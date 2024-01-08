@@ -8,7 +8,7 @@ import Card3 from "@/assets/membership-assets/card3.webp";
 import Card4 from "@/assets/membership-assets/card4.webp";
 import Ellipse from "@/assets/membership-assets/ellipse.png";
 
-export default function membership(): JSX.Element {
+export default function Membership(): JSX.Element {
 	return (
 		<>
 			<Head>
