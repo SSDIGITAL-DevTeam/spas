@@ -41,7 +41,7 @@ export default function Membership(): JSX.Element {
 			</Head>
 
 			{/* HERO MEMBERSHIP */}
-			<header className="pb-14 pt-32 lg:pt-40">
+			<header className="pb-14 pt-32 lg:pt-30">
 				<div className="container">
 					<div className="flex flex-col md:flex-row gap-x-14 gap-y-10">
 						<div className="md:w-1/2">

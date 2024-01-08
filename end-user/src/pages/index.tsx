@@ -48,7 +48,7 @@ export default function Home(): JSX.Element {
 			</Head>
 
 			{/* HERO */}
-			<header className="pb-14 lg:pb-18 pt-32">
+			<header className="pb-14 lg:pb-18 pt-24">
 				<div className="container">
 					<div className="flex flex-col md:flex-row md:items-center">
 						<div className="flex flex-col gap-y-4 md:w-1/2">
@@ -201,14 +201,30 @@ export default function Home(): JSX.Element {
 				<section className="py-16 pb-14">
 					<div className="container">
 						<div className="flex flex-col lg:flex-row">
-							<div className="grid grid-cols-2 gap-5 mb-10 lg:w-1/2">
+							<div className="grid grid-cols-2 gap-5 mb-10 lg:w-1/2 xl:w-1/2">
 								<div className="space-y-5">
-									<Image src={img1} alt="Tentang Kami" />
-									<Image src={img4} alt="Tentang Kami" />
+									<Image
+										className="w-full"
+										src={img1}
+										alt="Tentang Kami"
+									/>
+									<Image
+										className="w-full"
+										src={img4}
+										alt="Tentang Kami"
+									/>
 								</div>
 								<div className="space-y-5">
-									<Image src={img3} alt="Tentang Kami" />
-									<Image src={img2} alt="Tentang Kami" />
+									<Image
+										className="w-full"
+										src={img3}
+										alt="Tentang Kami"
+									/>
+									<Image
+										className="w-full"
+										src={img2}
+										alt="Tentang Kami"
+									/>
 								</div>
 							</div>
 							<div className="lg:w-1/2 lg:px-10 space-y-8">

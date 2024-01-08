@@ -1,9 +1,11 @@
 import { JSX } from "react";
-import Image from "next/image";
 import Logo from "@/components/utils/Logo";
-import Ig from "@/assets/images/instagram.png";
-import Fb from "@/assets/images/Facebook.png";
-import Linked from "@/assets/images/linkedin.png";
+import { FaSquareFacebook } from "react-icons/fa6";
+import { FaLinkedin } from "react-icons/fa6";
+import { FaInstagram } from "react-icons/fa6";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { FaPhone } from "react-icons/fa6";
+import { IoLocationOutline } from "react-icons/io5";
 
 export default function Footer(): JSX.Element {
 	return (
@@ -26,12 +28,7 @@ export default function Footer(): JSX.Element {
 										rel="noopener noreferrer"
 										aria-label="Link to The SPAS Linkedin"
 									></a>
-									<Image
-										className="rounded-lg"
-										src={Linked}
-										alt="Linked"
-										priority={true}
-									/>
+									<FaLinkedin />
 								</li>
 
 								<li>
@@ -41,12 +38,7 @@ export default function Footer(): JSX.Element {
 										rel="noopener noreferrer"
 										aria-label="Link to The SPAS Facebook"
 									></a>
-									<Image
-										className="rounded-lg"
-										src={Fb}
-										alt="Fb"
-										priority={true}
-									/>
+									<FaSquareFacebook />
 								</li>
 
 								<li>
@@ -56,12 +48,7 @@ export default function Footer(): JSX.Element {
 										rel="noopener noreferrer"
 										aria-label="Link to The SPAS Instagram"
 									></a>
-									<Image
-										className="rounded-lg"
-										src={Ig}
-										alt="Ig"
-										priority={true}
-									/>
+									<FaInstagram />
 								</li>
 							</ul>
 						</div>
@@ -96,7 +83,8 @@ export default function Footer(): JSX.Element {
 								<strong>Contact Us</strong>
 
 								<ul className="flex flex-col gap-y-2 text-secondary">
-									<li>
+									<li className="flex">
+										<MdOutlineMailOutline className="w-5 h-5 mt-0.5" />
 										<a
 											className="ml-2"
 											href="mailto:hello@spas.sg"
@@ -104,7 +92,8 @@ export default function Footer(): JSX.Element {
 											hello@spas.sg
 										</a>
 									</li>
-									<li>
+									<li className="flex">
+										<FaPhone className="w-4 h-4 mt-0.5" />
 										<a
 											className="ml-2"
 											target="_blank"
@@ -114,10 +103,11 @@ export default function Footer(): JSX.Element {
 										</a>
 									</li>
 
-									<li>
+									<li className="flex">
+										<IoLocationOutline className="w-6 h-6 mt-0.5" />
 										<a className="ml-2" href="#">
-											3891 Ranchview Dr. Richardson, CA
-											62639
+											360 Orchard Road 07-05 International
+											Building, Singapore
 										</a>
 									</li>
 								</ul>
@@ -135,11 +125,11 @@ export default function Footer(): JSX.Element {
 							</p>
 						</div>
 						<div className="text-center mt-2 lg:mt-0">
-							<a className="mx-2" href="#">
+							<a className="mx-2" href="/services">
 								Terms of Service
 							</a>
 							&#124;
-							<a className="mx-2" href="#">
+							<a className="mx-2" href="/privacy">
 								Privacy Policy
 							</a>
 						</div>

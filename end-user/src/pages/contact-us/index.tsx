@@ -2,6 +2,9 @@ import { JSX } from "react";
 import Head from "next/head";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Image from "next/image";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { FaPhone } from "react-icons/fa6";
+import { IoLocationOutline } from "react-icons/io5";
 
 export default function Contact(): JSX.Element {
 	return (
@@ -36,7 +39,7 @@ export default function Contact(): JSX.Element {
 			</Head>
 
 			{/* HERO */}
-			<header className="pb-14 md:pb-0 pt-28">
+			<header className="pb-14 md:pb-0 pt-24">
 				<div className="bg-[url('/contact-assets/contact.png')] bg-no-repeat bg-cover w-screen min-h-96 py-24 md:py-28">
 					<div className="container">
 						<div className="grid justify-center item-center">
@@ -68,19 +71,19 @@ export default function Contact(): JSX.Element {
 							</header>
 
 							<div className="flex flex-col md:flex-row py-8 md:w-3/5 gap-6 flex-wrap">
-								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:text-white">
+								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
 									Membership
 								</button>
-								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:text-white">
+								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
 									How To Join ?
 								</button>
-								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:text-white">
+								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
 									Where do I register ?
 								</button>
-								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:text-white">
+								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
 									Is there any requirements ?
 								</button>
-								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:text-white">
+								<button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
 									Any consultations that should I get ?
 								</button>
 							</div>
@@ -124,7 +127,8 @@ export default function Contact(): JSX.Element {
 									</h2>
 									<div className="py-8">
 										<ul className="flex flex-col gap-y-2 text-secondary">
-											<li>
+											<li className="flex">
+												<MdOutlineMailOutline className="w-5 h-5 mt-0.5" />
 												<a
 													className="ml-2"
 													href="mailto:hello@spas.sg"
@@ -132,7 +136,8 @@ export default function Contact(): JSX.Element {
 													hello@spas.sg
 												</a>
 											</li>
-											<li>
+											<li className="flex">
+												<FaPhone className="w-4 h-4 mt-0.5" />
 												<a
 													className="ml-2"
 													target="_blank"
@@ -142,17 +147,19 @@ export default function Contact(): JSX.Element {
 												</a>
 											</li>
 
-											<li>
+											<li className="flex">
+												<IoLocationOutline className="w-6 h-6 mt-0.5" />
 												<a className="ml-2" href="#">
-													3891 Ranchview Dr.
-													Richardson, CA 62639
+													360 Orchard Road 07-05
+													International Building,
+													Singapore
 												</a>
 											</li>
 										</ul>
 									</div>
 									<div>
 										<iframe
-											src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3346.6367663020533!2d-96.61666632520685!3d32.98698377322782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c1c846a181d41%3A0xe1167132cabc18bd!2sHeptic!5e0!3m2!1sid!2sid!4v1704706977015!5m2!1sid!2sid"
+											src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7817558568618!2d103.82842737406979!3d1.3060765617168588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da198d053a8b83%3A0xbda05168a851fede!2s360%20Orchard%20Rd%2C%20%2307%2005%20International%20Building%2C%20Singapore%20238869!5e0!3m2!1sen!2sid!4v1704726074675!5m2!1sen!2sid"
 											className="w-full min-h-80"
 										></iframe>
 									</div>
