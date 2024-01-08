@@ -10,7 +10,7 @@ import GroupImg5 from "@/assets/therapist-assets/group-5.svg";
 import GroupImg6 from "@/assets/therapist-assets/group-6.svg";
 import Image from "next/image";
 
-export default function therapist(): JSX.Element {
+export default function Therapist(): JSX.Element {
 	return (
 		<>
 			<Head>
@@ -89,7 +89,7 @@ export default function therapist(): JSX.Element {
 
 								<p className="mx-auto md:w-3/4 text-secondary text-sm md:text-lg">
 									Enjoy these SPAS&prime; benefits if you
-									decide to register your professional status
+									decide to register your professional status.
 								</p>
 							</header>
 
@@ -213,7 +213,7 @@ export default function therapist(): JSX.Element {
 											<p className="text-secondary p-3 max-w-xs text-sm md:text-lg mx-auto">
 												Enable potential customers to
 												locate and authenticate your
-												professional profile
+												professional profile.
 											</p>
 										</div>
 									</div>
@@ -234,7 +234,7 @@ export default function therapist(): JSX.Element {
 
 								<p className="mx-auto md:w-3/4 text-secondary">
 									If you work in one of the following
-									businesses
+									businesses.
 								</p>
 							</header>
 

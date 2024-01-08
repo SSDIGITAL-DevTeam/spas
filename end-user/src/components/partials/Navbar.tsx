@@ -11,30 +11,30 @@ type NavLink = {
 };
 
 const navLinks: NavLink[] = [
-  {
-    name: "Home",
-    path: "/",
-  },
-  {
-    name: "Membership",
-    path: "/membership",
-  },
-  {
-    name: "Therapist",
-    path: "/theraphist",
-  },
-  {
-    name: "Event & Media",
-    path: "/event-and-media",
-  },
-  {
-    name: "About Us",
-    path: "/about-us",
-  },
-  {
-    name: "Contact Us",
-    path: "/contact us",
-  },
+	{
+		name: "Home",
+		path: "/",
+	},
+	{
+		name: "Membership",
+		path: "/membership",
+	},
+	{
+		name: "Therapist",
+		path: "/therapist",
+	},
+	{
+		name: "Event & Media",
+		path: "/event-and-media",
+	},
+	{
+		name: "About Us",
+		path: "/about-us",
+	},
+	{
+		name: "Contact Us",
+		path: "/contact-us",
+	},
 ];
 
 export default function Navbar(): JSX.Element {
