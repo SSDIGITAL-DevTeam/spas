@@ -7,6 +7,7 @@ import Card2 from "@/assets/membership-assets/card2.webp";
 import Card3 from "@/assets/membership-assets/card3.webp";
 import Card4 from "@/assets/membership-assets/card4.webp";
 import Ellipse from "@/assets/membership-assets/ellipse.png";
+import Link from "next/link";
 
 export default function Membership(): JSX.Element {
 	return (
@@ -299,12 +300,11 @@ export default function Membership(): JSX.Element {
 
 							<div className="flex flex-col">
 								<div className="flex justify-center">
-									<a
-										href="/download"
-										className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
-									>
-										DOWNLOAD APPLICATION FORM
-									</a>
+									<Link href={"/download"}>
+										<span className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out">
+											DOWNLOAD APPLICATION FORM
+										</span>
+									</Link>
 								</div>
 							</div>
 						</div>
