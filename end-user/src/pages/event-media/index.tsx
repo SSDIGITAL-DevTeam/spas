@@ -344,6 +344,11 @@ export default function EventMedia(): JSX.Element {
 						<div className="container">
 							<div className="md:py-10 py-10">
 								<div className="md:p-10 p-5 bg-white rounded-lg text-sm fc-prev-button fc-next-button fc-today-button fc-toolbar fc-day">
+									<header className="flex flex-col gap-y-4 text-center">
+										<h2 className="mx-auto text-2xl leading-snug md:leading-normal lg:text-3xl xl:text-5xl lg:leading-tight text-black font-semibold md:mb-10 mb-3">
+											Event Calendar
+										</h2>
+									</header>
 									<FullCalendar
 										plugins={[dayGridPlugin]}
 										headerToolbar={{
