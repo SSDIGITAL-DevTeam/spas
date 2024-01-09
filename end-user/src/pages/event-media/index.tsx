@@ -10,6 +10,7 @@ import PostImg3 from "@/assets/images/08.webp";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import Link from "next/link";
 
 import { Service, services } from "@/data/event-media";
 
@@ -340,12 +341,11 @@ export default function EventMedia(): JSX.Element {
 							</div>
 
 							<div className="flex justify-center mt-10">
-								<a
-									href="/loadmore"
-									className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
-								>
-									Load more
-								</a>
+								<Link href={"/loadmore"}>
+									<span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+										Load more
+									</span>
+								</Link>
 							</div>
 						</div>
 					</div>

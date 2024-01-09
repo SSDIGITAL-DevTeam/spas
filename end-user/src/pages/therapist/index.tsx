@@ -9,6 +9,7 @@ import GroupImg4 from "@/assets/therapist-assets/group-4.svg";
 import GroupImg5 from "@/assets/therapist-assets/group-5.svg";
 import GroupImg6 from "@/assets/therapist-assets/group-6.svg";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Therapist(): JSX.Element {
 	return (
@@ -349,12 +350,11 @@ export default function Therapist(): JSX.Element {
 
 							<div className="flex flex-col">
 								<div className="flex justify-center">
-									<a
-										href="/download"
-										className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
-									>
-										DOWNLOAD APPLICATION FORM
-									</a>
+									<Link href={"/download"}>
+										<span className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out">
+											DOWNLOAD APPLICATION FORM
+										</span>
+									</Link>
 								</div>
 							</div>
 						</div>

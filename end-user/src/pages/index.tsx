@@ -13,6 +13,7 @@ import BlogImg1 from "@/assets/images/Replace Image.webp";
 import BlogImg2 from "@/assets/images/Replace Image-1.webp";
 import BlogImg3 from "@/assets/images/Replace Image-2.webp";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
+import Link from "next/link";
 import Image from "next/image";
 
 export default function Home(): JSX.Element {
@@ -64,12 +65,11 @@ export default function Home(): JSX.Element {
 								consumers of the Beauty, Spa and Wellness
 								Industry in Singapore.
 							</p>
-							<a
-								href="/membership"
-								className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out"
-							>
-								JOIN SPAS
-							</a>
+							<Link href={"/membership"}>
+								<span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+									JOIN SPAS
+								</span>
+							</Link>
 						</div>
 
 						<div className="mt-8 md:w-1/2">
@@ -276,12 +276,11 @@ export default function Home(): JSX.Element {
 											Wellness industry to new heights.
 										</p>
 									</div>
-									<a
-										href="/membership"
-										className="btn-1 block w-full lg:w-max text-center hover:bg-primary transition-colors ease-out"
-									>
-										JOIN SPAS
-									</a>
+									<Link href={"/membership"}>
+										<span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+											JOIN SPAS
+										</span>
+									</Link>
 								</div>
 							</div>
 						</div>
@@ -370,12 +369,11 @@ export default function Home(): JSX.Element {
 								</p>
 							</div>
 							<div className="flex justify-center">
-								<a
-									href="/membership"
-									className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max hover:bg-primary transition-colors ease-out"
-								>
-									See Membership Details
-								</a>
+								<Link href={"/membership"}>
+									<span className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max hover:bg-primary transition-colors ease-out">
+										See Membership Details
+									</span>
+								</Link>
 							</div>
 						</div>
 					</div>
@@ -527,12 +525,11 @@ export default function Home(): JSX.Element {
 							</div>
 
 							<div className="flex justify-center mt-10">
-								<a
-									href="/event-media"
-									className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
-								>
-									Read more
-								</a>
+								<Link href={"/event-media"}>
+									<span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+										Read more
+									</span>
+								</Link>
 							</div>
 						</div>
 					</div>
