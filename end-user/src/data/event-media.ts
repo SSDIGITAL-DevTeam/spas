@@ -6,31 +6,39 @@ export type Description = {
 export type Service = {
   id: number;
   name: string;
+  bgcolor?: string;
 };
 
 export const services = [
   {
     id: 1,
-    name: "Therapist"
+    name: "Therapist",
+    bgcolor: "bg-[url('/event-media-assets/01.webp')]"
   },
   {
     id: 2,
-    name: "Yoga"
+    name: "Yoga",    
+    bgcolor: "bg-[url('/event-media-assets/01.webp')]"
+
   },
   {
     id: 3,
-    name: "Accupressure"
+    name: "Accupressure",
+    bgcolor: "bg-[url('/event-media-assets/01.webp')]"
   },
   {
     id: 4,
-    name: "Beauty"
+    name: "Beauty",
+    bgcolor: "bg-[url('/event-media-assets/01.webp')]"
   },
   {
     id: 5,
-    name: "Hair Salon"
+    name: "Hair Salon",
+    bgcolor: "bg-[url('/event-media-assets/01.webp')]"
   },
   {
     id: 6,
-    name: "Nail Salon"
+    name: "Nail Salon",
+    bgcolor: "bg-[url('/event-media-assets/01.webp')]"
   }
 ];

@@ -17,7 +17,6 @@ import { Service, services } from "@/data/event-media";
 import { register } from "swiper/element/bundle";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import { Pagination } from "swiper/modules";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css";
@@ -68,9 +67,8 @@ export default function EventMedia(): JSX.Element {
 							{services.map((service: Service, index: number) => (
 								<button
 									key={index}
-									className={`bg-[url('/event-media-assets/01.webp')] p-3 border-1 font-bold py-2 px-4 duration-100 rounded-lg text-white w-40 ${
-										service.id == id ? "" : ""
-									}`}
+									className={`p-3 border-1 font-bold py-2 px-4 duration-100 rounded-lg text-white w-40 bg-[url('/event-media-assets/03.webp')]
+									`}
 									onClick={() => setId(service.id)}
 								>
 									{service.name}
@@ -98,35 +96,6 @@ export default function EventMedia(): JSX.Element {
 										autoplay={{ delay: 2000 }}
 										className="mySwiper"
 									>
-										<SwiperSlide>
-											<div className="relative">
-												<Image
-													className="object-cover rounded-md w-full"
-													src={PostImg1}
-													alt="PostImg1"
-												/>
-												<div className="bg-white/80 absolute bottom-5 mx-5 space-y-4 p-2 rounded-md">
-													<span className="text-black font-bold">
-														Best Place in Singapore
-														to Enjoy a Massage or
-														Spa
-													</span>
-													<p className="text-black text-xs md:text-base md:text-md line-clamp-3">
-														A Single Monitor
-														Manifesto — Many
-														developers believe
-														multiple monitors
-														improve productivity.
-														Studies have proven it,
-														right? Well, keep in
-														mind, many of those
-														studies are commissioned
-														from monitor
-														manufacturers like.
-													</p>
-												</div>
-											</div>
-										</SwiperSlide>
 										<SwiperSlide>
 											<div className="relative">
 												<Image
@@ -374,10 +343,12 @@ export default function EventMedia(): JSX.Element {
 					<div className="bg-[url('/event-media-assets/blur.webp')] bg-cover">
 						<div className="container">
 							<div className="md:py-10 py-10">
-								<div className="md:p-10 p-5 bg-white rounded-lg">
+								<div className="md:p-10 p-5 bg-white rounded-lg text-sm fc-prev-button fc-next-button fc-today-button fc-toolbar fc-day">
 									<FullCalendar
 										plugins={[dayGridPlugin]}
-										initialView="dayGridMonth"
+										headerToolbar={{
+											right: "prev,next",
+										}}
 									/>
 								</div>
 							</div>

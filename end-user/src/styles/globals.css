@@ -25,6 +25,35 @@
     @apply bg-quaternary rounded-lg px-6 py-3 font-bold uppercase;
   }
 
+  .fc-toolbar {
+    background-color: #002966;
+    /* Header background color */
+    color: white;
+    /* Header text color */
+    @apply text-xs md:text-base p-2 rounded-lg;
+  }
+
+  .fc-day {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+  }
+  
+  .fc-prev-button,
+  .fc-next-button,
+  .fc-today-button {
+    background-color: #1565C0;
+    /* Navigation button background color */
+    color: black;
+    /* Navigation button text color */
+  }
+
+  .fc-button-group button {
+    background-color: #1976D2;
+    /* Other button background color */
+    color: skyblue;
+    /* Other button text color */
+  }
+
 }
 
 @layer utilities {
