@@ -45,7 +45,7 @@ export default function Therapist(): JSX.Element {
 			{/* HERO */}
 			<header className="pb-14 lg:pb-18 pt-24">
 				<div className="container">
-					<div className="flex flex-col md:flex-row md:items-center">
+					<div className="flex flex-col md:flex-row md:gap-x-6 md:items-center">
 						<div className="flex flex-col gap-y-4 md:w-1/2">
 							<h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
 								Gain Recognition{" "}
@@ -349,7 +349,10 @@ export default function Therapist(): JSX.Element {
 
 							<div className="flex flex-col">
 								<div className="flex justify-center">
-									<a className="btn-1 block capitalize text-center w-full lg:w-max">
+									<a
+										href="/download"
+										className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
+									>
 										DOWNLOAD APPLICATION FORM
 									</a>
 								</div>

@@ -299,7 +299,10 @@ export default function Membership(): JSX.Element {
 
 							<div className="flex flex-col">
 								<div className="flex justify-center">
-									<a className="btn-1 block capitalize text-center w-full lg:w-max">
+									<a
+										href="/download"
+										className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
+									>
 										DOWNLOAD APPLICATION FORM
 									</a>
 								</div>

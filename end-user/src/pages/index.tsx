@@ -9,9 +9,9 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
-import BlogImg1 from "@/assets/homepage-assets/Replace Image.webp";
-import BlogImg2 from "@/assets/homepage-assets/Replace Image-1.webp";
-import BlogImg3 from "@/assets/homepage-assets/Replace Image-2.webp";
+import BlogImg1 from "@/assets/images/Replace Image.webp";
+import BlogImg2 from "@/assets/images/Replace Image-1.webp";
+import BlogImg3 from "@/assets/images/Replace Image-2.webp";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Image from "next/image";
 
@@ -50,7 +50,7 @@ export default function Home(): JSX.Element {
 			{/* HERO */}
 			<header className="pb-14 lg:pb-18 pt-24">
 				<div className="container">
-					<div className="flex flex-col md:flex-row md:items-center">
+					<div className="flex flex-col md:flex-row gap-x-6 md:items-center">
 						<div className="flex flex-col gap-y-4 md:w-1/2">
 							<h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
 								Elevate{" "}
@@ -64,7 +64,10 @@ export default function Home(): JSX.Element {
 								consumers of the Beauty, Spa and Wellness
 								Industry in Singapore.
 							</p>
-							<a className="btn-1 block my-4 w-full text-center lg:w-max">
+							<a
+								href="/membership"
+								className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out"
+							>
 								JOIN SPAS
 							</a>
 						</div>
@@ -273,7 +276,10 @@ export default function Home(): JSX.Element {
 											Wellness industry to new heights.
 										</p>
 									</div>
-									<a className="btn-1 block w-full lg:w-max text-center">
+									<a
+										href="/membership"
+										className="btn-1 block w-full lg:w-max text-center hover:bg-primary transition-colors ease-out"
+									>
 										JOIN SPAS
 									</a>
 								</div>
@@ -364,7 +370,10 @@ export default function Home(): JSX.Element {
 								</p>
 							</div>
 							<div className="flex justify-center">
-								<a className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max">
+								<a
+									href="/membership"
+									className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max hover:bg-primary transition-colors ease-out"
+								>
 									See Membership Details
 								</a>
 							</div>
@@ -518,7 +527,10 @@ export default function Home(): JSX.Element {
 							</div>
 
 							<div className="flex justify-center mt-10">
-								<a className="btn-1 block capitalize text-center w-full lg:w-max">
+								<a
+									href="/event-media"
+									className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out"
+								>
 									Read more
 								</a>
 							</div>
@@ -541,17 +553,22 @@ export default function Home(): JSX.Element {
 									in the world of Beauty, Spa, and Wellness.
 								</p>
 								<div className="">
-									<form className="mt-8">
+									<form
+										action="/send"
+										method="POST"
+										className="mt-8"
+									>
 										<div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
 											<input
 												type="text"
+												required
 												className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
 												placeholder="Your e-mail address"
 											/>
 											<input
 												type="submit"
 												value="Subscribe"
-												className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer"
+												className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
 											/>
 										</div>
 									</form>

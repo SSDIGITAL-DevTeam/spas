@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
 		<>
 			<AppLayout>
 				<NextTopLoader />
-				<Component {...pageProps} />;
+				<Component {...pageProps} />
 			</AppLayout>
 		</>
 	);

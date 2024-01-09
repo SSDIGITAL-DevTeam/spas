@@ -57,7 +57,7 @@ export default function Contact(): JSX.Element {
 
 			<main>
 				{/* TELL US */}
-				<section className="pb-14 lg:pb-0 lg:pt-20">
+				<section className="pb-14 md:pt-16 lg:pb-0 lg:pt-20">
 					<div className="container">
 						<div className="flex flex-col">
 							<header className="text-left space-y-6">
@@ -95,7 +95,7 @@ export default function Contact(): JSX.Element {
 				<div className="pb-14 lg:pb-18 lg:pt-20">
 					<div className="container">
 						<div className="flex flex-col md:flex-row">
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 w-full">
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  md:gap-x-8 w-full">
 								<div className="pb-10">
 									<h2 className="font-bold text-2xl text-secondary text-center md:text-left">
 										Contact Information
@@ -105,18 +105,24 @@ export default function Contact(): JSX.Element {
 											<input
 												type="text"
 												placeholder="Full Name *"
+												required
 												className="border-2 p-2.5 rounded-lg w-full"
 											/>
 											<input
 												type="email"
 												placeholder="Email Address *"
+												required
 												className="border-2 p-2.5 rounded-lg w-full"
 											/>
-											<textarea className="border-2 p-2.5 rounded-lg w-full"></textarea>
+											<textarea
+												className="border-2 p-2.5 rounded-lg w-full min-h-40"
+												placeholder="Tell us more about your concern *"
+											></textarea>
 											<input
 												type="submit"
 												value="Submit Now"
-												className="btn-1 w-full capitalize"
+												required
+												className="btn-1 w-full capitalize hover:bg-primary transition-colors ease-out"
 											/>
 										</form>
 									</div>
@@ -184,17 +190,22 @@ export default function Contact(): JSX.Element {
 									in the world of Beauty, Spa, and Wellness.
 								</p>
 								<div className="">
-									<form className="mt-8">
+									<form
+										action="/send"
+										method="POST"
+										className="mt-8"
+									>
 										<div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
 											<input
 												type="text"
+												required
 												className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
 												placeholder="Your e-mail address"
 											/>
 											<input
 												type="submit"
 												value="Subscribe"
-												className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer"
+												className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
 											/>
 										</div>
 									</form>
