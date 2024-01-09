@@ -25,6 +25,19 @@ register();
 
 export default function EventMedia(): JSX.Element {
 	const [id, setId] = useState(1);
+	const events = [
+		{
+			title: "Yoga",
+			start: "2024-01-10T10:00:00",
+			end: "2024-01-11T12:00:00",
+		},
+		{
+			title: "Therapist",
+			start: "2024-01-15T14:00:00",
+			end: "2024-01-16T16:00:00",
+		},
+		// Add more events as needed
+	];
 
 	return (
 		<>
@@ -354,6 +367,7 @@ export default function EventMedia(): JSX.Element {
 										headerToolbar={{
 											right: "prev,next",
 										}}
+										events={events}
 									/>
 								</div>
 							</div>
