@@ -403,27 +403,29 @@ export default function Home(): JSX.Element {
 
 							<div className="flex flex-col lg:flex-row text-center">
 								<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
-										<div className="grid justify-center">
-											<Image
-												className="rounded-lg"
-												src={BlogImg1}
-												alt="BlogImg1"
-												priority={true}
-											/>
-										</div>
-										<div className="mt-5 space-y-3 text-left">
-											<h2 className="font-semibold text-[#3E3232]">
-												Progressing The Wellness
-												Industry Through Professional
-												Recognition
-											</h2>
-											<p className="text-secondary text-black/80">
-												Progressing The Wellness
-												Industry Through Professional
-												Recognition.
-											</p>
-										</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+										<Link href={"/details"}>
+											<div className="grid justify-center">
+												<Image
+													className="rounded-lg"
+													src={BlogImg1}
+													alt="BlogImg1"
+													priority={true}
+												/>
+											</div>
+											<div className="mt-5 space-y-3 text-left">
+												<h2 className="font-semibold text-[#3E3232]">
+													Progressing The Wellness
+													Industry Through
+													Professional Recognition
+												</h2>
+												<p className="text-secondary text-black/80">
+													Progressing The Wellness
+													Industry Through
+													Professional Recognition.
+												</p>
+											</div>
+										</Link>
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
@@ -443,27 +445,31 @@ export default function Home(): JSX.Element {
 											</div>
 										</div>
 									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
-										<div className="grid justify-center">
-											<Image
-												className="rounded-lg"
-												src={BlogImg2}
-												alt="BlogImg2"
-												priority={true}
-											/>
-										</div>
-										<div className="mt-5 space-y-3 text-left">
-											<h2 className="font-semibold text-[#3E3232]">
-												Coup for Singapore Exhibitors
-												for SPAS for Dubai&prime;s
-												Beauty Wellness & Spa Show
-											</h2>
-											<p className="text-secondary text-black/80">
-												Coup for Singapore Exhibitors
-												from the Spa & Wellness
-												Association (Singapore).
-											</p>
-										</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+										<Link href={"/details"}>
+											<div className="grid justify-center">
+												<Image
+													className="rounded-lg"
+													src={BlogImg2}
+													alt="BlogImg2"
+													priority={true}
+												/>
+											</div>
+											<div className="mt-5 space-y-3 text-left">
+												<h2 className="font-semibold text-[#3E3232]">
+													Coup for Singapore
+													Exhibitors for SPAS for
+													Dubai&prime;s Beauty
+													Wellness & Spa Show
+												</h2>
+												<p className="text-secondary text-black/80">
+													Coup for Singapore
+													Exhibitors from the Spa &
+													Wellness Association
+													(Singapore).
+												</p>
+											</div>
+										</Link>
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
@@ -483,25 +489,27 @@ export default function Home(): JSX.Element {
 											</div>
 										</div>
 									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
-										<div className="grid justify-center">
-											<Image
-												className="rounded-lg"
-												src={BlogImg3}
-												alt="BlogImg3"
-												priority={true}
-											/>
-										</div>
-										<div className="mt-5 space-y-3 text-left">
-											<h2 className="font-semibold text-[#3E3232]">
-												Blue Ocean Strategy Talk for the
-												Spa & Wellness Industry
-											</h2>
-											<p className="text-secondary text-black/80">
-												Blue Ocean Strategy Talk for the
-												Spa & Wellness Industry.
-											</p>
-										</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+										<Link href={"/details"}>
+											<div className="grid justify-center bg-black">
+												<Image
+													className=" relativerounded-lg"
+													src={BlogImg3}
+													alt="BlogImg3"
+													priority={true}
+												/>
+											</div>
+											<div className="mt-5 space-y-3 text-left">
+												<h2 className="font-semibold text-[#3E3232]">
+													Blue Ocean Strategy Talk for
+													the Spa & Wellness Industry
+												</h2>
+												<p className="text-secondary text-black/80">
+													Blue Ocean Strategy Talk for
+													the Spa & Wellness Industry.
+												</p>
+											</div>
+										</Link>
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
