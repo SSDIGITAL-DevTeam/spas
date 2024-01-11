@@ -8,6 +8,12 @@ import GroupImg3 from "@/assets/therapist-assets/group-3.svg";
 import GroupImg4 from "@/assets/therapist-assets/group-4.svg";
 import GroupImg5 from "@/assets/therapist-assets/group-5.svg";
 import GroupImg6 from "@/assets/therapist-assets/group-6.svg";
+import Img1 from "@/assets/therapist-assets/img1.webp";
+import Img2 from "@/assets/therapist-assets/img2.webp";
+import Img3 from "@/assets/therapist-assets/img3.webp";
+import Img4 from "@/assets/therapist-assets/img4.webp";
+import Img5 from "@/assets/therapist-assets/img5.webp";
+import Img6 from "@/assets/therapist-assets/img6.webp";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -100,8 +106,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={ImgTherapist}
-												alt="ImgTherapist"
+												src={Img1}
+												alt="Img1"
 												priority={true}
 											/>
 										</div>
@@ -120,8 +126,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={ImgTherapist}
-												alt="ImgTherapist"
+												src={Img2}
+												alt="Img2"
 												priority={true}
 											/>
 										</div>
@@ -140,8 +146,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={ImgTherapist}
-												alt="ImgTherapist"
+												src={Img3}
+												alt="Img3"
 												priority={true}
 											/>
 										</div>
@@ -160,8 +166,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={ImgTherapist}
-												alt="ImgTherapist"
+												src={Img4}
+												alt="Img4"
 												priority={true}
 											/>
 										</div>
@@ -181,8 +187,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={ImgTherapist}
-												alt="ImgTherapist"
+												src={Img5}
+												alt="Img5"
 												priority={true}
 											/>
 										</div>
@@ -202,8 +208,8 @@ export default function Therapist(): JSX.Element {
 										<div className="">
 											<Image
 												className="w-md rounded-lg mx-auto"
-												src={ImgTherapist}
-												alt="ImgTherapist"
+												src={Img6}
+												alt="Img6"
 												priority={true}
 											/>
 										</div>

@@ -98,48 +98,52 @@ export default function EventMedia(): JSX.Element {
 						<div className="flex flex-col md:flex-row">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
 								<div className="relative w-full">
-									<Swiper
-										pagination={{
-											dynamicBullets: true,
-										}}
-										navigation={{
-											nextEl: ".arrow-right",
-											prevEl: ".arrow-left",
-										}}
-										modules={[Navigation]}
-										autoplay={{ delay: 2000 }}
-										className="mySwiper"
-									>
-										<SwiperSlide>
-											<div className="relative">
-												<Image
-													className="object-cover rounded-md w-full"
-													src={PostImg1}
-													alt="PostImg1"
-												/>
-												<div className="bg-white/80 absolute bottom-5 mx-5 space-y-4 p-2 rounded-md">
-													<span className="text-black font-bold">
-														Best Place in Singapore
-														to Enjoy a Massage or
-														Spa
-													</span>
-													<p className="text-black text-xs md:text-base md:text-md line-clamp-3">
-														A Single Monitor
-														Manifesto — Many
-														developers believe
-														multiple monitors
-														improve productivity.
-														Studies have proven it,
-														right? Well, keep in
-														mind, many of those
-														studies are commissioned
-														from monitor
-														manufacturers like.
-													</p>
+									<Link href="/details">
+										<Swiper
+											pagination={{
+												dynamicBullets: true,
+											}}
+											navigation={{
+												nextEl: ".arrow-right",
+												prevEl: ".arrow-left",
+											}}
+											modules={[Navigation]}
+											autoplay={{ delay: 2000 }}
+											className="mySwiper"
+										>
+											<SwiperSlide>
+												<div className="relative rounded-md">
+													<Image
+														className="object-cover rounded-md w-full"
+														src={PostImg1}
+														alt="PostImg1"
+													/>
+													<div className="bg-white/80 absolute bottom-5 mx-5 space-y-4 p-2 rounded-md">
+														<span className="text-black font-bold">
+															Best Place in
+															Singapore to Enjoy a
+															Massage or Spa
+														</span>
+														<p className="text-black text-xs md:text-base md:text-md line-clamp-3">
+															A Single Monitor
+															Manifesto — Many
+															developers believe
+															multiple monitors
+															improve
+															productivity.
+															Studies have proven
+															it, right? Well,
+															keep in mind, many
+															of those studies are
+															commissioned from
+															monitor
+															manufacturers like.
+														</p>
+													</div>
 												</div>
-											</div>
-										</SwiperSlide>
-									</Swiper>
+											</SwiperSlide>
+										</Swiper>
+									</Link>
 
 									<div className="bg-black">
 										<button className="arrow-left absolute top-[45%] mx-5 z-20 bg-white rounded-lg md:p-0.5">
@@ -152,60 +156,66 @@ export default function EventMedia(): JSX.Element {
 								</div>
 								<div className="flex flex-col md:flex-row gap-6">
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-										<div className="relative">
-											<Image
-												src={PostImg2}
-												alt="PostImg2"
-												className="object-cover rounded-md w-full"
-											/>
-											<div className="bg-white/80 absolute bottom-5 mx-3 space-y-4 p-2 rounded-md">
-												<span className="text-black font-bold">
-													Top 5 Acupressure Points For
-													Stress Relief
-												</span>
-												<p className="text-black text-sm md:text-base line-clamp-2">
-													Ah, the joy of the open
-													road—it&prime;s a good
-													feeling. But if you&prime;re
-													new to driving, you may feel
-													a little nervous about
-													getting behind the wheel.
-													Don&prime;t worry. While
-													it&prime;s true that
-													accidents can happen to
-													anybody, there are things
-													you can do to drive safely
-													and do your best to avoid
-													them.
-												</p>
+										<Link href={"/details"}>
+											<div className="relative">
+												<Image
+													src={PostImg2}
+													alt="PostImg2"
+													className="object-cover rounded-md w-full"
+												/>
+												<div className="bg-white/80 absolute bottom-5 mx-3 space-y-4 p-2 rounded-md">
+													<span className="text-black font-bold">
+														Top 5 Acupressure Points
+														For Stress Relief
+													</span>
+													<p className="text-black text-sm md:text-base line-clamp-2">
+														Ah, the joy of the open
+														road—it&prime;s a good
+														feeling. But if
+														you&prime;re new to
+														driving, you may feel a
+														little nervous about
+														getting behind the
+														wheel. Don&prime;t
+														worry. While it&prime;s
+														true that accidents can
+														happen to anybody, there
+														are things you can do to
+														drive safely and do your
+														best to avoid them.
+													</p>
+												</div>
 											</div>
-										</div>
+										</Link>
 
-										<div className="relative">
-											<Image
-												src={PostImg3}
-												alt="PostImg3"
-												className="object-cover rounded-md w-full"
-											/>
-											<div className="bg-white/80 absolute bottom-5 mx-3 space-y-4 p-2 rounded-md">
-												<span className="text-black font-bold">
-													Empowering Growth
-												</span>
-												<p className="text-black text-sm md:text-base line-clamp-3">
-													Download torrents from
-													verified or trusted
-													uploaders. If you're a
-													BitTorrent user looking for
-													safety tips, use this
-													method. Both of the big-name
-													BitTorrent indexers (The
-													Pirate Bay and
-													KickAssTorrents) use symbols
-													to highlight torrents
-													uploaded by verified users.
-												</p>
+										<Link href={"/details"}>
+											<div className="relative">
+												<Image
+													src={PostImg3}
+													alt="PostImg3"
+													className="object-cover rounded-md w-full"
+												/>
+												<div className="bg-white/80 absolute bottom-5 mx-3 space-y-4 p-2 rounded-md">
+													<span className="text-black font-bold">
+														Empowering Growth
+													</span>
+													<p className="text-black text-sm md:text-base line-clamp-3">
+														Download torrents from
+														verified or trusted
+														uploaders. If you're a
+														BitTorrent user looking
+														for safety tips, use
+														this method. Both of the
+														big-name BitTorrent
+														indexers (The Pirate Bay
+														and KickAssTorrents) use
+														symbols to highlight
+														torrents uploaded by
+														verified users.
+													</p>
+												</div>
 											</div>
-										</div>
+										</Link>
 									</div>
 								</div>
 							</div>
@@ -219,27 +229,29 @@ export default function EventMedia(): JSX.Element {
 						<div className="flex flex-col gap-y-8">
 							<div className="flex flex-col lg:flex-row text-center">
 								<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
-										<div className="grid justify-center">
-											<Image
-												className="rounded-lg"
-												src={BlogImg1}
-												alt="BlogImg1"
-												priority={true}
-											/>
-										</div>
-										<div className="mt-5 space-y-3 text-left">
-											<h2 className="font-semibold text-[#3E3232]">
-												Progressing The Wellness
-												Industry Through Professional
-												Recognition
-											</h2>
-											<p className="text-secondary text-black/80">
-												Progressing The Wellness
-												Industry Through Professional
-												Recognition.
-											</p>
-										</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+										<Link href={"/details"}>
+											<div className="grid justify-center">
+												<Image
+													className="rounded-lg"
+													src={BlogImg1}
+													alt="BlogImg1"
+													priority={true}
+												/>
+											</div>
+											<div className="mt-5 space-y-3 text-left">
+												<h2 className="font-semibold text-[#3E3232]">
+													Progressing The Wellness
+													Industry Through
+													Professional Recognition
+												</h2>
+												<p className="text-secondary text-black/80">
+													Progressing The Wellness
+													Industry Through
+													Professional Recognition.
+												</p>
+											</div>
+										</Link>
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
@@ -247,47 +259,7 @@ export default function EventMedia(): JSX.Element {
 												</p>
 
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Accupressure
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Therapist
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
-										</div>
-									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
-										<div className="grid justify-center">
-											<Image
-												className="rounded-lg"
-												src={BlogImg2}
-												alt="BlogImg2"
-												priority={true}
-											/>
-										</div>
-										<div className="mt-5 space-y-3 text-left">
-											<h2 className="font-semibold text-[#3E3232]">
-												Coup for Singapore Exhibitors
-												for SPAS for Dubai&prime;s
-												Beauty Wellness & Spa Show
-											</h2>
-											<p className="text-secondary text-black/80">
-												Coup for Singapore Exhibitors
-												from the Spa & Wellness
-												Association (Singapore).
-											</p>
-										</div>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Accupressure
+													Yoga
 												</p>
 
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
@@ -299,29 +271,75 @@ export default function EventMedia(): JSX.Element {
 											</div>
 										</div>
 									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg">
-										<div className="grid justify-center">
-											<Image
-												className="rounded-lg"
-												src={BlogImg3}
-												alt="BlogImg3"
-												priority={true}
-											/>
-										</div>
-										<div className="mt-5 space-y-3 text-left">
-											<h2 className="font-semibold text-[#3E3232]">
-												Blue Ocean Strategy Talk for the
-												Spa & Wellness Industry
-											</h2>
-											<p className="text-secondary text-black/80">
-												Blue Ocean Strategy Talk for the
-												Spa & Wellness Industry.
-											</p>
-										</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+										<Link href={"/details"}>
+											<div className="grid justify-center">
+												<Image
+													className="rounded-lg"
+													src={BlogImg2}
+													alt="BlogImg2"
+													priority={true}
+												/>
+											</div>
+											<div className="mt-5 space-y-3 text-left">
+												<h2 className="font-semibold text-[#3E3232]">
+													Coup for Singapore
+													Exhibitors for SPAS for
+													Dubai&prime;s Beauty
+													Wellness & Spa Show
+												</h2>
+												<p className="text-secondary text-black/80">
+													Coup for Singapore
+													Exhibitors from the Spa &
+													Wellness Association
+													(Singapore).
+												</p>
+											</div>
+										</Link>
 										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
 											<div className="flex flex-wrap gap-4">
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Therapist
+													Beauty
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Yoga
+												</p>
+
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Hair Salon
+												</p>
+											</div>
+											<div className="text-sm text-secondary text-left p-2">
+												<p>August 18 , 2022</p>
+											</div>
+										</div>
+									</div>
+									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+										<Link href={"/details"}>
+											<div className="grid justify-center bg-black">
+												<Image
+													className=" relativerounded-lg"
+													src={BlogImg3}
+													alt="BlogImg3"
+													priority={true}
+												/>
+											</div>
+											<div className="mt-5 space-y-3 text-left">
+												<h2 className="font-semibold text-[#3E3232]">
+													Blue Ocean Strategy Talk for
+													the Spa & Wellness Industry
+												</h2>
+												<p className="text-secondary text-black/80">
+													Blue Ocean Strategy Talk for
+													the Spa & Wellness Industry.
+												</p>
+											</div>
+										</Link>
+										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+											<div className="flex flex-wrap gap-4">
+												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
+													Beauty
 												</p>
 
 												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
