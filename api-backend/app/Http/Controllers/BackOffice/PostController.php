@@ -18,7 +18,7 @@ class PostController extends Controller
     public function index()
     {
         return PostResource::collection(
-            Post::with('cover', 'category', 'tag', 'meta')
+            Post::with('cover', 'categories', 'tags', 'metas')
                 ->latest()
                 ->get()
         );
@@ -30,7 +30,9 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         // return PostResource::make(Post::created($request->validated()));
-        $request->validated($request->all());
+        $cek = $request->validated();
+
+        // dd($cek);
 
         $post = Post::create($request->only(
             [
@@ -46,20 +48,20 @@ class PostController extends Controller
             'url' => $request->file('url')->store('post-image'),
         ]);
 
-        $post->tag()->create([
-            'name' => $request->name
-        ]);
+        // Create tags and attach them to the post
+        $tags = $post->tags()->createMany($request->input('tags'));
+        $post->tags()->attach(array_column($tags, 'id'));
 
-        // Attaching kategori ke post menggunakan relasi many-to-many
-        $post->category()->attach($request->input('category_id'));
+        // Create categories and attach them to the post
+        $post->categories()->attach($request->input('categories'));
 
-        $post->meta()->create([
+        $post->metas()->create([
             'key' => $request->key,
             'value' => $request->value,
-            'content' => $request->content,
+            'content' => $request->content1,
         ]);
 
-        return new PostResource($post->load('cover', 'category', 'tag', 'meta'));
+        return new PostResource($post->load('cover', 'categories', 'tags', 'metas'));
     }
 
     /**
@@ -69,9 +71,9 @@ class PostController extends Controller
     {
         return new PostResource($post->load([
             'cover',
-            'category',
-            'tag',
-            'meta'
+            'categories',
+            'tags',
+            'metas'
         ]));
     }
 
@@ -84,19 +86,18 @@ class PostController extends Controller
         try {
             $post->update($request->all());
 
-            // Update data di tabel tags
-            $post->tag()->create([
-                'name' => $request->input('name')
-            ]);
+            // Create tags and attach them to the post
+            $tags = $post->tags()->createMany($request->input('tags'));
+            $post->tags()->attach(array_column($tags, 'id'));
 
-            // Sync kategori ke post menggunakan relasi many-to-many
-            $post->category()->attach($request->input('category_id'));
+            // Create categories and attach them to the post
+            $post->categories()->attach($request->input('categories'));
 
             // Update data di tabel cover
             $post->cover()->update($request->only(['url']));
 
             // Muat kembali relasi-relasi yang diperlukan
-            $post->load('tag', 'category', 'cover');
+            $post->load('tags', 'categories', 'cover');
 
             return new PostResource($post);
         } catch (\Exception $e) {

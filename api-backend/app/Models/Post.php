@@ -21,19 +21,19 @@ class Post extends Model
     }
 
     /** @var model\tag */
-    public function tag(): BelongsToMany
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'post_tags');
     }
 
     /** @var model\category */
-    public function category(): BelongsToMany
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'post_categories');
     }
 
     /** @var model\meta */
-    public function meta()
+    public function metas()
     {
         return $this->morphMany(Meta::class, 'metaable');
     }

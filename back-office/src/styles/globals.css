@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&family=Montserrat:wght@400;500;700;800;900&family=Syne:wght@500;600;700;800;900');
+
+@tailwind base;
+@tailwind components; 
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100;
+    @apply font-inter;
+  }
+}
+
+@layer components {
+  .c-button-primary {
+    @apply flex items-center gap-x-2.5 px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-800 duration-150;
+  }
+
+  .c-button-secondary {
+    @apply flex items-center gap-x-2.5 px-4 py-2 bg-tertiary text-black rounded-lg hover:bg-orange-300 duration-150;
+  }
+
+  .c-button-tertiary {
+    @apply flex items-center gap-x-2.5 px-4 py-2 text-white rounded-lg hover:bg-red-900 duration-150;
+  }
+
+  .c-button-outline {
+    @apply flex items-center gap-x-2.5 px-4 py-2 rounded-lg hover:bg-black/10 border duration-150;
+  }
+
+  .c-input {
+    @apply px-4 py-2.5 rounded-lg border border-gray-300 outline-none;
+  }
+
+  .c-tab {
+    @apply px-4 py-2 w-28 flex justify-center rounded-lg border;
+  }
+
+  .font-inter {
+    /* Your styles for the font-inter class */
+    font-family: 'Inter', sans-serif;
+  }
+
+}
+
+.tox-notification.tox-notification--in.tox-notification--warning {
+  display: none !important;
+}

@@ -23,11 +23,11 @@ class PostResource extends JsonResource
             'published_at' => $this->whenHas('published_at'),
             'cover' => [
                 'id' => $this->cover->id,
-                'url-image' => $this->cover->url,
+                'url' => $this->cover->url,
             ],
-            'category' => CategoryResource::collection($this->whenLoaded('category')),
-            'tag' => TagResource::collection($this->whenLoaded('tag')),
-            'meta' => MetaResource::collection($this->whenLoaded('meta'))
+            'categories' => CategoryResource::collection($this->whenLoaded('categories')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
+            'metas' => MetaResource::collection($this->whenLoaded('metas'))
         ];
     }
 }

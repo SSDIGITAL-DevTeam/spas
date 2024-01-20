@@ -26,7 +26,7 @@ class UpdatePostRequest extends FormRequest
             'title' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'alpha_dash', 'max:255'],
             'content' => ['nullable', 'string'],
-            'status' => ['nullable', 'in:draft,published'],
+            'status' => ['nullable', 'in:PUBLISHED,DRAFT'],
             'published_at' => ['nullable', 'date'],
             'url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => ['nullable']
