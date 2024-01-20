@@ -16,7 +16,7 @@ class PageController extends Controller
     public function index()
     {
         return PageResource::collection(
-            Page::with('meta')
+            Page::with('metas')
                 ->latest()
                 ->get()
         );
@@ -26,22 +26,21 @@ class PageController extends Controller
     {
         $page = Page::create($request->validated());
 
-        $page->meta()->create([
+        $page->metas()->create([
             'key' => $request->key,
             'value' => $request->value,
             'content' => $request->content,
         ]);
 
         // Menggunakan resource untuk memformat respons API
-        return PageResource::make($page->load('meta'));
+        return PageResource::make($page->load('metas'));
     }
-
     /**
      * Display the specified resource.
      */
     public function show(Page $page)
     {
-        return new PageResource($page->load('meta'));
+        return new PageResource($page->load('metas'));
     }
 
     /**
@@ -52,7 +51,7 @@ class PageController extends Controller
 
         $page->update($request->all());
 
-        return new PageResource($page->load('meta'));
+        return new PageResource($page->load('metas'));
     }
 
     /**

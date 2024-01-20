@@ -12,7 +12,7 @@ class Page extends Model
 
     protected $guarded = ['id'];
 
-    public function meta(): MorphMany
+    public function metas(): MorphMany
     {
         return $this->morphMany(Meta::class, 'metaable');
     }

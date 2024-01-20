@@ -18,7 +18,7 @@ class PageResource extends JsonResource
             'id' => $this->whenHas('id'),
             'name' => $this->whenHas('name'),
             'slug' => $this->whenHas('slug'),
-            'meta' => MetaResource::collection($this->whenLoaded('meta'))
+            'metas' => MetaResource::collection($this->whenLoaded('metas'))
         ];
     }
 }

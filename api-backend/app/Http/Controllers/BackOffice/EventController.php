@@ -15,9 +15,10 @@ class EventController extends Controller
     public function index()
     {
         return EventResource::collection(
-            Event::orderby('id', 'DESC', Auth::user()->id)->get()
+            Event::latest()->get()
         );
     }
+
 
     public function store(StoreEventRequest $request)
     {

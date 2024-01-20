@@ -29,10 +29,13 @@ class StorePostRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'unique:posts,slug', 'alpha_dash', 'max:255'],
             'content' => ['required', 'string'],
-            'status' => ['nullable', 'in:draft,published'],
+            'status' => ['nullable', 'in:PUBLISHED,DRAFT'],
             'published_at' => ['nullable', 'date'],
-            'url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'name' => ['required']
+            'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'tags' => ['required', 'array'],
+            'tags.*.name' => ['required'],
+            'categories' => ['required', 'array'],
+            'categories.*.category_id' => ['required']
         ];
     }
 }

@@ -1,10 +1,6 @@
 import { JSX, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import BlogImg1 from "@/assets/images/Replace Image.webp";
-import BlogImg2 from "@/assets/images/Replace Image-1.webp";
-import BlogImg3 from "@/assets/images/Replace Image-2.webp";
-import PostImg1 from "@/assets/images/01.webp";
 import PostImg2 from "@/assets/images/05.webp";
 import PostImg3 from "@/assets/images/08.webp";
 import FullCalendar from "@fullcalendar/react";
@@ -21,24 +17,23 @@ import { Navigation } from "swiper/modules";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css";
+import { usePosts } from "@/hooks/usePosts";
+import { Post, Event, Tag } from "@/@types";
+import { useEvents } from "@/hooks/useEvents";
 
 register();
 
 export default function EventMedia(): JSX.Element {
 	const [id, setId] = useState(1);
-	const events = [
-		{
-			title: "Yoga",
-			start: "2024-01-10T10:00:00",
-			end: "2024-01-11T12:00:00",
-		},
-		{
-			title: "Therapist",
-			start: "2024-01-15T14:00:00",
-			end: "2024-01-16T16:00:00",
-		},
-		// Add more events as needed
-	];
+
+	const { posts } = usePosts();
+	const { events } = useEvents();
+
+	const parseEvents = events?.data?.map((event: Event, index: number) => ({
+		title: event.name,
+		start: event.start_date,
+		end: event.end_date,
+	}));
 
 	return (
 		<>
@@ -111,37 +106,41 @@ export default function EventMedia(): JSX.Element {
 											autoplay={{ delay: 2000 }}
 											className="mySwiper"
 										>
-											<SwiperSlide>
-												<div className="relative rounded-md">
-													<Image
-														className="object-cover rounded-md w-full"
-														src={PostImg1}
-														alt="PostImg1"
-													/>
-													<div className="bg-white/80 absolute bottom-5 mx-5 space-y-4 p-2 rounded-md">
-														<span className="text-black font-bold">
-															Best Place in
-															Singapore to Enjoy a
-															Massage or Spa
-														</span>
-														<p className="text-black text-xs md:text-base md:text-md line-clamp-3">
-															A Single Monitor
-															Manifesto — Many
-															developers believe
-															multiple monitors
-															improve
-															productivity.
-															Studies have proven
-															it, right? Well,
-															keep in mind, many
-															of those studies are
-															commissioned from
-															monitor
-															manufacturers like.
-														</p>
-													</div>
-												</div>
-											</SwiperSlide>
+											{posts.data?.map(
+												(
+													post: Post,
+													index: number
+												): JSX.Element => (
+													<SwiperSlide>
+														<Link
+															href={`/event-media/${post.slug}`}
+														>
+															<div className="relative rounded-md h-max">
+																<img
+																	className="object-cover rounded-md w-full"
+																	src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+																	alt={
+																		post.title
+																	}
+																/>
+																<div className="bg-white/80 absolute bottom-5 mx-5 space-y-4 p-2 rounded-md">
+																	<span className="text-black font-bold">
+																		{
+																			post.title
+																		}
+																	</span>
+																	<p className="text-black text-xs md:text-base md:text-md line-clamp-3 w-full">
+																		{post.content.replace(
+																			/<[^>]+>/g,
+																			""
+																		)}
+																	</p>
+																</div>
+															</div>
+														</Link>
+													</SwiperSlide>
+												)
+											)}
 										</Swiper>
 									</Link>
 
@@ -229,132 +228,64 @@ export default function EventMedia(): JSX.Element {
 						<div className="flex flex-col gap-y-8">
 							<div className="flex flex-col lg:flex-row text-center">
 								<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
-										<Link href={"/details"}>
-											<div className="grid justify-center">
-												<Image
-													className="rounded-lg"
-													src={BlogImg1}
-													alt="BlogImg1"
-													priority={true}
-												/>
-											</div>
-											<div className="mt-5 space-y-3 text-left">
-												<h2 className="font-semibold text-[#3E3232]">
-													Progressing The Wellness
-													Industry Through
-													Professional Recognition
-												</h2>
-												<p className="text-secondary text-black/80">
-													Progressing The Wellness
-													Industry Through
-													Professional Recognition.
-												</p>
-											</div>
-										</Link>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Yoga
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Hair Salon
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
+									{posts.data?.length === 0 && (
+										<div>
+											<p className="text-4xl font-semibold">
+												Opps..
+											</p>
+											<p>Artikel Sedang Kosong</p>
 										</div>
-									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
-										<Link href={"/details"}>
-											<div className="grid justify-center">
-												<Image
-													className="rounded-lg"
-													src={BlogImg2}
-													alt="BlogImg2"
-													priority={true}
-												/>
+									)}
+									{posts.data?.map(
+										(
+											post: Post,
+											index: number
+										): JSX.Element => (
+											<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
+												<Link
+													href={`/event-media/${post.slug}`}
+												>
+													<div className="grid justify-center">
+														<img
+															className="aspect-video rounded-lg object-cover"
+															src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+															alt={post.title}
+														/>
+													</div>
+													<div className="mt-5 space-y-3 text-left">
+														<h2 className="font-semibold text-[#3E3232]">
+															{post.title}
+														</h2>
+														<p className="text-secondary text-black/80 line-clamp-3">
+															{post.content.replace(
+																/<[^>]+>/g,
+																""
+															)}
+														</p>
+													</div>
+												</Link>
+												<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+													<div className="flex flex-wrap gap-4">
+														{post.tags?.map(
+															(
+																tag: Tag,
+																index: number
+															) => (
+																<p className="bg-[#dee9f9] w-max text-sm p-2 rounded-full flex-grow">
+																	#{tag.name}
+																</p>
+															)
+														)}
+													</div>
+													<div className="text-sm text-secondary text-left p-2">
+														<p>
+															{post.published_at}
+														</p>
+													</div>
+												</div>
 											</div>
-											<div className="mt-5 space-y-3 text-left">
-												<h2 className="font-semibold text-[#3E3232]">
-													Coup for Singapore
-													Exhibitors for SPAS for
-													Dubai&prime;s Beauty
-													Wellness & Spa Show
-												</h2>
-												<p className="text-secondary text-black/80">
-													Coup for Singapore
-													Exhibitors from the Spa &
-													Wellness Association
-													(Singapore).
-												</p>
-											</div>
-										</Link>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Yoga
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Hair Salon
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
-										</div>
-									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
-										<Link href={"/details"}>
-											<div className="grid justify-center bg-black">
-												<Image
-													className=" relativerounded-lg"
-													src={BlogImg3}
-													alt="BlogImg3"
-													priority={true}
-												/>
-											</div>
-											<div className="mt-5 space-y-3 text-left">
-												<h2 className="font-semibold text-[#3E3232]">
-													Blue Ocean Strategy Talk for
-													the Spa & Wellness Industry
-												</h2>
-												<p className="text-secondary text-black/80">
-													Blue Ocean Strategy Talk for
-													the Spa & Wellness Industry.
-												</p>
-											</div>
-										</Link>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Yoga
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Hair Salon
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
-										</div>
-									</div>
+										)
+									)}
 								</div>
 							</div>
 
@@ -380,12 +311,13 @@ export default function EventMedia(): JSX.Element {
 											Event Calendar
 										</h2>
 									</header>
+
 									<FullCalendar
 										plugins={[dayGridPlugin]}
 										headerToolbar={{
 											right: "prev,next",
 										}}
-										events={events}
+										events={parseEvents}
 									/>
 								</div>
 							</div>
