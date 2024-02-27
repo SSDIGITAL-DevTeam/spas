@@ -7,6 +7,7 @@ use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,37 +21,35 @@ class PostController extends Controller
         return PostResource::collection(
             Post::with('cover', 'categories', 'tags', 'metas')
                 ->latest()
+                ->filterByCategory(request()->input('search'))
                 ->get()
         );
     }
 
-    /** 
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StorePostRequest $request)
     {
         // return PostResource::make(Post::created($request->validated()));
-        $cek = $request->validated();
+        $request->validated();
 
         // dd($cek);
 
-        $post = Post::create($request->only(
-            [
-                'title',
-                'slug',
-                'content',
-                'status',
-                'published_at'
-            ]
-        ));
+        $post = Post::create($request->only([
+            'title',
+            'slug',
+            'content',
+            'status',
+        ]) + ['published_at' => now()]);
 
         $post->cover()->create([
-            'url' => $request->file('url')->store('post-image'),
+            'url' => $request->file('url')->store('post-image')
         ]);
 
         // Create tags and attach them to the post
-        $tags = $post->tags()->createMany($request->input('tags'));
-        $post->tags()->attach(array_column($tags, 'id'));
+        $tags = $request->input('tags');
+        $post->tags()->createMany($tags);
 
         // Create categories and attach them to the post
         $post->categories()->attach($request->input('categories'));
@@ -69,7 +68,7 @@ class PostController extends Controller
      */
     public function show(Post $post): PostResource
     {
-        return new PostResource($post->load([
+        return PostResource::make($post->load([
             'cover',
             'categories',
             'tags',
@@ -83,26 +82,36 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
 
-        try {
-            $post->update($request->all());
+        $post->update($request->all());
 
-            // Create tags and attach them to the post
-            $tags = $post->tags()->createMany($request->input('tags'));
-            $post->tags()->attach(array_column($tags, 'id'));
+        // Create tags and attach them to the post
+        $tags = $request->input('tags');
 
-            // Create categories and attach them to the post
-            $post->categories()->attach($request->input('categories'));
+        foreach ($tags as $tag) {
+            $existingTag = Tag::where('name', $tag)->first();
 
-            // Update data di tabel cover
-            $post->cover()->update($request->only(['url']));
-
-            // Muat kembali relasi-relasi yang diperlukan
-            $post->load('tags', 'categories', 'cover');
-
-            return new PostResource($post);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update post. ' . $e->getMessage()], 500);
+            if (!$existingTag) {
+                Tag::updateOrInsert(['name' => $tag], ['name' => $tag]);
+            }
         }
+
+        $post->tags()->sync(Tag::whereIn('name', $tags)->pluck('id'));
+
+
+        // Create categories and attach them to the post
+        $post->categories()->sync($request->input('categories'));
+
+        // Update data di tabel cover
+        $newFile = $request->file('url');
+        // Lakukan update pada relasi cover
+        if ($newFile) {
+            $post->cover()->update(['url' => $newFile->store('post-image')]);
+        }
+
+        // Muat kembali relasi-relasi yang diperlukan
+        $post->load('tags', 'categories', 'cover');
+
+        return new PostResource($post);
     }
 
     /**

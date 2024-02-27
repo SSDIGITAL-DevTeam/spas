@@ -8,4 +8,8 @@ export const postModule = {
     findOne: (slug: string) => {
         return apiModule(`/end-user/posts/${slug}`)
     },
+
+    findCategoryPost: (search: string) => {
+        return apiModule(`/end-user/posts?search=${search}`)
+    },
 }

@@ -28,8 +28,11 @@ class UpdatePostRequest extends FormRequest
             'content' => ['nullable', 'string'],
             'status' => ['nullable', 'in:PUBLISHED,DRAFT'],
             'published_at' => ['nullable', 'date'],
-            'url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'name' => ['nullable']
+            'url' => ['image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'tags' => ['array'],
+            'tags.*.name' => ['required'],
+            'categories' => ['array'],
+            'categories.*.category_id' => ['required']
         ];
     }
 }
