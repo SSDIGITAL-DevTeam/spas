@@ -26,7 +26,7 @@ export default function EventMedia(): JSX.Element {
   const { events } = useEvents();
   const [postsPerPage, setPostsPerPage] = useState(6);
   const [categoryPost, setCategoryPost] = useState([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
   const { categories } = useCategory();
 
   const getCategoryPost = async () => {
@@ -172,6 +172,14 @@ export default function EventMedia(): JSX.Element {
         <section className="pb-18 lg:pb-0 pt-12">
           <div className="md:container">
             <div className="flex justify-between gap-x-8 whitespace-nowrap overflow-scroll md:overflow-auto mb-4 p-5 bg-[#F5F5F5] rounded-lg shadow-xl">
+              <button
+                key="0"
+                className={`p-3 border-1 font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out w-40
+              ${selectedCategoryId === 0 ? "bg-primary text-white" : ""}`}
+                onClick={() => setSelectedCategoryId(0)}
+              >
+                All
+              </button>
               {categories.data?.map((category: Category, index: number) => (
                 <button
                   key={category.id}
