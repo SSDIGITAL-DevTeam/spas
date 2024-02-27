@@ -31,7 +31,7 @@ class StorePostRequest extends FormRequest
             'content' => ['required', 'string'],
             'status' => ['nullable', 'in:PUBLISHED,DRAFT'],
             'published_at' => ['nullable', 'date'],
-            'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'tags' => ['required', 'array'],
             'tags.*.name' => ['required'],
             'categories' => ['required', 'array'],

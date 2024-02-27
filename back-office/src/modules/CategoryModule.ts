@@ -1,5 +1,5 @@
 import ApiError from '@/errors/ApiError'
-import { Category } from '@/@types'
+import { Category, DataWithPagination } from '@/@types'
 import ApiModule from '@/modules/ApiModule'
 
 export default class CategoryModule {
@@ -14,9 +14,9 @@ export default class CategoryModule {
         }
     }
 
-    public async all(): Promise<Category[]> {
+    public async all(): Promise<DataWithPagination<Category>> {
         try {
-            return await ApiModule.makeRequestTo<Category[]>(`${this.url}`).with({
+            return await ApiModule.makeRequestTo<DataWithPagination<Category>>(`${this.url}`).with({
                 headers: this.defaultHeaders,
             })
         } catch (err: any) {

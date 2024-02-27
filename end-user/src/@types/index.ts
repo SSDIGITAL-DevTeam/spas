@@ -15,7 +15,7 @@ export type Post = {
     content: string
     status: string
     published_at?: string | null
-    cover: Cover | File
+    cover: any
     model?: string
     categories?: Category[]
     tags?: Tag[]

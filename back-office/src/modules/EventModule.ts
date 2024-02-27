@@ -1,5 +1,5 @@
 import ApiError from '@/errors/ApiError'
-import { Event } from '@/@types'
+import { DataWithPagination, Event } from '@/@types'
 import ApiModule from '@/modules/ApiModule'
 
 export default class EventModule {
@@ -14,9 +14,9 @@ export default class EventModule {
         }
     }
 
-    public async all(): Promise<Event[]> {
+    public async all(): Promise<DataWithPagination<Event>> {
         try {
-            return await ApiModule.makeRequestTo<Event[]>(`${this.url}`).with({
+            return await ApiModule.makeRequestTo<DataWithPagination<Event>>(`${this.url}`).with({
                 headers: this.defaultHeaders,
             })
         } catch (err: any) {

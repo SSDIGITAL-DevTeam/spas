@@ -60,7 +60,7 @@ class PageController extends Controller
     public function destroy(Page $page)
     {
         try {
-            $page->delete();
+            $page->delete();    
 
             return response()->json(['message' => 'Page deleted successfully'], 200);
         } catch (\Exception $e) {

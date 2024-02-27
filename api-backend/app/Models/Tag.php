@@ -12,6 +12,7 @@ class Tag extends Model
 
     protected $guarded = ['id'];
 
+    protected $cats = ['name'];
     /**
      * Get all of the posts that are assigned this tag.
      */

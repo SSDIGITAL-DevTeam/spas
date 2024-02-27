@@ -6,15 +6,15 @@
 
 
 @layer base {
-    html {
-      @apply scroll-smooth font-intern text-primary;
-    }
+  html {
+    @apply scroll-smooth font-intern text-primary;
+  }
 
-    body {
-      @applay font-intern;
-    }
+  body {
+    @applay font-intern;
+  }
 }
-    
+
 @layer components {
 
   .btn-1 {
@@ -36,8 +36,9 @@
   .fc-day {
     background-color: #f0f0f0;
     border: 1px solid #ccc;
+    /* @apply text-[#f0f0f0]; */
   }
-  
+
   .fc-prev-button,
   .fc-next-button,
   .fc-today-button {

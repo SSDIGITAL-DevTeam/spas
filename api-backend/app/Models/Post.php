@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,22 +21,31 @@ class Post extends Model
         return $this->hasOne(Cover::class);
     }
 
-    /** @var model\tag */
+    /** @var model\tags */
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'post_tags');
     }
 
-    /** @var model\category */
+    /** @var model\categories */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'post_categories');
     }
 
-    /** @var model\meta */
+    /** @var model\metas */
     public function metas()
     {
         return $this->morphMany(Meta::class, 'metaable');
+    }
+
+    public function scopeFilterByCategory($query, $search)
+    {
+        return $query->whereHas('categories', function ($query) use ($search) {
+            if ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            }
+        });
     }
 
     public static function boot()
@@ -43,11 +53,11 @@ class Post extends Model
         parent::boot();
 
         static::deleting(function ($post) {
-            $post->tag()->detach(); // Menghapus entri terkait dari tabel post_tags
+            $post->tags()->detach(); // Menghapus entri terkait dari tabel post_tags
         });
 
         static::deleting(function ($post) {
-            $post->category()->detach(); // Menghapus entri terkait dari tabel post_tags
+            $post->categories()->detach(); // Menghapus entri terkait dari tabel post_tags
         });
     }
 }

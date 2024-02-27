@@ -26,7 +26,20 @@ export default class PostModule {
         }
     }
 
-    public async single(id: number): Promise<{ data: Post }> {
+    public async single(slug: string): Promise<{ data: Post }> {
+        try {
+            return await ApiModule.makeRequestTo<{ data: Post }>(
+                `${this.url}/${slug}`,
+            ).with({
+                headers: this.defaultHeaders,
+            })
+        } catch (err: any) {
+            throw err satisfies ApiError
+        }
+    }
+
+    
+    public async singlePost(id: number): Promise<{ data: Post }> {
         try {
             return await ApiModule.makeRequestTo<{ data: Post }>(
                 `${this.url}/${id}`,

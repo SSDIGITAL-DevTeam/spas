@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DataWithPagination, Page } from "@/@types";
 import ApiError from "@/errors/ApiError";
-import PageModule from "@/modules/pageModule";
+import PageModule from "@/modules/PageModule";
 
 
 export function usePage() {

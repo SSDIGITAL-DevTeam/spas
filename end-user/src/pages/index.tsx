@@ -9,14 +9,18 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
-import BlogImg1 from "@/assets/images/Replace Image.webp";
-import BlogImg2 from "@/assets/images/Replace Image-1.webp";
-import BlogImg3 from "@/assets/images/Replace Image-2.webp";
+import moment from 'moment';
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Link from "next/link";
 import Image from "next/image";
 
+import { usePosts } from "@/hooks/usePosts";
+import { Post, Event, Tag, Category } from "@/@types";
+
 export default function Home(): JSX.Element {
+
+	const { posts } = usePosts();
+
 	return (
 		<>
 			<Head>
@@ -380,168 +384,88 @@ export default function Home(): JSX.Element {
 				</section>
 
 				{/* BLOG */}
-				<section className="pb-14 lg:pb-14 lg:py-20">
+				< section className="pb-14 lg:pb-24 pt-12" >
 					<div className="container">
 						<div className="flex flex-col gap-y-8">
-							<header className="flex flex-col gap-y-4 text-center">
-								<h2 className="at-center mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
-									Latest News
-								</h2>
-
-								<p className="mx-auto mt-2 md:w-3/4 text-secondary">
-									Our blog is more than just a collection of
-									articles - it&prime;s a hub of ideas,
-									inspiration, and thought-provoking
-									discussions.
-								</p>
-								<div className="grid justify-center">
-									<p className="bg-[#F0F6FF] w-max py-2 px-6 rounded-full">
-										Blog
-									</p>
-								</div>
-							</header>
-
 							<div className="flex flex-col lg:flex-row text-center">
 								<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
-										<Link href={"/details"}>
-											<div className="grid justify-center">
-												<Image
-													className="rounded-lg"
-													src={BlogImg1}
-													alt="BlogImg1"
-													priority={true}
-												/>
-											</div>
-											<div className="mt-5 space-y-3 text-left">
-												<h2 className="font-semibold text-[#3E3232]">
-													Progressing The Wellness
-													Industry Through
-													Professional Recognition
-												</h2>
-												<p className="text-secondary text-black/80">
-													Progressing The Wellness
-													Industry Through
-													Professional Recognition.
-												</p>
-											</div>
-										</Link>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Yoga
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Hair Salon
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
+									{posts.data?.length === 0 && (
+										<div className="text-center">
+											<p className="text-4xl font-semibold">
+												Opps..
+											</p>
+											<p>Blog not found</p>
 										</div>
-									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
-										<Link href={"/details"}>
-											<div className="grid justify-center">
-												<Image
-													className="rounded-lg"
-													src={BlogImg2}
-													alt="BlogImg2"
-													priority={true}
-												/>
-											</div>
-											<div className="mt-5 space-y-3 text-left">
-												<h2 className="font-semibold text-[#3E3232]">
-													Coup for Singapore
-													Exhibitors for SPAS for
-													Dubai&prime;s Beauty
-													Wellness & Spa Show
-												</h2>
-												<p className="text-secondary text-black/80">
-													Coup for Singapore
-													Exhibitors from the Spa &
-													Wellness Association
-													(Singapore).
-												</p>
-											</div>
-										</Link>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Yoga
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Hair Salon
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
-										</div>
-									</div>
-									<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10">
-										<Link href={"/details"}>
-											<div className="grid justify-center bg-black">
-												<Image
-													className=" relativerounded-lg"
-													src={BlogImg3}
-													alt="BlogImg3"
-													priority={true}
-												/>
-											</div>
-											<div className="mt-5 space-y-3 text-left">
-												<h2 className="font-semibold text-[#3E3232]">
-													Blue Ocean Strategy Talk for
-													the Spa & Wellness Industry
-												</h2>
-												<p className="text-secondary text-black/80">
-													Blue Ocean Strategy Talk for
-													the Spa & Wellness Industry.
-												</p>
-											</div>
-										</Link>
-										<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
-											<div className="flex flex-wrap gap-4">
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Beauty
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Yoga
-												</p>
-
-												<p className="bg-[#F0F6FF] w-max text-sm p-2 rounded-full flex-grow">
-													Hair Salon
-												</p>
-											</div>
-											<div className="text-sm text-secondary text-left p-2">
-												<p>August 18 , 2022</p>
-											</div>
-										</div>
-									</div>
+									)}
+									{posts.data?.
+										slice(0, 3).
+										filter((post) => post.status === 'PUBLISHED').
+										map(
+											(
+												post: Post,
+												index: number
+											): JSX.Element => (
+												<div className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10"
+													key={post.id}>
+													<Link
+														href={`/event-media/${post.slug}`}
+													>
+														<div className="grid justify-center">
+															{/* eslint-disable-next-line @next/next/no-img-element */}
+															<img
+																className="aspect-video w-full rounded-xl object-cover"
+																src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+																alt={post.title}
+															/>
+														</div>
+														<div className="mt-5 space-y-3 text-left h-[130px]">
+															<h2 className="font-semibold text-[#3E3232]">
+																{post.title}
+															</h2>
+															<p className="text-secondary text-black/80 line-clamp-3">
+																{post.content.replace(
+																	/<[^>]+>/g,
+																	""
+																)}
+															</p>
+														</div>
+													</Link>
+													<div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+														<div className="flex flex-wrap gap-4">
+															{post.categories?.slice(0, 3).map(
+																(
+																	category: Category,
+																	index: number
+																) => (
+																	<p className="bg-[#dee9f9] w-max text-sm p-2 rounded-full flex-grow" key={category.id}>
+																		{category.name}
+																	</p>
+																)
+															)}
+														</div>
+														<div className="text-sm text-secondary text-left p-2">
+															<p>
+																Last update : <br />
+																<label className="text-primary" htmlFor="{moment(post.published_at).format('ddd, MMMM Do YYYY')}">{moment(post.published_at).format('ddd, MMMM Do YYYY')}</label>
+															</p>
+														</div>
+													</div>
+												</div>
+											)
+										)}
 								</div>
 							</div>
 
 							<div className="flex justify-center mt-10">
-								<Link href={"/event-media"}>
+								<Link href={'/event-media'}>
 									<span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-										Read more
+										Readmore
 									</span>
 								</Link>
 							</div>
 						</div>
 					</div>
-				</section>
+				</section >
 
 				{/* KEEP UP TO DATE WITH US */}
 				<section className="pb-12 lg:pb-14">

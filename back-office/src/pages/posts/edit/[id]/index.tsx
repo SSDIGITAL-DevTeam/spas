@@ -8,346 +8,332 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
-	ChangeEvent,
-	FormEvent,
-	JSX,
-	KeyboardEvent,
-	useEffect,
-	useRef,
-	useState,
+  ChangeEvent,
+  FormEvent,
+  JSX,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 import toast from "react-hot-toast";
 
 type ValidationErrors = {
-	status: boolean;
-	errors: {
-		title: string;
-		cover: string;
-		status: string;
-		content: string;
-		category: string;
-	};
+  status: boolean;
+  errors: {
+    title: string;
+    cover: string;
+    status: string;
+    content: string;
+    category: string;
+  };
 };
 
 export default function EditPost(): JSX.Element {
-	// router
-	const router = useRouter();
+  // router
+  const router = useRouter();
 
-	// states
-	const [singlePost, setSinglePost] = useState<Post>({} as Post);
-	const [isProcessing, setIsProcessing] = useState<boolean>(false);
-	const [isCoverUploaded, setIsCoverUploaded] = useState<boolean>(false);
-	const [postTags, setPostTags] = useState([] as string[]);
-	const [validationErrors, setValidationErrors] = useState(
-		{} as ValidationErrors
-	);
+  // states
+  const [singlePost, setSinglePost] = useState<Post>({} as Post);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [isCoverUploaded, setIsCoverUploaded] = useState<boolean>(false);
+  const [postTags, setPostTags] = useState([] as string[]);
+  const [validationErrors, setValidationErrors] = useState(
+    {} as ValidationErrors
+  );
 
-	// fetch posts
-	const { categories, isCategoryLoading } = useCategory();
+  // fetch posts
+  const { categories, isCategoryLoading } = useCategory();
 
-	const cover = singlePost.cover as Cover;
+  const cover = singlePost.cover as Cover;
 
-	useEffect(() => {
-		const fetchSinglePost = async () => {
-			try {
-				const res = await new PostModule().single(+router.query.id!);
-				setSinglePost(res.data);
-				if (res.data.tags) {
-					setPostTags(
-						res.data.tags?.map(
-							(tag: Tag, _index: number) => tag.name
-						)
-					);
-				}
-			} catch (error) {
-			} finally {
-			}
-		};
+  useEffect(() => {
+    const fetchSinglePost = async () => {
+      try {
+        const res = await new PostModule().singlePost(+router.query.id!);
+        setSinglePost(res.data);
 
-		fetchSinglePost();
-	}, [router]);
+        if (res.data.tags) {
+          setPostTags(
+            res.data.tags?.map((tag: Tag, _index: number) => tag.name)
+          );
+        }
+      } catch (error) {
+      } finally {
+      }
+    };
 
-	// refs
-	const imageRef = useRef<HTMLImageElement | null>(null);
+    fetchSinglePost();
+  }, [router]);
 
-	const handleUpload = (e: ChangeEvent<HTMLInputElement>): void => {
-		const image: File | null | undefined = e.currentTarget.files?.item(0);
+  // refs
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
-		if (image) {
-			setIsCoverUploaded(true);
-			imageRef.current!.src = URL.createObjectURL(image);
-			imageRef.current?.setAttribute("alt", "Blog Cover");
+  const handleUpload = (e: ChangeEvent<HTMLInputElement>): void => {
+    const image: File | null | undefined = e.currentTarget.files?.item(0);
 
-			return;
-		}
-		setIsCoverUploaded(false);
-		imageRef.current?.removeAttribute("src");
-		imageRef.current?.removeAttribute("alt");
-	};
+    if (image) {
+      setIsCoverUploaded(true);
+      imageRef.current!.src = URL.createObjectURL(image);
+      imageRef.current?.setAttribute("alt", "Blog Cover");
 
-	// add tags
-	const addTag = (e: KeyboardEvent<HTMLInputElement>): void => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			const tag = e.currentTarget.value.trim();
+      return;
+    }
+    setIsCoverUploaded(false);
+    imageRef.current?.removeAttribute("src");
+    imageRef.current?.removeAttribute("alt");
+  };
 
-			if (tag) {
-				setPostTags([...postTags, tag]);
-			}
+  // add tags
+  const addTag = (e: KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const tag = e.currentTarget.value.trim();
 
-			e.currentTarget.value = "";
-		}
-	};
+      if (tag) {
+        setPostTags([...postTags, tag]);
+      }
 
-	// remove tags
-	const removeTag = (tag: string): void => {
-		setPostTags([...postTags.filter((item: string) => item !== tag)]);
-	};
+      e.currentTarget.value = "";
+    }
+  };
 
-	// handle create blog
-	const handleCreateBlog = async (
-		e: FormEvent<HTMLFormElement>
-	): Promise<void> => {
-		setIsProcessing(true);
-		e.preventDefault();
+  // remove tags
+  const removeTag = (tag: string): void => {
+    setPostTags([...postTags.filter((item: string) => item !== tag)]);
+  };
 
-		const form: HTMLFormElement = e.currentTarget;
-		const formData: FormData = new FormData(form);
-		const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-		const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
+  // handle create blog
+  const handleCreateBlog = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    setIsProcessing(true);
+    e.preventDefault();
 
-		formData.append("status", status.value);
-		postTags.forEach((tag: string, i: number) =>
-			formData.append(`tags[${i}][name]`, tag)
-		);
+    const form: HTMLFormElement = e.currentTarget;
+    const formData: FormData = new FormData(form);
+    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
+    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
 
-		try {
-			await new PostModule().update(formData, +router.query.id!);
+    formData.append("status", status.value);
+    postTags.forEach((tag: string, i: number) =>
+      formData.append(`tags[${i}][name]`, tag)
+    );
 
-			toast("Post Updated Successfully", {
-				icon: "✅",
-				style: {
-					backgroundColor: "#F4B202",
-					color: "#ffffff",
-					paddingBlock: 12,
-				},
-			});
+    // console.log(postTags);
 
-			router.push(`/posts?status=PUBLISHED`);
-		} catch (error) {
-			const err = error as ApiError;
-			const validationErrors = err.data as ValidationErrors;
-			setValidationErrors(validationErrors);
+    try {
+      await new PostModule().update(formData, +router.query.id!);
 
-			toast("Something Wrong", {
-				icon: "🚫",
-				style: {
-					backgroundColor: "#D81222",
-					color: "#ffffff",
-					paddingBlock: 12,
-				},
-			});
-		} finally {
-			setIsProcessing(false);
-		}
-	};
+      toast("Post Updated Successfully", {
+        icon: "✅",
+        style: {
+          backgroundColor: "#F4B202",
+          color: "#ffffff",
+          paddingBlock: 12,
+        },
+      });
 
-	return (
-		<>
-			<Head>
-				<title>SPAS | Edit - {singlePost.title}</title>
-			</Head>
+      router.push(`/posts/view/${singlePost.id}`);
+    } catch (error) {
+      const err = error as ApiError;
+      const validationErrors = err.data as ValidationErrors;
+      setValidationErrors(validationErrors);
 
-			<main>
-				<Link href="/posts" className="btn bg-primary px-4 py-2">
-					&larr;
-				</Link>
+      toast("Something Wrong", {
+        icon: "🚫",
+        style: {
+          backgroundColor: "#D81222",
+          color: "#ffffff",
+          paddingBlock: 12,
+        },
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
-				<header className="my-8">
-					<h1 className="text-2xl">Edit Blog</h1>
-				</header>
+  return (
+    <>
+      <Head>
+        <title>SPAS | Edit - {singlePost.title}</title>
+      </Head>
 
-				<section className="mx-auto max-w-3xl">
-					<form onSubmit={(e) => handleCreateBlog(e)}>
-						<div className="font-montserrat flex flex-col gap-y-8">
-							{/* title */}
-							<div>
-								<input
-									className="form-input block w-full px-4 py-3 border-2 rounded-lg"
-									name="title"
-									type="text"
-									placeholder="Title..."
-									defaultValue={singlePost.title}
-								/>
+      <main>
+        <Link
+          href="/posts"
+          className="btn bg-primary rounded-lg text-white px-4 py-2"
+        >
+          Back
+        </Link>
 
-								{validationErrors.errors?.title && (
-									<small className="text-light">
-										{validationErrors.errors.title[0]}
-									</small>
-								)}
-							</div>
+        <header className="my-8">
+          <h1 className="text-2xl">Edit Blog</h1>
+        </header>
 
-							{/* blog content */}
-							<div className="min-h-[380px] overflow-hidden">
-								{/* CK Editor */}
-								<TinyMceEditor
-									textareaName="content"
-									initialValue={singlePost.content}
-								/>
+        <section className="mx-auto max-w-3xl">
+          <form onSubmit={(e) => handleCreateBlog(e)}>
+            <div className="font-montserrat flex flex-col gap-y-8">
+              {/* title */}
+              <div>
+                <input
+                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  name="title"
+                  type="text"
+                  placeholder="Title..."
+                  defaultValue={singlePost.title}
+                />
 
-								{validationErrors.errors?.content && (
-									<small className="text-light">
-										{validationErrors.errors.content[0]}
-									</small>
-								)}
-							</div>
+                {validationErrors.errors?.title && (
+                  <small className="text-light">
+                    {validationErrors.errors.title[0]}
+                  </small>
+                )}
+              </div>
 
-							<div>
-								<div className="flex">
-									<div className="flex items-center gap-5">
-										{categories?.data.map(
-											(
-												category: Category,
-												index: number
-											) => (
-												<div className="ap-5">
-													<input
-														id="inline-checkbox"
-														type="checkbox"
-														value={category.id}
-														name={`categories[${index}][category_id]`}
-														className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-													/>
-													<label className="ms-2 text-sm font-medium text-black">
-														{category.name}
-													</label>
-												</div>
-											)
-										)}
-									</div>
-								</div>
+              {/* blog content */}
+              <div className="min-h-[380px] overflow-hidden">
+                {/* CK Editor */}
+                <TinyMceEditor
+                  textareaName="content"
+                  initialValue={singlePost.content}
+                />
 
-								{validationErrors?.errors?.category && (
-									<p className="text-ligh text-[#654648] mt-2">
-										{validationErrors.errors.category[0]}
-									</p>
-								)}
-							</div>
+                {validationErrors.errors?.content && (
+                  <small className="text-light">
+                    {validationErrors.errors.content[0]}
+                  </small>
+                )}
+              </div>
 
-							{/* cover */}
-							<div className="flex flex-col items-center rounded-xl border px-8 pb-8 font-medium">
-								<label
-									htmlFor="cover"
-									className="flex flex-col gap-y-8"
-								>
-									<div
-										className={`${
-											isCoverUploaded ? "hidden" : "block"
-										}`}
-									></div>
+              <div>
+                <div className="flex">
+                  <div className="flex items-center">
+                    {categories?.data.map(
+                      (category: Category, index: number) => (
+                        <div className="gap-5" key={category.id}>
+                          <input
+                            id="inline-checkbox"
+                            type="checkbox"
+                            value={category.id}
+                            name={`categories[${index}][category_id]`}
+                            defaultChecked={singlePost.categories
+                              ?.map((category) => category.name)
+                              .includes(category.name)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          />
+                          <label className="ms-2 text-sm font-medium text-black w-max">
+                            {category.name}
+                          </label>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
 
-									{/* preview cover */}
-									<img
-										className="mx-auto aspect-video rounded-lg object-cover"
-										ref={imageRef}
-										src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover?.url}`}
-										alt="cover"
-									/>
+                {validationErrors?.errors?.category && (
+                  <p className="text-ligh text-[#654648] mt-2">
+                    {validationErrors.errors.category[0]}
+                  </p>
+                )}
+              </div>
 
-									<p className="mx-auto text-center">
-										Click the button to upload an image
-									</p>
+              {/* cover */}
+              <div className="flex flex-col items-center rounded-xl border px-8 pb-8 font-medium">
+                <label htmlFor="cover" className="flex flex-col gap-y-8">
+                  <div
+                    className={`${isCoverUploaded ? "hidden" : "block"}`}
+                  ></div>
 
-									<div className="flex items-center justify-center gap-x-8">
-										<span className="cursor-pointer rounded-lg bg-primary px-8 py-2.5 text-white hover:bg-red-800">
-											{isCoverUploaded
-												? "Change Cover"
-												: "Upload"}
-										</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    className="mx-auto aspect-video rounded-lg object-cover"
+                    ref={imageRef}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singlePost.cover?.url}`}
+                    alt="cover"
+                  />
 
-										<span
-											className={`${
-												isCoverUploaded ||
-												imageRef.current
-													? "hidden"
-													: "block"
-											}`}
-										>
-											It appears no file is selected
-										</span>
-									</div>
-								</label>
+                  <p className="mx-auto text-center">
+                    Click the button to upload an image
+                  </p>
 
-								<input
-									className="hidden"
-									type="file"
-									name="cover"
-									id="cover"
-									onChange={(e) => handleUpload(e)}
-								/>
-							</div>
+                  <div className="flex items-center justify-center gap-x-8">
+                    <span className="cursor-pointer rounded-lg bg-primary px-8 py-2.5 text-white hover:bg-red-800">
+                      {isCoverUploaded ? "Change Cover" : "Upload"}
+                    </span>
 
-							{validationErrors.errors?.cover && (
-								<small className="-mt-8 text-light">
-									{validationErrors.errors.cover[0]}
-								</small>
-							)}
+                    <span
+                      className={`${
+                        isCoverUploaded || imageRef.current ? "hidden" : "block"
+                      }`}
+                    >
+                      It appears no file is selected
+                    </span>
+                  </div>
+                </label>
 
-							{/* tags */}
-							<div className="flex flex-col gap-y-4">
-								<input
-									className="form-input block w-full px-4 py-3 border-2 rounded-lg"
-									name="tags"
-									type="text"
-									placeholder="Press enter to add new tag..."
-									onKeyDown={(e): void => addTag(e)}
-								/>
+                <input
+                  className="hidden"
+                  type="file"
+                  name="url"
+                  id="cover"
+                  onChange={(e) => handleUpload(e)}
+                />
+              </div>
 
-								{/* preview tags */}
-								<div className="flex gap-x-2">
-									{postTags?.map(
-										(tag: string, index: number) => (
-											<div
-												key={`tag-${index}`}
-												className="relative"
-											>
-												<small
-													onClick={() =>
-														removeTag(tag)
-													}
-													className="cursor-pointer rounded-full bg-primary px-3 py-1 text-white"
-												>
-													{tag}
-												</small>
-											</div>
-										)
-									)}
-								</div>
-							</div>
-						</div>
+              {validationErrors.errors?.cover && (
+                <small className="-mt-8 text-light">
+                  {validationErrors.errors.cover[0]}
+                </small>
+              )}
 
-						<div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
-							<button
-								className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
-								name="status"
-								value="DRAFT"
-							>
-								Draft
-							</button>
+              {/* tags */}
+              <div className="flex flex-col gap-y-4">
+                <input
+                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  name="tags"
+                  type="text"
+                  placeholder="Press enter to add new tag..."
+                  onKeyDown={(e): void => addTag(e)}
+                />
 
-							<button
-								className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
-								name="status"
-								value="PUBLISHED"
-							>
-								{isProcessing
-									? "Updating..."
-									: "Update & Publish"}
-							</button>
-						</div>
-					</form>
-				</section>
-			</main>
-		</>
-	);
+                {/* preview tags */}
+                <div className="flex gap-x-2">
+                  {postTags?.map((tag: string, index: number) => (
+                    <div key={`tag-${index}`} className="relative">
+                      <small
+                        onClick={() => removeTag(tag)}
+                        className="cursor-pointer rounded-full bg-primary px-3 py-1 text-white"
+                      >
+                        {tag}{" "}
+                        <span className="font-semibold text-red-500">x</span>
+                      </small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
+              <button
+                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
+                name="status"
+                value="DRAFT"
+              >
+                Draft
+              </button>
+
+              <button
+                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
+                name="status"
+                value="PUBLISHED"
+              >
+                {isProcessing ? "Updating..." : "Update & Publish"}
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </>
+  );
 }

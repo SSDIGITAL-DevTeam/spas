@@ -1,5 +1,5 @@
 import ApiError from '@/errors/ApiError'
-import { Page } from '@/@types'
+import { DataWithPagination, Meta, Page } from '@/@types'
 import ApiModule from '@/modules/ApiModule'
 
 export default class PageModule {
@@ -14,9 +14,9 @@ export default class PageModule {
         }
     }
 
-    public async all(): Promise<Page[]> {
+    public async all(): Promise<DataWithPagination<Page>> {
         try {
-            return await ApiModule.makeRequestTo<Page[]>(`${this.url}`).with({
+            return await ApiModule.makeRequestTo<DataWithPagination<Page>>(`${this.url}`).with({
                 headers: this.defaultHeaders,
             })
         } catch (err: any) {

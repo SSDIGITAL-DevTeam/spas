@@ -32,11 +32,10 @@ export default function Sidebar({
 
 	return (
 		<aside
-			className={`${
-				isMenuOpen
-					? "left-0 right-0 md:left-4 md:right-4"
-					: "-translate-x-full lg:translate-x-4"
-			} fixed top-1/2 z-10 h-[95vh] -translate-y-1/2 overflow-y-auto rounded-xl bg-white shadow-lg backdrop-blur duration-300 lg:w-64`}
+			className={`${isMenuOpen
+				? "left-0 right-0 md:left-4 md:right-4"
+				: "-translate-x-full lg:translate-x-4"
+				} fixed top-1/2 z-10 h-[95vh] -translate-y-1/2 overflow-y-auto rounded-xl bg-white shadow-lg backdrop-blur duration-300 lg:w-64`}
 		>
 			<div className="flex h-full flex-col gap-y-8 text-center">
 				<div>
@@ -58,11 +57,10 @@ export default function Sidebar({
 							key={`navlink-${index}`}
 						>
 							<Link
-								className={`${
-									router.pathname === navLink.url
-										? "bg-secondary w-full text-center px-5 text-white"
-										: ""
-								} btn flex items-center gap-x-2 py-2.5 text-secondary hover:bg-secondary hover:text-white hover:text-center hover:px-5 transition-all ease-in-out`}
+								className={`${router.pathname === navLink.url
+									? "bg-secondary w-full text-center px-5 text-white"
+									: ""
+									} btn flex items-center gap-x-2 py-2.5 text-secondary hover:bg-secondary hover:text-white hover:text-center hover:px-5 transition-all ease-in-out`}
 								href={navLink.url}
 								aria-label="Link"
 							>
@@ -79,10 +77,10 @@ export default function Sidebar({
 
 				<button
 					onClick={handleLogout}
-					className="bg-secondary hover:bg-primary text-center transition-all uppercase mt-auto py-2 text-white"
+					className="bg-secondary hover:bg-primary text-center transition-all capitalize mt-auto py-2 text-white"
 				>
 					{/* <Image className="w-4 pb-1" src={AssetLogout} alt="Icon" /> */}
-					<span>{isLoading ? "Logging out.." : "Logout"}</span>
+					<span>{isLoading ? "Logging out.." : "Sign Out"}</span>
 				</button>
 			</div>
 		</aside>

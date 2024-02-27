@@ -164,8 +164,13 @@ export default function CreateEvent(): JSX.Element {
 						</div>
 
 						<div className="mt-12 flex justify-center gap-x-12 font-medium">
-							<button className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12">
-								Save
+
+							<button
+								className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
+								name="status"
+								value="PUBLISHED"
+							>
+								{isProcessing ? "Save..." : "Save"}
 							</button>
 						</div>
 					</form>

@@ -15,7 +15,7 @@ class CategoryController extends Controller
     public function index()
     {
         return CategoryResource::collection(
-            Category::orderby('id', 'DESC', Auth::user()->id)->get()
+            Category::latest()->get()
         );
     }
 
