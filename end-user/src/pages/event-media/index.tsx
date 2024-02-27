@@ -56,6 +56,7 @@ export default function EventMedia(): JSX.Element {
     <>
       <Head>
         <title>SPAS | Event & Media</title>
+        <link rel="icon" href="/spas-logo.png" />
         <meta name="author" content="SPAS" />
 
         <meta name="title" content="Event and Media" />
