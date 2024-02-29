@@ -8,18 +8,18 @@ These are the system planning for this project.
 
 ### API Specification
 
-- [Authentication](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/Athentication.md)
-- Categories
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/docs/api/Categories.md)
-- Covers
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/docs/api/Covers.md)
-- Posts
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/docs/api/Posts.md)
-  - [End User](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/docs/api/Posts.md)
+- [Authentication](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Athentication.md)
 - Pages
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/docs/api/Pages.md)
-- Metas
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/docs/api/Metas.md)
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Pages.md)
+- Posts
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Posts.md)
+  - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Posts.md)
+- Categories
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Categories.md)
+  - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Categories.md)
+- Events
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/Posts.md)
+  - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Events.md)
 
 ### Database Design
 
@@ -27,4 +27,4 @@ These are the system planning for this project.
 
 ## How To Contribute?
 
-Please read [CONTRIBUTING.md](https://github.com/SSDIGITAL-DevTeam/digital-pa/blob/main/CONTRIBUTING.md)
+Please read [CONTRIBUTING.md](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/CONTRIBUTING.md)
