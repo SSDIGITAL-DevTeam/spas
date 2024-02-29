@@ -9,8 +9,6 @@ These are the system planning for this project.
 ### API Specification
 
 - [Authentication](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Athentication.md)
-- Pages
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Pages.md)
 - Posts
   - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Posts.md)
   - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Posts.md)
@@ -20,6 +18,8 @@ These are the system planning for this project.
 - Events
   - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/Posts.md)
   - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Events.md)
+- Pages
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Pages.md)
 
 ### Database Design
 
