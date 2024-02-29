@@ -8,18 +8,18 @@ These are the system planning for this project.
 
 ### API Specification
 
-- [Authentication](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Athentication.md)
+- [Authentication](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackoOffice/Athentication.md)
 - Posts
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Posts.md)
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackoOffice/Posts.md)
   - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Posts.md)
 - Categories
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Categories.md)
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackoOffice/Categories.md)
   - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Categories.md)
 - Events
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/Posts.md)
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackoOffice/Events.md)
   - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Events.md)
 - Pages
-  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackOffice/Pages.md)
+  - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackoOffice/Pages.md)
 
 ### Database Design
 
