@@ -71,7 +71,7 @@ export default function Events(): JSX.Element {
       </Head>
 
       <main>
-        <header className="mb-4 flex flex-col items-start justify-between md:flex-row md:items-center">
+        <header className="mb-4 flex flex-col items-start justify-between md:flex-row md:items-center gap-y-4">
           <div>
             <h2 className="mb-4 text-4xl">Events</h2>
 

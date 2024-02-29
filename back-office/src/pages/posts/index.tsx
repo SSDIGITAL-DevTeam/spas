@@ -65,7 +65,7 @@ export default function Posts(): JSX.Element {
       </Head>
 
       <main>
-        <header className="mb-4 flex flex-col items-start justify-between md:flex-row md:items-center">
+        <header className="mb-4 flex flex-col items-start justify-between md:flex-row md:items-center gap-y-4">
           <div>
             <h2 className="mb-4 text-4xl">Blogs</h2>
 
@@ -118,9 +118,9 @@ export default function Posts(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
-                  {posts?.data.map((post: Post, index: number) => (
+                  {posts?.data.map((post: Post) => (
                     <tr
-                      className="bg-white text-md text-black hover:bg-secondary hover:text-black dark:hover:bg-gray-300 h-max"
+                      className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
                       key={post.id}
                     >
                       <td className="text-left p-6">
@@ -130,15 +130,15 @@ export default function Posts(): JSX.Element {
                       </td>
                       <td className="text-center p-6">{post.slug}</td>
                       <td className="text-center">
-                        <p className="bg-[#e7e4e4] w-max mx-auto lg:p-1 text-secondary text-sm rounded-lg capitalize">
+                        <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
                           {post.status}
                         </p>
                       </td>
                       <td>
-                        <div className="flex gap-x-2 p-2">
+                        <div className="flex gap-x-2 p-2 w-max">
                           <Link href={`/posts/view/${post.id}`}>
                             <Image
-                              className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5"
+                              className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5 object-cover"
                               src={AssetView}
                               alt="Asset View"
                             />
