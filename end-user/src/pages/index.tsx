@@ -303,7 +303,7 @@ export default function Home(): JSX.Element {
               </div>
               <div className="flex flex-col lg:flex-row justify-center">
                 <Link href={"/membership"}>
-                  <span className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max hover:bg-primary transition-colors ease-out">
+                  <span className="btn-1 block w-full text-center lg:text-left lg:w-max hover:bg-primary transition-colors ease-out">
                     See Membership Details
                   </span>
                 </Link>
