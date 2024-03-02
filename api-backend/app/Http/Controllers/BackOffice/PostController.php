@@ -22,7 +22,7 @@ class PostController extends Controller
             Post::with('cover', 'categories', 'tags', 'metas')
                 ->latest()
                 ->filterByCategory(request()->input('search'))
-                ->get()
+                ->paginate(10)
         );
     }
 

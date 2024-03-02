@@ -10,12 +10,11 @@ export function usePage() {
     const [isPageLoading, setIsPageLoading] = useState<boolean>(false)
     const [PageError, setPageErrors] = useState<ApiError>({} as ApiError)
 
-    useEffect(() => {
-      const fetchPage = async(): Promise<void> => {
+      const fetchPage = async(page1?: string): Promise<void> => {
         setIsPageLoading(true)
         
        try {
-            const res = await new PageModule().all()
+            const res = await new PageModule().all(page1)
             setPage(res)
         } catch (error) {
             setPageErrors(error as ApiError)
@@ -23,8 +22,6 @@ export function usePage() {
             setIsPageLoading(false)
         }
       }
-      fetchPage()
-    }, [])
 
-    return { pages, isPageLoading, PageError }
+    return { pages, isPageLoading, PageError, fetchPage }
 }

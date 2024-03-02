@@ -10,12 +10,11 @@ export function useCategory() {
   const [isCategoryLoading, setIsCategoryLoading] = useState<boolean>(false)
   const [CategoryError, setCategoryErrors] = useState<ApiError>({} as ApiError)
 
-  useEffect(() => {
-    const fetchCategory = async (): Promise<void> => {
+    const fetchCategory = async (page?: string): Promise<void> => {
       setIsCategoryLoading(true)
 
       try {
-        const res = await new CategoryModule().all()
+        const res = await new CategoryModule().all(page)
         setCategories(res)
       } catch (error) {
         setCategoryErrors(error as ApiError)
@@ -23,8 +22,6 @@ export function useCategory() {
         setIsCategoryLoading(false)
       }
     }
-    fetchCategory()
-  }, [])
 
-  return { categories, isCategoryLoading, CategoryError }
+  return { categories, isCategoryLoading, CategoryError, fetchCategory }
 }

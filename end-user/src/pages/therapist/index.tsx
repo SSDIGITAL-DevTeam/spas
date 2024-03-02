@@ -64,9 +64,11 @@ export default function Therapist(): JSX.Element {
                 competencies, demonstrating their expertise and skills in
                 specific treatments and sectors of the Wellness Industry.
               </p>
-              <a className="btn-1 block my-4 w-full text-center lg:w-max">
-                JOIN SPAS
-              </a>
+              <Link href={"/membership"}>
+                <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                  JOIN SPAS
+                </span>
+              </Link>
             </div>
 
             <div className="mt-8 md:w-1/2">
@@ -322,7 +324,10 @@ export default function Therapist(): JSX.Element {
 
               <div className="flex flex-col">
                 <div className="flex justify-center">
-                  <Link href={"/download"}>
+                  <Link
+                    href={"/SPAS Membership Application Form.pdf"}
+                    download="SPAS Membership Application Form"
+                  >
                     <span className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out">
                       DOWNLOAD APPLICATION FORM
                     </span>

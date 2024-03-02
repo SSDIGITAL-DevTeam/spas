@@ -9,22 +9,18 @@ export function usePosts() {
     const [isPostsLoading, setIsPostsLoading] = useState<boolean>(false)
     const [postsErrors, setPostsErrors] = useState<ApiError>({} as ApiError)
 
-    useEffect(() => {
-        const fetchPosts = async (): Promise<void> => {
-            setIsPostsLoading(true)
+    const fetchPosts = async (page?: string): Promise<void> => {
+        setIsPostsLoading(true)
 
-            try {
-                const res = await new PostModule().all()
-                setPosts(res)
-            } catch (error) {
-                setPostsErrors(error as ApiError)
-            } finally {
-                setIsPostsLoading(false)
-            }
+        try {
+            const res = await new PostModule().all(page)
+            setPosts(res)
+        } catch (error) {
+            setPostsErrors(error as ApiError)
+        } finally {
+            setIsPostsLoading(false)
         }
+    }
 
-        fetchPosts()
-    }, [])
-
-    return { posts, isPostsLoading, postsErrors }
+    return { posts, isPostsLoading, postsErrors, fetchPosts }
 }

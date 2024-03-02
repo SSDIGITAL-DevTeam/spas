@@ -12,6 +12,7 @@ import {
   FormEvent,
   JSX,
   KeyboardEvent,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -49,7 +50,12 @@ export default function CreatePost(): JSX.Element {
   );
 
   // fetch posts
-  const { categories, isCategoryLoading } = useCategory();
+  const { categories, isCategoryLoading, fetchCategory } = useCategory();
+
+  useEffect(() => {
+    fetchCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // refs
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -163,8 +169,9 @@ export default function CreatePost(): JSX.Element {
             <div className="font-montserrat flex flex-col gap-y-8">
               {/* title */}
               <div>
+                <label htmlFor="title">Title</label>
                 <input
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="title"
                   type="text"
                   placeholder="Title..."
@@ -179,8 +186,9 @@ export default function CreatePost(): JSX.Element {
 
               {/* slug */}
               <div>
+                <label htmlFor="slug">Slug</label>
                 <input
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="slug"
                   type="text"
                   placeholder="Slug..."
@@ -194,7 +202,8 @@ export default function CreatePost(): JSX.Element {
               </div>
 
               {/* blog content */}
-              <div className="min-h-[380px] overflow-hidden">
+              <div className="min-h-[380px] overflow-hidden space-y-2">
+                <label htmlFor="content">Content</label>
                 {/* CK Editor */}
                 <TinyMceEditor textareaName="content" apiKey={apikey} />
 
@@ -206,7 +215,8 @@ export default function CreatePost(): JSX.Element {
               </div>
 
               <div>
-                <div className="flex">
+                <label htmlFor="categories">Categories</label>
+                <div className="flex mt-2">
                   <div className="flex items-center gap-5">
                     {categories?.data.map(
                       (category: Category, index: number) => (
@@ -284,6 +294,7 @@ export default function CreatePost(): JSX.Element {
 
               {/* tags */}
               <div className="flex flex-col gap-y-4">
+                <label htmlFor="tags">Tags</label>
                 <input
                   className="form-input px-4 py-3 border-2 rounded-lg"
                   name="tags"
@@ -309,8 +320,9 @@ export default function CreatePost(): JSX.Element {
               </div>
               <h1 className="text-2xl">Additional Meta</h1>
               <div>
+                <label htmlFor="key">Attribute</label>
                 <input
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="key"
                   type="text"
                   autoComplete="off"
@@ -328,8 +340,9 @@ export default function CreatePost(): JSX.Element {
                 )}
               </div>
               <div>
+                <label htmlFor="value">Value</label>
                 <input
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="value"
                   type="text"
                   autoComplete="off"
@@ -346,8 +359,9 @@ export default function CreatePost(): JSX.Element {
                 )}
               </div>
               <div>
+                <label htmlFor="content1">Content Meta</label>
                 <input
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="content1"
                   type="text"
                   autoComplete="off"
@@ -366,13 +380,13 @@ export default function CreatePost(): JSX.Element {
             </div>
 
             <div className="mt-12 flex justify-center gap-x-12 font-medium">
-              <button
+              {/* <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
                 name="status"
                 value="DRAFT"
               >
                 Draft
-              </button>
+              </button> */}
 
               <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"

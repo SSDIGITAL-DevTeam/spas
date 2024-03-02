@@ -15,7 +15,7 @@ class EventController extends Controller
     public function index()
     {
         return EventResource::collection(
-            Event::latest()->get()
+            Event::latest()->paginate(10)
         );
     }
 

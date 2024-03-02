@@ -43,7 +43,12 @@ export default function EditPost(): JSX.Element {
   );
 
   // fetch posts
-  const { categories, isCategoryLoading } = useCategory();
+  const { categories, isCategoryLoading, fetchCategory } = useCategory();
+
+  useEffect(() => {
+    fetchCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const cover = singlePost.cover as Cover;
 
@@ -176,8 +181,9 @@ export default function EditPost(): JSX.Element {
             <div className="font-montserrat flex flex-col gap-y-8">
               {/* title */}
               <div>
+                <label htmlFor="title">Title</label>
                 <input
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="title"
                   type="text"
                   placeholder="Title..."
@@ -192,7 +198,8 @@ export default function EditPost(): JSX.Element {
               </div>
 
               {/* blog content */}
-              <div className="min-h-[380px] overflow-hidden">
+              <div className="min-h-[380px] overflow-hidden space-y-2">
+                <label htmlFor="content">Content</label>
                 {/* CK Editor */}
                 <TinyMceEditor
                   textareaName="content"
@@ -207,7 +214,8 @@ export default function EditPost(): JSX.Element {
               </div>
 
               <div>
-                <div className="flex">
+                <label htmlFor="categories">Categories</label>
+                <div className="flex mt-2">
                   <div className="flex items-center">
                     {categories?.data.map(
                       (category: Category, index: number) => (
@@ -289,6 +297,7 @@ export default function EditPost(): JSX.Element {
 
               {/* tags */}
               <div className="flex flex-col gap-y-4">
+                <label htmlFor="tags">Tags</label>
                 <input
                   className="form-input block w-full px-4 py-3 border-2 rounded-lg"
                   name="tags"
@@ -315,13 +324,13 @@ export default function EditPost(): JSX.Element {
             </div>
 
             <div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
-              <button
+              {/* <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
                 name="status"
                 value="DRAFT"
               >
                 Draft
-              </button>
+              </button> */}
 
               <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"

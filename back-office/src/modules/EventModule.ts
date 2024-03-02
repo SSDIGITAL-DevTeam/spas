@@ -14,9 +14,11 @@ export default class EventModule {
         }
     }
 
-    public async all(): Promise<DataWithPagination<Event>> {
+    public async all(page: string = '1'): Promise<DataWithPagination<Event>> {
         try {
-            return await ApiModule.makeRequestTo<DataWithPagination<Event>>(`${this.url}`).with({
+            return await ApiModule.makeRequestTo<DataWithPagination<Event>>(
+                `${this.url}?page=${page}`,
+            ).with({
                 headers: this.defaultHeaders,
             })
         } catch (err: any) {
