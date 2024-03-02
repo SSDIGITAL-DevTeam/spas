@@ -116,7 +116,7 @@ export default function Contact(): JSX.Element {
                         type="button"
                         value="Submit Now"
                         required
-                        className="btn-1 w-full capitalize hover:bg-primary transition-colors ease-out"
+                        className="btn-1 w-full hover:bg-primary transition-colors ease-out"
                       />
                     </form>
                   </div>
