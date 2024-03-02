@@ -10,21 +10,18 @@ export function useEvent() {
     const [isEventLoading, setIsEventLoading] = useState<boolean>(false)
     const [EventError, setEventErrors] = useState<ApiError>({} as ApiError)
 
-    useEffect(() => {
-      const fetchEvent = async(): Promise<void> => {
-        setIsEventLoading(true)
-        
-       try {
-            const res = await new EventModule().all()
-            setEvents(res)
-        } catch (error) {
-            setEventErrors(error as ApiError)
-        } finally {
-            setIsEventLoading(false)
-        }
+    const fetchEvent = async(page?: string): Promise<void> => {
+      setIsEventLoading(true)
+      
+      try {
+          const res = await new EventModule().all(page)
+          setEvents(res)
+      } catch (error) {
+          setEventErrors(error as ApiError)
+      } finally {
+          setIsEventLoading(false)
       }
-      fetchEvent()
-    }, [])
+    }
 
-    return { events, isEventLoading, EventError }
+    return { events, isEventLoading, EventError, fetchEvent }
 }

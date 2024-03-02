@@ -138,7 +138,7 @@ export default function Contact(): JSX.Element {
                         <a
                           className="ml-2"
                           target="_blank"
-                          href="https://wa.me/+6588002950"
+                          href="tel:+6588002950"
                         >
                           +65 8800 2950
                         </a>
@@ -146,7 +146,7 @@ export default function Contact(): JSX.Element {
 
                       <li className="flex">
                         <IoLocationOutline className="w-6 h-6 mt-0.5" />
-                        <a className="ml-2" href="#">
+                        <a className="ml-2">
                           360 Orchard Road 07-05 International Building,
                           Singapore
                         </a>

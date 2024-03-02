@@ -14,9 +14,11 @@ export default class PageModule {
         }
     }
 
-    public async all(): Promise<DataWithPagination<Page>> {
+    public async all(page1: string = '1'): Promise<DataWithPagination<Page>> {
         try {
-            return await ApiModule.makeRequestTo<DataWithPagination<Page>>(`${this.url}`).with({
+            return await ApiModule.makeRequestTo<DataWithPagination<Page>>(
+                `${this.url}?page=${page1}`,
+            ).with({
                 headers: this.defaultHeaders,
             })
         } catch (err: any) {

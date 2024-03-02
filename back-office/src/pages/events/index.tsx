@@ -1,15 +1,7 @@
-import {
-  Dispatch,
-  JSX,
-  SetStateAction,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { JSX, useEffect, useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
-import { eventReducer } from "@/reducers/eventReducer";
 import Loading from "@/components/partials/Loading";
 import AssetView from "@/assets/svg/asset-view.svg";
 import AssetEdit from "@/assets/svg/asset-edit.svg";
@@ -19,7 +11,7 @@ import Modal from "@/components/partials/Modal";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useEvent } from "@/hooks/useEvent";
-import { DataWithPagination, Event } from "@/@types";
+import { DataWithPagination, Event, Pagination } from "@/@types";
 import EventModule from "@/modules/EventModule";
 
 export default function Events(): JSX.Element {
@@ -32,13 +24,7 @@ export default function Events(): JSX.Element {
   const router = useRouter();
 
   // fetch posts
-  const { events, isEventLoading } = useEvent();
-
-  // reducers ONPROGRESS
-  const [state, dispatch] = useReducer(
-    eventReducer,
-    {} as DataWithPagination<Event>
-  );
+  const { events, isEventLoading, fetchEvent } = useEvent();
 
   // handle delete blog
   const handleDeleteBlog = async (id: number): Promise<void> => {
@@ -64,6 +50,27 @@ export default function Events(): JSX.Element {
     }
   };
 
+  useEffect(() => {
+    fetchEvent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function getLastPageNumber(page: string | null | undefined) {
+    if (page === null || page === undefined) {
+      return 1; // nilai default jika page adalah null atau undefined
+    }
+
+    try {
+      const url = new URL(page);
+      const params = new URLSearchParams(url.search);
+      const pageNumbers = params.getAll("page").map(Number);
+      return Math.max(...pageNumbers, 1);
+    } catch (error) {
+      console.error("Error parsing URL:", error);
+      return 1;
+    }
+  }
+
   return (
     <>
       <Head>
@@ -88,7 +95,7 @@ export default function Events(): JSX.Element {
 
         {/* TODO */}
         <section>
-          {isEventLoading && !events?.data && <Loading />}
+          {!events?.data}
 
           <div className="grid gap-4 md:gap-8">
             {events?.data?.length === 0 && (
@@ -119,6 +126,9 @@ export default function Events(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td colSpan={5}>{isEventLoading && <Loading />}</td>
+                  </tr>
                   {events?.data.map((event: Event, index: number) => (
                     <tr
                       className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
@@ -153,6 +163,53 @@ export default function Events(): JSX.Element {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-12 flex flex-col md:flex-row w-full gap-x-2 justify-between items-center gap-y-4">
+              <div>
+                <span className="font-normal text-sm">
+                  Showing {events?.meta.from} to {events?.meta.to} of{" "}
+                  {events?.meta.total} entries
+                </span>
+              </div>
+              <div className="flex gap-x-2">
+                {events?.meta?.links.map(
+                  (pagination: Pagination, index: number) => {
+                    const lastPageNumber = getLastPageNumber(pagination.url);
+                    return (
+                      <div
+                        key={index}
+                        className={`${
+                          pagination.active
+                            ? "bg-primary text-white"
+                            : "bg-tertiary text-white hover:bg-primary"
+                        } ${
+                          !pagination.url
+                            ? "bg-tertiary/40 text-black/30 cursor-not-allowed"
+                            : ""
+                        } flex gap-x-2 rounded-lg px-3 py-1.5 text-sm`}
+                      >
+                        <Link
+                          onClick={() => {
+                            fetchEvent(lastPageNumber.toString());
+                          }}
+                          href={`?page=${lastPageNumber}`}
+                          className={`${
+                            !pagination.url
+                              ? "pointer-events-none cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: pagination.label,
+                            }}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </div>
           </div>
         </section>

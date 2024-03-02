@@ -1,4 +1,4 @@
-import { JSX, useReducer, useState } from "react";
+import { JSX, useEffect, useReducer, useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import Loading from "@/components/partials/Loading";
 import AssetEdit from "@/assets/svg/asset-edit.svg";
 import { useRouter } from "next/router";
 import { usePage } from "@/hooks/usePage";
-import { DataWithPagination, Page } from "@/@types";
+import { DataWithPagination, Page, Pagination } from "@/@types";
 
 export default function Pages(): JSX.Element {
   // states
@@ -18,13 +18,28 @@ export default function Pages(): JSX.Element {
   const router = useRouter();
 
   // fetch posts
-  const { pages, isPageLoading } = usePage();
+  const { pages, isPageLoading, fetchPage } = usePage();
 
-  // reducers ONPROGRESS
-  const [state, dispatch] = useReducer(
-    pageReducer,
-    {} as DataWithPagination<Page>
-  );
+  useEffect(() => {
+    fetchPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function getLastPageNumber(page: string | null | undefined) {
+    if (page === null || page === undefined) {
+      return 1; // nilai default jika page adalah null atau undefined
+    }
+
+    try {
+      const url = new URL(page);
+      const params = new URLSearchParams(url.search);
+      const pageNumbers = params.getAll("page").map(Number);
+      return Math.max(...pageNumbers, 1);
+    } catch (error) {
+      console.error("Error parsing URL:", error);
+      return 1;
+    }
+  }
 
   return (
     <>
@@ -50,7 +65,7 @@ export default function Pages(): JSX.Element {
 
         {/* TODO */}
         <section>
-          {isPageLoading && !pages?.data && <Loading />}
+          {!pages?.data}
 
           <div className="grid gap-4 md:gap-8">
             {pages?.data?.length === 0 && (
@@ -75,6 +90,9 @@ export default function Pages(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td colSpan={3}>{isPageLoading && <Loading />}</td>
+                  </tr>
                   {pages?.data.map((page: Page, index: number) => (
                     <tr
                       className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
@@ -97,6 +115,53 @@ export default function Pages(): JSX.Element {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-12 flex flex-col md:flex-row w-full gap-x-2 justify-between items-center gap-y-4">
+              <div>
+                <span className="font-normal text-sm">
+                  Showing {pages?.meta.from} to {pages?.meta.to} of{" "}
+                  {pages?.meta.total} entries
+                </span>
+              </div>
+              <div className="flex gap-x-2">
+                {pages?.meta?.links.map(
+                  (pagination: Pagination, index: number) => {
+                    const lastPageNumber = getLastPageNumber(pagination.url);
+                    return (
+                      <div
+                        key={index}
+                        className={`${
+                          pagination.active
+                            ? "bg-primary text-white"
+                            : "bg-tertiary text-white hover:bg-primary"
+                        } ${
+                          !pagination.url
+                            ? "bg-tertiary/40 text-black/30 cursor-not-allowed"
+                            : ""
+                        } flex gap-x-2 rounded-lg px-3 py-1.5 text-sm`}
+                      >
+                        <Link
+                          onClick={() => {
+                            fetchPage(lastPageNumber.toString());
+                          }}
+                          href={`?page=${lastPageNumber}`}
+                          className={`${
+                            !pagination.url
+                              ? "pointer-events-none cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: pagination.label,
+                            }}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </div>
           </div>
         </section>

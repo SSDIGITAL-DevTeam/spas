@@ -1,15 +1,14 @@
-import { JSX, useReducer, useState } from "react";
+import { JSX, useEffect, useReducer, useState } from "react";
 
 import Image from "next/image";
 import Head from "next/head";
-import { Cover, DataWithPagination, Post } from "@/@types";
+import { Cover, DataWithPagination, Post, Pagination } from "@/@types";
 import { usePosts } from "@/hooks/usePosts";
 import Loading from "@/components/partials/Loading";
 import AssetView from "@/assets/svg/asset-view.svg";
 import AssetEdit from "@/assets/svg/asset-edit.svg";
 import AssetDelete from "@/assets/svg/asset-delete.svg";
 import Link from "next/link";
-import { postReducer } from "@/reducers/postReducer";
 import PostModule from "@/modules/PostModule";
 import ApiError from "@/errors/ApiError";
 import toast from "react-hot-toast";
@@ -26,13 +25,8 @@ export default function Posts(): JSX.Element {
   const router = useRouter();
 
   // fetch posts
-  const { posts, isPostsLoading } = usePosts();
-
-  // reducers ONPROGRESS
-  const [state, dispatch] = useReducer(
-    postReducer,
-    {} as DataWithPagination<Post>
-  );
+  const { posts, isPostsLoading, fetchPosts } = usePosts();
+  // console.log(posts);
 
   // handle delete blog
   const handleDeleteBlog = async (id: number): Promise<void> => {
@@ -57,6 +51,27 @@ export default function Posts(): JSX.Element {
       router.reload();
     }
   };
+
+  useEffect(() => {
+    fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function getLastPageNumber(page: string | null | undefined) {
+    if (page === null || page === undefined) {
+      return 1; // nilai default jika page adalah null atau undefined
+    }
+
+    try {
+      const url = new URL(page);
+      const params = new URLSearchParams(url.search);
+      const pageNumbers = params.getAll("page").map(Number);
+      return Math.max(...pageNumbers, 1);
+    } catch (error) {
+      console.error("Error parsing URL:", error);
+      return 1;
+    }
+  }
 
   return (
     <>
@@ -92,7 +107,7 @@ export default function Posts(): JSX.Element {
             </button>
           </div>
 
-          {isPostsLoading && !posts?.data && <Loading />}
+          {!posts?.data}
 
           <div className="grid gap-4 md:gap-8">
             {posts?.data?.length === 0 && (
@@ -114,10 +129,15 @@ export default function Posts(): JSX.Element {
                     <th scope="col" className="px-6 py-3">
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-3"></th>
+                    <th scope="col" className="px-6 py-3">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td colSpan={4}>{isPostsLoading && <Loading />}</td>
+                  </tr>
                   {posts?.data.map((post: Post) => (
                     <tr
                       className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
@@ -167,6 +187,53 @@ export default function Posts(): JSX.Element {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-12 flex flex-col md:flex-row w-full gap-x-2 justify-between items-center gap-y-4">
+              <div>
+                <span className="font-normal text-sm">
+                  Showing {posts?.meta.from} to {posts?.meta.to} of{" "}
+                  {posts?.meta.total} entries
+                </span>
+              </div>
+              <div className="flex gap-x-2">
+                {posts?.meta?.links.map(
+                  (pagination: Pagination, index: number) => {
+                    const lastPageNumber = getLastPageNumber(pagination.url);
+                    return (
+                      <div
+                        key={index}
+                        className={`${
+                          pagination.active
+                            ? "bg-primary text-white"
+                            : "bg-tertiary text-white hover:bg-primary"
+                        } ${
+                          !pagination.url
+                            ? "bg-tertiary/40 text-black/30 cursor-not-allowed"
+                            : ""
+                        } flex gap-x-2 rounded-lg px-3 py-1.5 text-sm`}
+                      >
+                        <Link
+                          onClick={() => {
+                            fetchPosts(lastPageNumber.toString());
+                          }}
+                          href={`?page=${lastPageNumber}`}
+                          className={`${
+                            !pagination.url
+                              ? "pointer-events-none cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: pagination.label,
+                            }}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </div>
           </div>
         </section>

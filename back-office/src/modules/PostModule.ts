@@ -14,10 +14,10 @@ export default class PostModule {
         }
     }
 
-    public async all(page: number = 1): Promise<DataWithPagination<Post>> {
+public async all(page: string = '1'): Promise<DataWithPagination<Post>> {
         try {
             return await ApiModule.makeRequestTo<DataWithPagination<Post>>(
-                `${this.url}?page=${page}&status=${status.toString()}`,
+                `${this.url}?page=${page}`,
             ).with({
                 headers: this.defaultHeaders,
             })
