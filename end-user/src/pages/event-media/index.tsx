@@ -274,7 +274,7 @@ export default function EventMedia(): JSX.Element {
                 </div>
               </div>
 
-              <div className="flex justify-center mt-10">
+              <div className="flex flex-col lg:flex-row justify-center lg:mt-10">
                 <button onClick={loadMore}>
                   <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
                     Load more
