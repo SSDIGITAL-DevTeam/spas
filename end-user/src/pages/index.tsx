@@ -301,7 +301,7 @@ export default function Home(): JSX.Element {
                   the Beauty, Spa, and Wellness community.
                 </p>
               </div>
-              <div className="flex justify-center">
+              <div className="flex flex-col lg:flex-row justify-center">
                 <Link href={"/membership"}>
                   <span className="btn-1 block capitalize w-full text-center lg:text-left lg:w-max hover:bg-primary transition-colors ease-out">
                     See Membership Details
@@ -384,10 +384,10 @@ export default function Home(): JSX.Element {
                 </div>
               </div>
 
-              <div className="flex justify-center mt-10">
+              <div className="flex flex-col lg:flex-row justify-center lg:mt-10">
                 <Link href={"/event-media"}>
                   <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                    Readmore
+                    Read more
                   </span>
                 </Link>
               </div>

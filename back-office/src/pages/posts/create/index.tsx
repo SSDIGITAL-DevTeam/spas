@@ -205,7 +205,10 @@ export default function CreatePost(): JSX.Element {
               <div className="min-h-[380px] overflow-hidden space-y-2">
                 <label htmlFor="content">Content</label>
                 {/* CK Editor */}
-                <TinyMceEditor textareaName="content" apiKey={apikey} />
+                <TinyMceEditor
+                  textareaName="content"
+                  apiKey={"hm18uevth18hvt5w813bfoup4hmy5wlosl1swwdtfjyb5g4u"}
+                />
 
                 {validationErrors?.errors?.content && (
                   <p className="text-ligh text-[#D81222] mt-2">

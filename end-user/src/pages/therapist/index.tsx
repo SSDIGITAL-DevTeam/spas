@@ -322,17 +322,15 @@ export default function Therapist(): JSX.Element {
                 </h2>
               </header>
 
-              <div className="flex flex-col">
-                <div className="flex justify-center">
-                  <Link
-                    href={"/SPAS Membership Application Form.pdf"}
-                    download="SPAS Membership Application Form"
-                  >
-                    <span className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out">
-                      DOWNLOAD APPLICATION FORM
-                    </span>
-                  </Link>
-                </div>
+              <div className="flex flex-col lg:flex-row justify-center">
+                <Link
+                  href={"/SPAS Membership Application Form.pdf"}
+                  download="SPAS Membership Application Form"
+                >
+                  <span className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out">
+                    DOWNLOAD APPLICATION FORM
+                  </span>
+                </Link>
               </div>
             </div>
           </div>
