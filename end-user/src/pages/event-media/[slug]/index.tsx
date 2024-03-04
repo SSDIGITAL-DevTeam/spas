@@ -7,29 +7,29 @@ import { Post, Tag, Category } from "@/@types";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import moment from 'moment';
+import moment from "moment";
 
 export const getServerSideProps = async (
-	context: GetServerSidePropsContext
+  context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ slug: string }>> => {
-	const slug = context.query.slug as string;
+  const slug = context.query.slug as string;
 
-	return {
-		props: {
-			slug,
-		},
-	};
+  return {
+    props: {
+      slug,
+    },
+  };
 };
 
 export default function BlogDetail({ slug }: { slug: string }): JSX.Element {
-	// fetch single post with custom hooks
-	const { singlePost, isLoading } = useSinglePost(slug);
+  // fetch single post with custom hooks
+  const { singlePost, isLoading } = useSinglePost(slug);
 
-	// console.log(singlePost.title);
+  // console.log(singlePost.title);
 
-	// fetch recent post with custom hooks
-	const { posts } = usePosts();
-	return (
+  // fetch recent post with custom hooks
+  const { posts } = usePosts();
+  return (
     <>
       <Head>
         <title>{`SPAS | ${singlePost.title}`}</title>

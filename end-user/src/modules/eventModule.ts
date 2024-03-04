@@ -5,7 +5,7 @@ export const eventModule = {
         return apiModule(`/end-user/events`)
     },
 
-    findOne: (id: string) => {
+    findOne: (id: number) => {
         return apiModule(`/end-user/events/${id}`)
     },
 }

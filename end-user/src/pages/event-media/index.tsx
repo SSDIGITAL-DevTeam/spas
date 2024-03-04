@@ -43,10 +43,13 @@ export default function EventMedia(): JSX.Element {
   }, []);
 
   const parseEvents = events?.data?.map((event: Event, index: number) => ({
+    id: event.id,
     title: event.name,
     start: event.start_date,
     end: event.end_date,
   }));
+
+  // console.log(parseEvents);
 
   const loadMore = () => {
     setPostsPerPage(postsPerPage + 3);
@@ -302,7 +305,11 @@ export default function EventMedia(): JSX.Element {
                     headerToolbar={{
                       right: "prev,next",
                     }}
-                    events={parseEvents}
+                    initialView="dayGridMonth"
+                    events={parseEvents} // Panggil fungsi parseEvents
+                    eventClick={(event) => {
+                      window.location.href = `/event-media/events/${event.event.id}`; // Menggunakan event.event.id
+                    }}
                   />
                 </div>
               </div>
