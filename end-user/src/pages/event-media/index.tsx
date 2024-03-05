@@ -18,6 +18,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { Post, Event, Tag, Category } from "@/@types";
 import { useEvents } from "@/hooks/useEvents";
 import { useCategory } from "@/hooks/useCategory";
+import EventModals from "@/components/modals/EventModals";
 
 register();
 
@@ -28,6 +29,9 @@ export default function EventMedia(): JSX.Element {
   const [categoryPost, setCategoryPost] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
   const { categories } = useCategory();
+
+  const [isOpenEvent, setIsOpenEvent] = useState<boolean>(false);
+  const [selectEventId, setSelectEventId] = useState<number | null>(null);
 
   const getCategoryPost = async () => {
     const response = await axios.get(
@@ -43,7 +47,7 @@ export default function EventMedia(): JSX.Element {
   }, []);
 
   const parseEvents = events?.data?.map((event: Event, index: number) => ({
-    id: event.id,
+    id: event.id.toString(),
     title: event.name,
     start: event.start_date,
     end: event.end_date,
@@ -307,8 +311,13 @@ export default function EventMedia(): JSX.Element {
                     }}
                     initialView="dayGridMonth"
                     events={parseEvents} // Panggil fungsi parseEvents
+                    // eventClick={(event) => {
+                    //   window.location.href = `/event-media/events/${event.event.id}`; // Menggunakan event.event.id
+                    // }}
                     eventClick={(event) => {
-                      window.location.href = `/event-media/events/${event.event.id}`; // Menggunakan event.event.id
+                      const eventId = parseInt(event.event.id);
+                      setSelectEventId(eventId);
+                      setIsOpenEvent((prevState) => !prevState);
                     }}
                   />
                 </div>
@@ -316,6 +325,11 @@ export default function EventMedia(): JSX.Element {
             </div>
           </div>
         </section>
+        <EventModals
+          isOpen={isOpenEvent}
+          setIsOpen={setIsOpenEvent}
+          eventId={selectEventId}
+        />
       </main>
     </>
   );
