@@ -1,12 +1,79 @@
 /* eslint-disable @next/next/no-img-element */
-import { JSX } from "react";
+import { FormEvent, JSX, useState } from "react";
 import Head from "next/head";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaPhone } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
+import axios, { AxiosError } from "axios";
+import FormSuccess from "@/components/modals/FormSucces";
+
+const topics = [
+  {
+    id: 0,
+    name: "Membership",
+  },
+  {
+    id: 1,
+    name: "How To Join?",
+  },
+  {
+    id: 2,
+    name: "Where do I register?",
+  },
+  {
+    id: 3,
+    name: "Is there any requirements?",
+  },
+  {
+    id: "4",
+    name: "Any consultations that should I get?",
+  },
+];
+
+type ErrorResponse = {
+  errors: {
+    topic: string;
+    fullname: string;
+    email: string;
+    message: string;
+  };
+};
 
 export default function Contact(): JSX.Element {
+  const [selectedTopic, setSelectedTopic] = useState<string>("Membership");
+  const [fullname, setFullname] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [errMsg, setErrMsg] = useState<ErrorResponse>({} as ErrorResponse);
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  const submitForm = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/end-user/contacts`, {
+        topic: selectedTopic,
+        fullname: fullname,
+        email: email,
+        message: message,
+      });
+
+      setTimeout(() => {
+        setOpenSuccess(true);
+      }, 1000);
+
+      setTimeout(() => {
+        setOpenSuccess(false);
+      }, 3800);
+
+      const formReset = e.target as HTMLFormElement;
+      formReset.reset();
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMsg(errorMessage.response?.data as ErrorResponse);
+    }
+  };
   return (
     <>
       <Head>
@@ -60,26 +127,24 @@ export default function Contact(): JSX.Element {
                 <p className="text-secondary font-semibold">Tell Us !</p>
 
                 <h2 className="text-2xl text-black font-bold">
-                  I want to ask about...
+                  I want to ask about topic...
                 </h2>
               </header>
 
               <div className="flex flex-col md:flex-row py-8 md:w-3/5 gap-6 flex-wrap">
-                <button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
-                  Membership
-                </button>
-                <button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
-                  How To Join ?
-                </button>
-                <button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
-                  Where do I register ?
-                </button>
-                <button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
-                  Is there any requirements ?
-                </button>
-                <button className="p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white">
-                  Any consultations that should I get ?
-                </button>
+                {topics.map((topic) => (
+                  <button
+                    key={topic.id}
+                    onClick={() => setSelectedTopic(topic.name)}
+                    className={`p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white ${
+                      topic.name == selectedTopic
+                        ? "bg-[#1975FF] border-[#1975FF] text-white"
+                        : ""
+                    }`}
+                  >
+                    {topic.name}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -95,29 +160,64 @@ export default function Contact(): JSX.Element {
                     Contact Information
                   </h2>
                   <div className="pt-10">
-                    <form className="grid gap-y-6">
-                      <input
-                        type="text"
-                        placeholder="Full Name *"
-                        required
-                        className="border-2 p-2.5 rounded-lg w-full"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email Address *"
-                        required
-                        className="border-2 p-2.5 rounded-lg w-full"
-                      />
-                      <textarea
-                        className="border-2 p-2.5 rounded-lg w-full min-h-40"
-                        placeholder="Tell us more about your concern *"
-                      ></textarea>
-                      <input
-                        type="button"
-                        value="Submit Now"
-                        required
-                        className="btn-1 w-full hover:bg-primary transition-colors ease-out"
-                      />
+                    <form onSubmit={submitForm} className="grid gap-y-4">
+                      <div className="relative w-full">
+                        {errMsg?.errors?.fullname && (
+                          <p className="text-sm text-red-500">
+                            {errMsg.errors.fullname[0]}
+                          </p>
+                        )}
+                        <input
+                          type="text"
+                          placeholder="Full Name"
+                          onChange={(e) => setFullname(e.target.value)}
+                          name="fullname"
+                          className="border-2 p-2.5 rounded-lg w-full"
+                        />
+                      </div>
+
+                      <div className="relative w-full">
+                        {errMsg?.errors?.email && (
+                          <p className="text-sm text-red-500">
+                            {errMsg.errors.email[0]}
+                          </p>
+                        )}
+                        <input
+                          // type="email"
+                          placeholder="Email Address"
+                          onChange={(e) => setEmail(e.target.value)}
+                          name="email"
+                          className="border-2 p-2.5 rounded-lg w-full"
+                        />
+                      </div>
+
+                      <div className="relative w-full">
+                        {errMsg?.errors?.message && (
+                          <p className="text-sm text-red-500 ">
+                            {errMsg.errors.message[0]}
+                          </p>
+                        )}
+
+                        <textarea
+                          className="border-2 p-2.5 rounded-lg w-full min-h-40"
+                          onChange={(e) => setMessage(e.target.value)}
+                          name="message"
+                          placeholder="Tell us more about your concern *"
+                        ></textarea>
+                      </div>
+                      <div className="relative w-full space-y-2">
+                        {errMsg?.errors?.topic && (
+                          <p className="text-sm text-red-500 text-center ">
+                            {errMsg.errors.topic[0]}
+                          </p>
+                        )}
+                        <button
+                          type="submit"
+                          className="btn-1 w-full hover:bg-primary transition-colors ease-out"
+                        >
+                          Submit Now
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </div>
@@ -164,6 +264,10 @@ export default function Contact(): JSX.Element {
             </div>
           </div>
         </div>
+        <FormSuccess
+          openSuccess={openSuccess}
+          setOpenSuccess={setOpenSuccess}
+        />
 
         {/* KEEP UP TO DATE WITH US */}
         {/* <section className="pb-12 lg:pb-14">
