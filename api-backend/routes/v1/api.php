@@ -39,4 +39,7 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);
     Route::apiResource('events', BackOffice\EventController::class)->only(['index', 'show']);
     Route::apiResource('categories', BackOffice\CategoryController::class)->only(['index', 'show']);
+
+
+    Route::post('contacts', [BackOffice\ContactUsController::class, 'ContactUs'])->name('contacts');
 });
