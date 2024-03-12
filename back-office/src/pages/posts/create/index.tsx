@@ -383,18 +383,18 @@ export default function CreatePost(): JSX.Element {
             </div>
 
             <div className="mt-12 flex justify-center gap-x-12 font-medium">
-              {/* <button
+              <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
                 name="status"
-                value="DRAFT"
+                value="2"
               >
                 Draft
-              </button> */}
+              </button>
 
               <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
                 name="status"
-                value="PUBLISHED"
+                value="4"
               >
                 {isProcessing ? "Publish..." : "Save & Publish"}
               </button>

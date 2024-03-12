@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\BackOffice;
 
+use App\Enums\PostStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Tag;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,13 +18,25 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // $status = $request->input('status');
+
+        $status = PostStatusEnum::tryFrom($request->integer('status', PostStatusEnum::PUBLISHED->value));
+
+        if (!$status) {
+            return new JsonResponse([
+                'status' => false,
+                'message' => 'Invalid post status.',
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         return PostResource::collection(
             Post::with('cover', 'categories', 'tags', 'metas')
+                ->where('status', $status)
                 ->latest()
-                ->filterByCategory(request()->input('search'))
-                ->paginate(10)
+                ->filterByCategory($request->input('search'))
+                ->paginate(3)
         );
     }
 

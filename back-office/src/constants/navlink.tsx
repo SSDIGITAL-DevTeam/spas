@@ -5,35 +5,35 @@ import AssetPages from "@/assets/svg/pages.svg";
 import AssetSources from "@/assets/svg/sources.svg";
 
 export type NavLink = {
-	name: string;
-	url: string;
-	icon: StaticImageData;
+  name: string;
+  url: string;
+  icon: StaticImageData;
 };
 
 export const navLinks: NavLink[] = [
-	{
-		name: "Dashboard",
-		url: "/",
-		icon: AssetDashboard,
-	},
-	{
-		name: "Posts",
-		url: "/posts",
-		icon: AssetPosts,
-	},
-	{
-		name: "Category",
-		url: "/categories",
-		icon: AssetSources,
-	},
-	{
-		name: "Events",
-		url: "/events",
-		icon: AssetSources,
-	},
-	{
-		name: "Pages",
-		url: "/pages",
-		icon: AssetPages,
-	},
+  {
+    name: "Dashboard",
+    url: "/",
+    icon: AssetDashboard,
+  },
+  {
+    name: "Posts",
+    url: "/posts?status=4",
+    icon: AssetPosts,
+  },
+  {
+    name: "Category",
+    url: "/categories",
+    icon: AssetSources,
+  },
+  {
+    name: "Events",
+    url: "/events",
+    icon: AssetSources,
+  },
+  {
+    name: "Pages",
+    url: "/pages",
+    icon: AssetPages,
+  },
 ];

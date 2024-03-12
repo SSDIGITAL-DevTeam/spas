@@ -129,8 +129,8 @@ export default function Contact(): JSX.Element {
                     <ul className="flex flex-col gap-y-2 text-secondary">
                       <li className="flex">
                         <MdOutlineMailOutline className="w-5 h-5 mt-0.5" />
-                        <a className="ml-2" href="mailto:hello@spas.sg">
-                          hello@spas.sg
+                        <a className="ml-2" href="mailto:hello@spas.com.sg">
+                          hello@spas.com.sg
                         </a>
                       </li>
                       <li className="flex">
@@ -147,15 +147,15 @@ export default function Contact(): JSX.Element {
                       <li className="flex">
                         <IoLocationOutline className="w-6 h-6 mt-0.5" />
                         <a className="ml-2">
-                          360 Orchard Road 07-05 International Building,
-                          Singapore
+                          1100 Lower Delta Rd #02-02B EPL Building
+                          Singapore 169206
                         </a>
                       </li>
                     </ul>
                   </div>
                   <div>
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7817558568618!2d103.82842737406979!3d1.3060765617168588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da198d053a8b83%3A0xbda05168a851fede!2s360%20Orchard%20Rd%2C%20%2307%2005%20International%20Building%2C%20Singapore%20238869!5e0!3m2!1sen!2sid!4v1704726074675!5m2!1sen!2sid"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8225881637272!2d103.81935817406989!3d1.2800925617979801!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da197d54065a13%3A0xceac47e82adb29de!2sEpl%20Building!5e0!3m2!1sid!2sid!4v1710209553304!5m2!1sid!2sid"
                       className="w-full min-h-80"
                     ></iframe>
                   </div>
@@ -166,7 +166,7 @@ export default function Contact(): JSX.Element {
         </div>
 
         {/* KEEP UP TO DATE WITH US */}
-        <section className="pb-12 lg:pb-14">
+        {/* <section className="pb-12 lg:pb-14">
           <div className="container">
             <div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
               <div className="space-y-3 p-9">
@@ -205,7 +205,7 @@ export default function Contact(): JSX.Element {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
     </>
   );

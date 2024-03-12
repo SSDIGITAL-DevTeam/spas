@@ -1,6 +1,7 @@
 import ApiError from '@/errors/ApiError'
 import { DataWithPagination, Post } from '@/@types'
 import ApiModule from '@/modules/ApiModule'
+import { PostStatusEnum } from '@/enums'
 
 export default class PostModule {
     private url: string = '/posts'
@@ -14,10 +15,13 @@ export default class PostModule {
         }
     }
 
-public async all(page: string = '1'): Promise<DataWithPagination<Post>> {
+    public async all(
+        page: string = '1', 
+        status: PostStatusEnum = PostStatusEnum.PUBLISHED
+    ): Promise<DataWithPagination<Post>> {
         try {
             return await ApiModule.makeRequestTo<DataWithPagination<Post>>(
-                `${this.url}?page=${page}`,
+                `${this.url}?page=${page}&status=${status.toString()}`,
             ).with({
                 headers: this.defaultHeaders,
             })
