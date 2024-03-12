@@ -13,6 +13,10 @@ import img4 from "@/assets/homepage-assets/rectangle-148.webp";
 import moment from "moment";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Link from "next/link";
+import { FaChartLine } from "react-icons/fa6";
+import { RiVoiceRecognitionLine } from "react-icons/ri";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { IoIosPhonePortrait } from "react-icons/io";
 
 import { usePosts } from "@/hooks/usePosts";
 import { Post, Event, Tag, Category } from "@/@types";
@@ -90,7 +94,7 @@ export default function Home(): JSX.Element {
                 </h2>
 
                 <p className="mx-auto md:w-3/4 text-secondary">
-                  At SPAs, we&prime;re more than just a network - we&prime;re a
+                  At SPAS, we&prime;re more than just a network - we&prime;re a
                   community of passionate professionals shaping the future of
                   Beauty, Spa, and Wellness in Singapore.
                 </p>
@@ -103,11 +107,9 @@ export default function Home(): JSX.Element {
 
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-2 mt-5">
                 <div>
-                  <img
-                    className="w-md rounded-lg"
-                    src={Ficon1.src}
-                    alt="Ficon1"
-                  />
+                  <div className="bg-[#F0F6FF] w-max px-3 rounded-xl">
+                    <FaRegCheckCircle className="h-10 w-5" />
+                  </div>
                   <div className="mt-5 space-y-3">
                     <h2 className="font-semibold">Fostering Collaboration</h2>
                     <p className="text-secondary text-justify">
@@ -120,11 +122,9 @@ export default function Home(): JSX.Element {
                   </div>
                 </div>
                 <div>
-                  <img
-                    className="w-md rounded-lg"
-                    src={Ficon3.src}
-                    alt="Ficon3"
-                  />
+                  <div className="bg-[#F0F6FF] w-max px-3 rounded-xl">
+                    <FaChartLine className="h-10 w-5" />
+                  </div>
                   <div className="mt-5 space-y-3">
                     <h2 className="font-semibold">Empowering Growth</h2>
                     <p className="text-secondary text-justify">
@@ -137,11 +137,9 @@ export default function Home(): JSX.Element {
                   </div>
                 </div>
                 <div>
-                  <img
-                    className="w-md rounded-lg"
-                    src={Ficon2.src}
-                    alt="Ficon2"
-                  />
+                  <div className="bg-[#F0F6FF] w-max px-3 rounded-xl">
+                    <IoIosPhonePortrait className="h-10 w-6" />
+                  </div>
                   <div className="mt-5 space-y-3">
                     <h2 className="font-semibold">Enabling Innovation</h2>
                     <p className="text-secondary text-justify">
@@ -153,15 +151,13 @@ export default function Home(): JSX.Element {
                   </div>
                 </div>
                 <div>
-                  <img
-                    className="w-md rounded-lg"
-                    src={Ficon4.src}
-                    alt="Ficon4"
-                  />
+                  <div className="bg-[#F0F6FF] w-max px-3 rounded-xl">
+                    <RiVoiceRecognitionLine className="h-10 w-6" />
+                  </div>
                   <div className="mt-5 space-y-3">
                     <h2 className="font-semibold">Give Recognition</h2>
                     <p className="text-secondary text-justify">
-                      SPAs is a platform where Singaporean therapists find
+                      SPAS is a platform where Singaporean therapists find
                       recognition and support by validating their crucial role
                       in enhancing the well-being of our community.
                     </p>

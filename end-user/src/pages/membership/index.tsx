@@ -54,7 +54,7 @@ export default function Membership(): JSX.Element {
               <h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
                 {/* Elevate{" "} */}
                 <span className="text-black">
-                  Enjoy Benefits by Becoming the SPAS Members
+                  Get connnected with the SPAS community.
                 </span>
               </h1>
             </div>

@@ -59,7 +59,7 @@ export default function AboutUs(): JSX.Element {
               <div className="text-white text-center py-20 md:py-52 space-y-8">
                 <h1 className="text-3xl md:text-5xl font-bold">Who We Are</h1>
                 <p className="md:w-3/5 mx-auto px-4 md:px-0">
-                  At SPAs, we're more than just a network - we're a community of
+                  At SPAS, we're more than just a network - we're a community of
                   passionate professionals shaping the future of Beauty, Spa,
                   and Wellness in Singapore.
                 </p>

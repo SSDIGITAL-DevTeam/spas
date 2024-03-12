@@ -29,7 +29,7 @@ class StorePostRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'unique:posts,slug', 'alpha_dash', 'max:255'],
             'content' => ['required', 'string'],
-            'status' => ['nullable', 'in:PUBLISHED,DRAFT'],
+            'status' => ['nullable', 'in:4,2'],
             'published_at' => ['nullable', 'date'],
             'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'tags' => ['required', 'array'],

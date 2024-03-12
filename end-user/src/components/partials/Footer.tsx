@@ -103,8 +103,8 @@ export default function Footer(): JSX.Element {
                 <ul className="flex flex-col gap-y-2 text-secondary">
                   <li className="flex">
                     <MdOutlineMailOutline className="w-5 h-5 mt-0.5" />
-                    <a className="ml-2" href="mailto:hello@spas.sg">
-                      hello@spas.sg
+                    <a className="ml-2" href="mailto:hello@spas.com.sg">
+                      hello@spas.com.sg
                     </a>
                   </li>
                   <li className="flex">
@@ -117,7 +117,7 @@ export default function Footer(): JSX.Element {
                   <li className="flex">
                     <IoLocationOutline className="w-6 h-6 mt-0.5" />
                     <a className="ml-2">
-                      360 Orchard Road 07-05 International Building, Singapore
+                      1100 Lower Delta Rd #02-02B EPL Building Singapore 169206
                     </a>
                   </li>
                 </ul>

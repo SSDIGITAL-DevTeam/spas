@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { DataWithPagination, Post } from '@/@types'
 import ApiError from '@/errors/ApiError'
 import PostModule from '@/modules/PostModule'
+import { PostStatusEnum } from '@/enums'
 
 export function usePosts() {
     // states
@@ -9,18 +10,19 @@ export function usePosts() {
     const [isPostsLoading, setIsPostsLoading] = useState<boolean>(false)
     const [postsErrors, setPostsErrors] = useState<ApiError>({} as ApiError)
 
-    const fetchPosts = async (page?: string): Promise<void> => {
-        setIsPostsLoading(true)
+    const fetchPosts = async (page?: string, status?: PostStatusEnum): Promise<void> => {
+        setIsPostsLoading(true);
 
         try {
-            const res = await new PostModule().all(page)
-            setPosts(res)
+            const postModule = new PostModule();
+            const res = await postModule.all(page, status);
+            setPosts(res);
         } catch (error) {
-            setPostsErrors(error as ApiError)
+            setPostsErrors(error as ApiError);
         } finally {
-            setIsPostsLoading(false)
+            setIsPostsLoading(false);
         }
-    }
+    };
 
     return { posts, isPostsLoading, postsErrors, fetchPosts }
 }

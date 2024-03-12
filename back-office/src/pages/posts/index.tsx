@@ -14,6 +14,7 @@ import ApiError from "@/errors/ApiError";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import Modal from "@/components/partials/Modal";
+import { PostStatusEnum } from "@/enums";
 
 export default function Posts(): JSX.Element {
   // states
@@ -26,7 +27,6 @@ export default function Posts(): JSX.Element {
 
   // fetch posts
   const { posts, isPostsLoading, fetchPosts } = usePosts();
-  // console.log(posts);
 
   // handle delete blog
   const handleDeleteBlog = async (id: number): Promise<void> => {
@@ -57,6 +57,7 @@ export default function Posts(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // get last data after ?page=
   function getLastPageNumber(page: string | null | undefined) {
     if (page === null || page === undefined) {
       return 1; // nilai default jika page adalah null atau undefined
@@ -97,14 +98,41 @@ export default function Posts(): JSX.Element {
 
         {/* TODO */}
         <section>
-          <div className="mb-8 flex gap-x-4">
-            <button className="btn w-full bg-white px-4 py-2 text-primary md:w-max">
-              Published
-            </button>
-
-            <button className="btn w-full px-4 py-2 text-white md:w-max">
-              Drafted
-            </button>
+          {/* tabs */}
+          <div className="flex gap-x-2 py-4">
+            <Link
+              onClick={() => {
+                fetchPosts(PostStatusEnum.PUBLISHED.toString());
+              }}
+              href={{
+                pathname: "/posts",
+                query: { status: PostStatusEnum.PUBLISHED.toString() },
+              }}
+              className={`${
+                !router.query.status ||
+                router.query.status === PostStatusEnum.PUBLISHED.toString()
+                  ? "bg-[#002966] text-white"
+                  : "hover:bg-gray-200"
+              } c-tab`}
+            >
+              Publish
+            </Link>
+            <Link
+              onClick={() => {
+                fetchPosts(PostStatusEnum.PUBLISHED.toString());
+              }}
+              href={{
+                pathname: "/posts",
+                query: { status: PostStatusEnum.DRAFTED.toString() },
+              }}
+              className={`${
+                router.query.status === PostStatusEnum.DRAFTED.toString()
+                  ? "bg-[#002966] text-white"
+                  : "hover:bg-gray-200"
+              } c-tab`}
+            >
+              Draft
+            </Link>
           </div>
 
           {!posts?.data}
@@ -151,7 +179,11 @@ export default function Posts(): JSX.Element {
                       <td className="text-center p-6">{post.slug}</td>
                       <td className="text-center">
                         <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
-                          {post.status}
+                          {post.status === "4"
+                            ? "PUBLISHED"
+                            : post.status === "2"
+                            ? "DRAFTED"
+                            : "Unknown"}
                         </p>
                       </td>
                       <td>
@@ -216,7 +248,7 @@ export default function Posts(): JSX.Element {
                           onClick={() => {
                             fetchPosts(lastPageNumber.toString());
                           }}
-                          href={`?page=${lastPageNumber}`}
+                          href={`?status=${PostStatusEnum.PUBLISHED.toString()}&page=${lastPageNumber}`}
                           className={`${
                             !pagination.url
                               ? "pointer-events-none cursor-not-allowed"
