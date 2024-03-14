@@ -63,12 +63,15 @@ export default function EventMedia(): JSX.Element {
     <>
       <Head>
         <title>SPAS | Event & Media</title>
-        <link rel="icon" href="/spas-logo.png" />
+        <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
 
-        <meta name="title" content="Event and Media" />
+        <meta name="title" content="SPAS | Event & Media" />
 
-        <meta name="description" content="event and media" />
+        <meta
+          name="description"
+          content="Expand your knowledge with our latest information and upcoming events about beauty, spas, and wellness."
+        />
 
         <meta name="keywords" content="spa, services, event and media" />
 
@@ -76,15 +79,18 @@ export default function EventMedia(): JSX.Element {
 
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
 
-        <meta property="og:title" content="event and media" />
+        <meta property="og:title" content="SPAS | Event & Media" />
 
-        <meta property="og:description" content="Event And Media" />
+        <meta
+          property="og:description"
+          content="Expand your knowledge with our latest information and upcoming events about beauty, spas, and wellness."
+        />
 
         <meta property="og:type" content="website" />
 
         <meta
           property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
+          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
       <main>
