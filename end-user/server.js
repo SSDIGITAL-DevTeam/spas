@@ -5,7 +5,7 @@ const next = require("next");
 
 const dev = process.env.NODE_ENV !== "development";
 const hostname =
-  process.env.NODE_ENV !== "development" ? "localhost" : "api.spas.com.sg";
+  process.env.NODE_ENV !== "development" ? "localhost" : "spas.com.sg";
 const port = process.env.port || 3000;
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port });

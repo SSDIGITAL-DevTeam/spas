@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { JSX } from "react";
+import { FormEvent, JSX, useState } from "react";
 import Head from "next/head";
 import Hero from "@/assets/homepage-assets/hero-homepage.webp";
 import Ficon1 from "@/assets/homepage-assets/featured-icons.svg";
@@ -10,6 +10,7 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
+import AssetSuccess from "@/assets/images/success2.gif";
 import moment from "moment";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Link from "next/link";
@@ -17,23 +18,42 @@ import { FaChartLine } from "react-icons/fa6";
 import { RiVoiceRecognitionLine } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoIosPhonePortrait } from "react-icons/io";
-
+import toast, { Toaster } from "react-hot-toast";
 import { usePosts } from "@/hooks/usePosts";
 import { Post, Event, Tag, Category } from "@/@types";
 
 export default function Home(): JSX.Element {
+  const [isSubscribe, setIsSubscribe] = useState<boolean>(false);
   const { posts } = usePosts();
+
+  const handleSubscribe = (e: FormEvent) => {
+    toast("Subscribed", {
+      position: "bottom-right",
+      icon: "✅",
+      style: {
+        backgroundColor: "#1975FF",
+        color: "#ffffff",
+        paddingBlock: 12,
+      },
+    });
+  };
 
   return (
     <>
       <Head>
-        <title>SPAS | Homepage</title>
-        <link rel="icon" href="/spas-logo.png" />
+        <title>SPAS | Elevate your Spa & Wellness Business with Us!</title>
+        <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
 
-        <meta name="title" content="Beranda" />
+        <meta
+          name="title"
+          content="SPAS | Elevate your Spa & Wellness Business with Us!"
+        />
 
-        <meta name="description" content="SPAS" />
+        <meta
+          name="description"
+          content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore."
+        />
 
         <meta name="keywords" content="spa, services" />
 
@@ -41,15 +61,21 @@ export default function Home(): JSX.Element {
 
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
 
-        <meta property="og:title" content="beranda" />
+        <meta
+          property="og:title"
+          content="SPAS | Elevate your Spa & Wellness Business with Us!"
+        />
 
-        <meta property="og:description" content="SPAS" />
+        <meta
+          property="og:description"
+          content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore."
+        />
 
         <meta property="og:type" content="website" />
 
         <meta
-          property="og:img"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
+          property="og:image"
+          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
 
@@ -392,7 +418,7 @@ export default function Home(): JSX.Element {
         </section>
 
         {/* KEEP UP TO DATE WITH US */}
-        <section className="pb-12 lg:pb-14">
+        {/* <section className="pb-12 lg:pb-14">
           <div className="container">
             <div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
               <div className="space-y-3 p-9">
@@ -405,23 +431,26 @@ export default function Home(): JSX.Element {
                   dialogue in the world of Beauty, Spa, and Wellness.
                 </p>
                 <div className="">
-                  <form action="/send" method="POST" className="mt-8">
+                  <form onSubmit={handleSubscribe} className="mt-8">
                     <div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
                       <input
-                        type="text"
+                        type="email"
                         required
                         className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
                         placeholder="Your e-mail address"
                       />
-                      <input
-                        type="button"
-                        value="Subscribe"
+
+                      <button
+                        type="submit"
                         className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
-                      />
+                      >
+                        <span>Subscribe</span>
+                      </button>
                     </div>
                   </form>
                 </div>
               </div>
+              <Toaster />
               <div className="absolute right-0 top-0 hidden lg:block">
                 <img
                   className="w-72 rounded-lg"
@@ -431,7 +460,7 @@ export default function Home(): JSX.Element {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
     </>
   );

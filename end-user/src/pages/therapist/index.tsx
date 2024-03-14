@@ -23,11 +23,17 @@ export default function Therapist(): JSX.Element {
       <Head>
         <title>SPAS | Therapist</title>
         <meta name="author" content="SPAS" />
-        <link rel="icon" href="/spas-logo.png" />
+        <link rel="icon" href="/asset-logo.png" />
 
-        <meta name="title" content="Therapist" />
+        <meta
+          name="title"
+          content="Therapist | Gain Recognition for Professional Status"
+        />
 
-        <meta name="description" content="therapist" />
+        <meta
+          name="description"
+          content="Get accredited recognition and other benefits by registering your professional status with us."
+        />
 
         <meta name="keywords" content="spa, services, therapist" />
 
@@ -35,15 +41,21 @@ export default function Therapist(): JSX.Element {
 
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
 
-        <meta property="og:title" content="therapist" />
+        <meta
+          property="og:title"
+          content="Therapist | Gain Recognition for Professional Status"
+        />
 
-        <meta property="og:description" content="Therapist" />
+        <meta
+          property="og:description"
+          content="Get accredited recognition and other benefits by registering your professional status with us."
+        />
 
         <meta property="og:type" content="website" />
 
         <meta
           property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
+          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
 
