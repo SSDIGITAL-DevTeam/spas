@@ -97,14 +97,14 @@ export default function EventMedia(): JSX.Element {
         {/* BLOG TOP */}
         <section className="pb-18 lg:pb-0 pt-32">
           <div className="container">
-            {posts.data?.length === 0 && (
-              <div className="text-center">
-                <p className="text-4xl font-semibold">Opps..</p>
-                <p>Blog not found</p>
-              </div>
-            )}
             <div className="flex flex-col md:flex-row gap-5">
               <div className="grid grid-cols-1 gap-8 w-full lg:w-3/4">
+                {posts.data?.length === 0 && (
+                  <div className="text-center">
+                    <p className="text-4xl font-semibold">Opps..</p>
+                    <p>Blog not found</p>
+                  </div>
+                )}
                 <div className="relative w-full">
                   <Link href="/details">
                     <Swiper
@@ -218,14 +218,14 @@ export default function EventMedia(): JSX.Element {
         <section className="pb-14 lg:pb-24 pt-12">
           <div className="container">
             <div className="flex flex-col gap-y-8">
-              {posts.data?.length === 0 && (
-                <div className="text-center">
-                  <p className="text-4xl font-semibold">Opps..</p>
-                  <p>Blog not found</p>
-                </div>
-              )}
               <div className="flex flex-col lg:flex-row text-center">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {posts.data?.length === 0 && (
+                    <div className="text-center">
+                      <p className="text-4xl font-semibold">Opps..</p>
+                      <p>Blog not found</p>
+                    </div>
+                  )}
                   {posts.data
                     ?.slice(0, postsPerPage)
                     .filter((categoryPost) =>

@@ -16,9 +16,8 @@ import { RiVoiceRecognitionLine } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoIosPhonePortrait } from "react-icons/io";
 import axios, { AxiosError } from "axios";
-import FormSuccess from "@/components/modals/FormSucces";
-
 import toast, { Toaster } from "react-hot-toast";
+
 import { usePosts } from "@/hooks/usePosts";
 import { Post, Event, Tag, Category } from "@/@types";
 
@@ -48,13 +47,15 @@ export default function Home(): JSX.Element {
         }
       );
 
-      setTimeout(() => {
-        setOpenSuccess(true);
-      }, 1000);
-
-      setTimeout(() => {
-        setOpenSuccess(false);
-      }, 3800);
+      toast("Subscribed", {
+        position: "bottom-right",
+        icon: "✅",
+        style: {
+          backgroundColor: "#1975FF",
+          color: "#ffffff",
+          paddingBlock: 12,
+        },
+      });
 
       const formReset = e.target as HTMLFormElement;
       formReset.reset();
@@ -456,10 +457,6 @@ export default function Home(): JSX.Element {
           </div>
         </section>
 
-        <FormSuccess
-          openSuccess={openSuccess}
-          setOpenSuccess={setOpenSuccess}
-        />
         {/* KEEP UP TO DATE WITH US */}
         <section className="pb-12 lg:pb-14">
           <div className="container">

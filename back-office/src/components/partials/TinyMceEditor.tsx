@@ -4,18 +4,14 @@ import { Editor, IAllProps } from "@tinymce/tinymce-react";
 export default function TinyMceEditor(props: IAllProps): JSX.Element {
   return (
     <Editor
+      apiKey={"hm18uevth18hvt5w813bfoup4hmy5wlosl1swwdtfjyb5g4u"}
       init={{
         branding: false,
         min_height: 640,
       }}
       plugins={[
-        "a11ychecker",
         "advlist",
-        "advcode",
-        "advtable",
         "autolink",
-        "checklist",
-        "export",
         "lists",
         "link",
         "image",
@@ -24,9 +20,7 @@ export default function TinyMceEditor(props: IAllProps): JSX.Element {
         "anchor",
         "searchreplace",
         "visualblocks",
-        "powerpaste",
         "fullscreen",
-        "formatpainter",
         "insertdatetime",
         "media",
         "table",
