@@ -7,6 +7,7 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
+import AssetSuccess from "@/assets/images/success2.gif";
 import moment from "moment";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Link from "next/link";
@@ -17,6 +18,7 @@ import { IoIosPhonePortrait } from "react-icons/io";
 import axios, { AxiosError } from "axios";
 import FormSuccess from "@/components/modals/FormSucces";
 
+import toast, { Toaster } from "react-hot-toast";
 import { usePosts } from "@/hooks/usePosts";
 import { Post, Event, Tag, Category } from "@/@types";
 
@@ -27,6 +29,7 @@ type ErrorResponseSubs = {
 };
 
 export default function Home(): JSX.Element {
+  const [isSubscribe, setIsSubscribe] = useState<boolean>(false);
   const { posts } = usePosts();
   const [email, setEmail] = useState<string>("");
   const [errMsgSubs, setErrMsgSubs] = useState<ErrorResponseSubs>(
@@ -62,16 +65,34 @@ export default function Home(): JSX.Element {
     }
   };
 
+  const handleSubscribe = (e: FormEvent) => {
+    toast("Subscribed", {
+      position: "bottom-right",
+      icon: "✅",
+      style: {
+        backgroundColor: "#1975FF",
+        color: "#ffffff",
+        paddingBlock: 12,
+      },
+    });
+  };
+
   return (
     <>
       <Head>
-        <title>SPAS | Homepage</title>
-        <link rel="icon" href="/spas-logo.png" />
+        <title>SPAS | Elevate your Spa & Wellness Business with Us!</title>
+        <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
 
-        <meta name="title" content="Beranda" />
+        <meta
+          name="title"
+          content="SPAS | Elevate your Spa & Wellness Business with Us!"
+        />
 
-        <meta name="description" content="SPAS" />
+        <meta
+          name="description"
+          content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore."
+        />
 
         <meta name="keywords" content="spa, services" />
 
@@ -79,15 +100,21 @@ export default function Home(): JSX.Element {
 
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
 
-        <meta property="og:title" content="beranda" />
+        <meta
+          property="og:title"
+          content="SPAS | Elevate your Spa & Wellness Business with Us!"
+        />
 
-        <meta property="og:description" content="SPAS" />
+        <meta
+          property="og:description"
+          content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore."
+        />
 
         <meta property="og:type" content="website" />
 
         <meta
-          property="og:img"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
+          property="og:image"
+          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
 
@@ -475,6 +502,7 @@ export default function Home(): JSX.Element {
                   </form>
                 </div>
               </div>
+              <Toaster />
               <div className="absolute right-0 top-0 hidden lg:block">
                 <img
                   className="w-72 rounded-lg"

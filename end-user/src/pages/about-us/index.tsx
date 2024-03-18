@@ -27,12 +27,15 @@ export default function AboutUs(): JSX.Element {
     <>
       <Head>
         <title>SPAS | About Us</title>
-        <link rel="icon" href="/spas-logo.png" />
+        <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
 
-        <meta name="title" content="About-Us" />
+        <meta name="title" content="SPAS | About Us" />
 
-        <meta name="description" content="about-us" />
+        <meta
+          name="description"
+          content="SPAS is a large community that connects passionate professionals to shape the future of beauty, spa, and wellness in Singapore."
+        />
 
         <meta name="keywords" content="spa, services, about-us" />
 
@@ -40,15 +43,18 @@ export default function AboutUs(): JSX.Element {
 
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
 
-        <meta property="og:title" content="about-us" />
+        <meta property="og:title" content="SPAS | About Us" />
 
-        <meta property="og:description" content="about-us" />
+        <meta
+          property="og:description"
+          content="SPAS is a large community that connects passionate professionals to shape the future of beauty, spa, and wellness in Singapore."
+        />
 
         <meta property="og:type" content="website" />
 
         <meta
           property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
+          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
 

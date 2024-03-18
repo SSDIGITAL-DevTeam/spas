@@ -7,6 +7,7 @@ import { FaPhone } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import axios, { AxiosError } from "axios";
 import FormSuccess from "@/components/modals/FormSucces";
+import toast, { Toaster } from "react-hot-toast";
 
 const topics = [
   {
@@ -52,6 +53,7 @@ export default function Contact(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [errMsg, setErrMsg] = useState<ErrorResponse>({} as ErrorResponse);
+
   const [errMsgSubs, setErrMsgSubs] = useState<ErrorResponseSubs>(
     {} as ErrorResponseSubs
   );
@@ -68,14 +70,16 @@ export default function Contact(): JSX.Element {
         message: message,
       });
 
-      setTimeout(() => {
-        setOpenSuccess(true);
-      }, 1000);
-
-      setTimeout(() => {
-        setOpenSuccess(false);
-      }, 3800);
-
+      toast("Form Submitted", {
+        position: "bottom-right",
+        icon: "✅",
+        style: {
+          backgroundColor: "#1975FF",
+          color: "#ffffff",
+          paddingBlock: 12,
+        },
+      });
+      setSelectedTopic("");
       const formReset = e.target as HTMLFormElement;
       formReset.reset();
     } catch (error) {
@@ -116,12 +120,15 @@ export default function Contact(): JSX.Element {
     <>
       <Head>
         <title>SPAS | Contact Us</title>
-        <link rel="icon" href="/spas-logo.png" />
+        <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
 
-        <meta name="title" content="Contact-Us" />
+        <meta name="title" content="SPAS | Contact Us" />
 
-        <meta name="description" content="contact-us" />
+        <meta
+          name="description"
+          content="Let’s build something great together. So please do not hesitate to contact us and we will get back to you shortly."
+        />
 
         <meta name="keywords" content="spa, services, contact-us" />
 
@@ -129,21 +136,24 @@ export default function Contact(): JSX.Element {
 
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
 
-        <meta property="og:title" content="contact-us" />
+        <meta property="og:title" content="SPAS | Contact Us" />
 
-        <meta property="og:description" content="Contact-us" />
+        <meta
+          property="og:description"
+          content="Let’s build something great together. So please do not hesitate to contact us and we will get back to you shortly."
+        />
 
         <meta property="og:type" content="website" />
 
         <meta
           property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-special-offer.webp`}
+          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
 
       {/* HERO */}
       <header className="pb-14 md:pb-0 pt-24">
-        <div className="bg-[url('/contact-assets/contact.png')] bg-no-repeat bg-cover w-screen min-h-96 py-24 md:py-28">
+        <div className="bg-[url('/contact-assets/contact.png')] bg-no-repeat bg-center md:bg-cover w-screen min-h-96 py-24 md:py-28">
           <div className="container">
             <div className="grid justify-center item-center">
               <div className="md:p-14 py-14">
@@ -240,7 +250,7 @@ export default function Contact(): JSX.Element {
                           className="border-2 p-2.5 rounded-lg w-full min-h-40"
                           onChange={(e) => setMessage(e.target.value)}
                           name="message"
-                          placeholder="Tell us more about your concern *"
+                          placeholder="Tell us more about your concern"
                         ></textarea>
                       </div>
                       <div className="relative w-full space-y-2">
@@ -302,10 +312,7 @@ export default function Contact(): JSX.Element {
             </div>
           </div>
         </div>
-        <FormSuccess
-          openSuccess={openSuccess}
-          setOpenSuccess={setOpenSuccess}
-        />
+        <Toaster />
 
         {/* KEEP UP TO DATE WITH US */}
         <section className="pb-12 lg:pb-14">
