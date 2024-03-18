@@ -3,9 +3,6 @@ import { FormEvent, JSX, useState } from "react";
 import Head from "next/head";
 import Hero from "@/assets/homepage-assets/hero-homepage.webp";
 import Ficon1 from "@/assets/homepage-assets/featured-icons.svg";
-import Ficon2 from "@/assets/homepage-assets/featured-icons-1.svg";
-import Ficon3 from "@/assets/homepage-assets/featured-icons-2.svg";
-import Ficon4 from "@/assets/homepage-assets/featured-icons-3.svg";
 import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
@@ -18,13 +15,55 @@ import { FaChartLine } from "react-icons/fa6";
 import { RiVoiceRecognitionLine } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoIosPhonePortrait } from "react-icons/io";
+import axios, { AxiosError } from "axios";
+import FormSuccess from "@/components/modals/FormSucces";
+
 import toast, { Toaster } from "react-hot-toast";
 import { usePosts } from "@/hooks/usePosts";
 import { Post, Event, Tag, Category } from "@/@types";
 
+type ErrorResponseSubs = {
+  errors: {
+    email: string;
+  };
+};
+
 export default function Home(): JSX.Element {
   const [isSubscribe, setIsSubscribe] = useState<boolean>(false);
   const { posts } = usePosts();
+  const [email, setEmail] = useState<string>("");
+  const [errMsgSubs, setErrMsgSubs] = useState<ErrorResponseSubs>(
+    {} as ErrorResponseSubs
+  );
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+
+  const submitFormSubscribe = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/subscribes`,
+        {
+          email: email,
+        }
+      );
+
+      setTimeout(() => {
+        setOpenSuccess(true);
+      }, 1000);
+
+      setTimeout(() => {
+        setOpenSuccess(false);
+      }, 3800);
+
+      const formReset = e.target as HTMLFormElement;
+      formReset.reset();
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMsgSubs(errorMessage.response?.data as ErrorResponseSubs);
+    }
+  };
 
   const handleSubscribe = (e: FormEvent) => {
     toast("Subscribed", {
@@ -338,14 +377,14 @@ export default function Home(): JSX.Element {
         <section className="pb-14 lg:pb-24 pt-12">
           <div className="container">
             <div className="flex flex-col gap-y-8">
+              {posts.data?.length === 0 && (
+                <div className="text-center w-full">
+                  <p className="text-4xl font-semibold">Opps..</p>
+                  <p>Blog not found</p>
+                </div>
+              )}
               <div className="flex flex-col lg:flex-row text-center">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {posts.data?.length === 0 && (
-                    <div className="text-center">
-                      <p className="text-4xl font-semibold">Opps..</p>
-                      <p>Blog not found</p>
-                    </div>
-                  )}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
                   {posts.data
                     ?.slice(0, 3)
                     .filter((post) => post.status === "PUBLISHED")
@@ -417,8 +456,12 @@ export default function Home(): JSX.Element {
           </div>
         </section>
 
+        <FormSuccess
+          openSuccess={openSuccess}
+          setOpenSuccess={setOpenSuccess}
+        />
         {/* KEEP UP TO DATE WITH US */}
-        {/* <section className="pb-12 lg:pb-14">
+        <section className="pb-12 lg:pb-14">
           <div className="container">
             <div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
               <div className="space-y-3 p-9">
@@ -431,21 +474,30 @@ export default function Home(): JSX.Element {
                   dialogue in the world of Beauty, Spa, and Wellness.
                 </p>
                 <div className="">
-                  <form onSubmit={handleSubscribe} className="mt-8">
+                  <form onSubmit={submitFormSubscribe} className="mt-8">
                     <div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
-                      <input
-                        type="email"
-                        required
-                        className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
-                        placeholder="Your e-mail address"
-                      />
-
-                      <button
-                        type="submit"
-                        className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
-                      >
-                        <span>Subscribe</span>
-                      </button>
+                      <div className="w-full">
+                        <input
+                          type="text"
+                          required
+                          onChange={(e) => setEmail(e.target.value)}
+                          name="email"
+                          className="p-3 h-max w-full focus:text-secondary rounded-lg border-1 shadow-lg mb-2"
+                          placeholder="Your e-mail address"
+                        />
+                        {errMsgSubs?.errors?.email && (
+                          <p className="text-sm text-red-500">
+                            {errMsgSubs.errors.email[0]}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <input
+                          type="submit"
+                          value="Subscribe"
+                          className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
+                        />
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -460,7 +512,7 @@ export default function Home(): JSX.Element {
               </div>
             </div>
           </div>
-        </section> */}
+        </section>
       </main>
     </>
   );

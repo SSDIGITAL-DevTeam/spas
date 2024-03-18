@@ -41,12 +41,24 @@ type ErrorResponse = {
   };
 };
 
+type ErrorResponseSubs = {
+  errors: {
+    email: string;
+  };
+};
+
 export default function Contact(): JSX.Element {
   const [selectedTopic, setSelectedTopic] = useState<string>("Membership");
   const [fullname, setFullname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [errMsg, setErrMsg] = useState<ErrorResponse>({} as ErrorResponse);
+
+  const [errMsgSubs, setErrMsgSubs] = useState<ErrorResponseSubs>(
+    {} as ErrorResponseSubs
+  );
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+
   const submitForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -74,6 +86,34 @@ export default function Contact(): JSX.Element {
       console.log(error);
       const errorMessage = error as AxiosError;
       setErrMsg(errorMessage.response?.data as ErrorResponse);
+    }
+  };
+
+  const submitFormSubscribe = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/subscribes`,
+        {
+          email: email,
+        }
+      );
+
+      setTimeout(() => {
+        setOpenSuccess(true);
+      }, 1000);
+
+      setTimeout(() => {
+        setOpenSuccess(false);
+      }, 3800);
+
+      const formReset = e.target as HTMLFormElement;
+      formReset.reset();
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMsgSubs(errorMessage.response?.data as ErrorResponseSubs);
     }
   };
   return (
@@ -275,7 +315,7 @@ export default function Contact(): JSX.Element {
         <Toaster />
 
         {/* KEEP UP TO DATE WITH US */}
-        {/* <section className="pb-12 lg:pb-14">
+        <section className="pb-12 lg:pb-14">
           <div className="container">
             <div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
               <div className="space-y-3 p-9">
@@ -288,19 +328,30 @@ export default function Contact(): JSX.Element {
                   dialogue in the world of Beauty, Spa, and Wellness.
                 </p>
                 <div className="">
-                  <form action="/send" method="POST" className="mt-8">
+                  <form onSubmit={submitFormSubscribe} className="mt-8">
                     <div className="lg:flex lg:flex-row lg:gap-x-3 lg:w-3/4">
-                      <input
-                        type="text"
-                        required
-                        className="p-3 h-max w-full lg:w-3/4 focus:text-secondary rounded-lg border-1 shadow-lg"
-                        placeholder="Your e-mail address"
-                      />
-                      <input
-                        type="button"
-                        value="Subscribe"
-                        className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
-                      />
+                      <div className="w-full">
+                        <input
+                          type="text"
+                          required
+                          onChange={(e) => setEmail(e.target.value)}
+                          name="email"
+                          className="p-3 h-max w-full focus:text-secondary rounded-lg border-1 shadow-lg mb-2"
+                          placeholder="Your e-mail address"
+                        />
+                        {errMsgSubs?.errors?.email && (
+                          <p className="text-sm text-red-500">
+                            {errMsgSubs.errors.email[0]}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <input
+                          type="submit"
+                          value="Subscribe"
+                          className="btn-2 text-white lg:w-max w-full mt-5 lg:mt-0 capitalize cursor-pointer hover:bg-secondary transition-colors ease-out"
+                        />
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -314,7 +365,7 @@ export default function Contact(): JSX.Element {
               </div>
             </div>
           </div>
-        </section> */}
+        </section>
       </main>
     </>
   );

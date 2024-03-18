@@ -20,6 +20,8 @@ These are the system planning for this project.
   - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/Events.md)
 - Pages
   - [Back Office](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/BackoOffice/Pages.md)
+- Contact-Us
+  - [End User](https://github.com/SSDIGITAL-DevTeam/spas/blob/main/docs/api/EndUser/ContactUs.md)
 
 ### Database Design
 
