@@ -205,10 +205,7 @@ export default function CreatePost(): JSX.Element {
               <div className="min-h-[380px] overflow-hidden space-y-2">
                 <label htmlFor="content">Content</label>
                 {/* CK Editor */}
-                <TinyMceEditor
-                  textareaName="content"
-                  apiKey={"hm18uevth18hvt5w813bfoup4hmy5wlosl1swwdtfjyb5g4u"}
-                />
+                <TinyMceEditor id="content" textareaName="content" />
 
                 {validationErrors?.errors?.content && (
                   <p className="text-ligh text-[#D81222] mt-2">
@@ -383,13 +380,13 @@ export default function CreatePost(): JSX.Element {
             </div>
 
             <div className="mt-12 flex justify-center gap-x-12 font-medium">
-              <button
+              {/* <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
                 name="status"
                 value="2"
               >
                 Draft
-              </button>
+              </button> */}
 
               <button
                 className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"

@@ -13,6 +13,7 @@ class PostController extends Controller
     {
         return PostResource::collection(
             Post::with('cover', 'categories', 'tags', 'metas')
+                ->where('status', 4)
                 ->latest()
                 ->filterByCategory(request()->input('search'))
                 ->paginate(10)

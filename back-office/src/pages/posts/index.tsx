@@ -90,7 +90,7 @@ export default function Posts(): JSX.Element {
 
           <Link
             href={`/posts/create`}
-            className="bg-secondary hover:bg-primary rounded-lg text-white p-3.5"
+            className="bg-secondary hover:bg-primary rounded-lg text-white p-2"
           >
             Add New
           </Link>
@@ -99,7 +99,7 @@ export default function Posts(): JSX.Element {
         {/* TODO */}
         <section>
           {/* tabs */}
-          <div className="flex gap-x-2 py-4">
+          {/* <div className="flex gap-x-2 py-4">
             <Link
               onClick={() => {
                 fetchPosts(PostStatusEnum.PUBLISHED.toString());
@@ -133,7 +133,7 @@ export default function Posts(): JSX.Element {
             >
               Draft
             </Link>
-          </div>
+          </div> */}
 
           {!posts?.data}
 

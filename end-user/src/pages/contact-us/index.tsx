@@ -6,7 +6,6 @@ import { MdOutlineMailOutline } from "react-icons/md";
 import { FaPhone } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import axios, { AxiosError } from "axios";
-import FormSuccess from "@/components/modals/FormSucces";
 import toast, { Toaster } from "react-hot-toast";
 
 const topics = [
@@ -100,14 +99,15 @@ export default function Contact(): JSX.Element {
         }
       );
 
-      setTimeout(() => {
-        setOpenSuccess(true);
-      }, 1000);
-
-      setTimeout(() => {
-        setOpenSuccess(false);
-      }, 3800);
-
+      toast("Subscribed", {
+        position: "bottom-right",
+        icon: "✅",
+        style: {
+          backgroundColor: "#1975FF",
+          color: "#ffffff",
+          paddingBlock: 12,
+        },
+      });
       const formReset = e.target as HTMLFormElement;
       formReset.reset();
     } catch (error) {
@@ -127,7 +127,7 @@ export default function Contact(): JSX.Element {
 
         <meta
           name="description"
-          content="Let’s build something great together. So please do not hesitate to contact us and we will get back to you shortly."
+          content="Let&laquo;s build something great together. So please do not hesitate to contact us and we will get back to you shortly."
         />
 
         <meta name="keywords" content="spa, services, contact-us" />
@@ -140,7 +140,7 @@ export default function Contact(): JSX.Element {
 
         <meta
           property="og:description"
-          content="Let’s build something great together. So please do not hesitate to contact us and we will get back to you shortly."
+          content="Let&laquo;s build something great together. So please do not hesitate to contact us and we will get back to you shortly."
         />
 
         <meta property="og:type" content="website" />
@@ -366,6 +366,7 @@ export default function Contact(): JSX.Element {
             </div>
           </div>
         </section>
+        <Toaster />
       </main>
     </>
   );
