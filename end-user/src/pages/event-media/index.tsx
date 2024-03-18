@@ -120,7 +120,7 @@ export default function EventMedia(): JSX.Element {
                       className="mySwiper"
                     >
                       {posts.data
-                        ?.filter((post) => post.status === "PUBLISHED")
+                        ?.filter((post) => post.status === "4")
                         .map(
                           (post: Post, index: number): JSX.Element => (
                             <SwiperSlide key={post.id}>
@@ -162,7 +162,7 @@ export default function EventMedia(): JSX.Element {
                 <div className="grid grid-cols-1 gap-4 w-full">
                   {posts.data
                     ?.slice(0, 3)
-                    .filter((post) => post.status === "PUBLISHED")
+                    .filter((post) => post.status === "4")
                     .map(
                       (post: Post, index: number): JSX.Element => (
                         <Link href={`/event-media/${post.slug}`} key={post.id}>
@@ -235,7 +235,7 @@ export default function EventMedia(): JSX.Element {
                           )
                         : true
                     )
-                    .filter((post) => post.status === "PUBLISHED")
+                    .filter((post) => post.status === "4")
                     .map(
                       (post: Post, index: number): JSX.Element => (
                         <div

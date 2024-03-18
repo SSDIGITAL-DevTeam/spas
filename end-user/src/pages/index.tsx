@@ -7,7 +7,6 @@ import img1 from "@/assets/homepage-assets/rectangle-145.webp";
 import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
-import AssetSuccess from "@/assets/images/success2.gif";
 import moment from "moment";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
 import Link from "next/link";
@@ -388,7 +387,7 @@ export default function Home(): JSX.Element {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
                   {posts.data
                     ?.slice(0, 3)
-                    .filter((post) => post.status === "PUBLISHED")
+                    .filter((post) => post.status === "4")
                     .map(
                       (post: Post, index: number): JSX.Element => (
                         <div
