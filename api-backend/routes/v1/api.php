@@ -42,4 +42,5 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
 
 
     Route::post('contacts', [BackOffice\ContactUsController::class, 'ContactUs'])->name('contacts');
+    Route::post('subscribes', [EndUser\SucbscribeController::class, 'store'])->name('subscribes');
 });
