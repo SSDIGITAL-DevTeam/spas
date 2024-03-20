@@ -1,19 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\BackOffice;
 use App\Http\Controllers\EndUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
 // PUBLIC ROUTES
-
-
 Route::prefix('auth')->as('auth.')->group(function (): void {
     Route::post('/sign-in', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'register']);
@@ -21,6 +15,8 @@ Route::prefix('auth')->as('auth.')->group(function (): void {
     Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::get('validate-token', fn () => ['status' => true]);
         Route::post('/sign-out', [AuthController::class, 'logout']);
+
+        Route::put('change-password', [ChangePasswordController::class, 'update'])->name('change-password');
     });
 });
 
@@ -39,7 +35,6 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);
     Route::apiResource('events', BackOffice\EventController::class)->only(['index', 'show']);
     Route::apiResource('categories', BackOffice\CategoryController::class)->only(['index', 'show']);
-
 
     Route::post('contacts', [BackOffice\ContactUsController::class, 'ContactUs'])->name('contacts');
     Route::post('subscribes', [EndUser\SucbscribeController::class, 'store'])->name('subscribes');
