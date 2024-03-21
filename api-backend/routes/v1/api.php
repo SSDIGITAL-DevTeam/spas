@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\BackOffice;
 use App\Http\Controllers\EndUser;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // PUBLIC ROUTES
@@ -31,6 +30,8 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
 });
 
 Route::prefix('end-user')->as('end-user.')->group(function (): void {
+
+    Route::apiResource('members', BackOffice\MemberController::class)->parameters(['members' => 'member']);
 
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);
     Route::apiResource('events', BackOffice\EventController::class)->only(['index', 'show']);
