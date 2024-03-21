@@ -16,4 +16,9 @@ class Cover extends Model
     {
         return $this->belongsTo(Post::class);
     }
+
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
 }
