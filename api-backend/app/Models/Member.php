@@ -16,4 +16,9 @@ class Member extends Model
     {
         return $this->hasOne(Cover::class);
     }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
 }

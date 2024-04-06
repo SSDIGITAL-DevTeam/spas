@@ -7,7 +7,10 @@ use App\Http\Requests\Member\StoreMemberRequest;
 use App\Http\Requests\Member\UpdateMemberRequest;
 use App\Http\Resources\MemberResource;
 use App\Models\Member;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class MemberController extends Controller
 {
@@ -22,19 +25,40 @@ class MemberController extends Controller
 
     public function store(StoreMemberRequest $request)
     {
-        $member = Member::create($request->validated());
+        $validated = $request->validated();
 
-        if ($request->hasFile('url')) {
-            $path = $request->file('url')->store('company-logo');
+        try {
+            $member = DB::transaction(function () use ($request, $validated) {
+                // Create the member
+                $member = Member::create($validated);
 
-            $member->cover()->create(
-                [
-                    'url' => $path
-                ]
-            );
+                // Handle the file upload
+                if ($request->hasFile('url')) {
+                    $path = $request->file('url')->store('company-logo');
+                    $member->cover()->create(['url' => $path]);
+                }
+
+                // Create associated user
+                $member->user()->create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'role' => 'member',
+                ]);
+
+                return $member;
+            });
+
+            // Assuming you want to load the relationships immediately for the resource
+            return new MemberResource($member->load('cover', 'user'));
+
+            DB::commit();
+        } catch (
+            \Exception $e
+        ) {
+            DB::rollBack();
+            throw $e;
         }
-
-        return new MemberResource($member->load('cover'));
     }
 
     public function show(Member $member)

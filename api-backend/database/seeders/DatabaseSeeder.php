@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'adminSPAS',
+            'member_id' => null,
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
             'role' => 'admin'
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'memberSPAS',
+            'member_id' => null,
             'email' => 'member@gmail.com',
             'password' => Hash::make('member'),
             'role' => 'member'
@@ -33,6 +35,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'therapistSPAS',
+            'member_id' => null,
             'email' => 'therapist@gmail.com',
             'password' => Hash::make('therapist'),
             'role' => 'therapist'

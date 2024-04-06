@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Http\Resources\Cover\CoverResource;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,12 +30,8 @@ class MemberResource extends JsonResource
             'name_of_representative' => $this->whenHas('name_of_representative'),
             'designation' => $this->whenHas('designation'),
             'wechat_id' => $this->whenHas('wechat_id'),
-            'cover' => $this->whenLoaded('cover', function () {
-                return [
-                    'id' => $this->cover->id,
-                    'url' => $this->cover->url,
-                ];
-            }),
+            'cover' => CoverResource::make($this->whenLoaded('cover')),
+            'user' => UserResource::make($this->whenLoaded('user'))
         ];
     }
 }

@@ -11,6 +11,11 @@ Route::prefix('auth')->as('auth.')->group(function (): void {
     Route::post('/sign-in', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'register']);
 
+    // this route for OTP mail
+    Route::post('forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+    Route::post('validate-otp', [AuthController::class, 'validateOtp'])->name('validate-otp');
+    Route::post('reset-password/{user}', [AuthController::class, 'resetPassword'])->name('reset-password');
+
     Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::get('validate-token', fn () => ['status' => true]);
         Route::post('/sign-out', [AuthController::class, 'logout']);
