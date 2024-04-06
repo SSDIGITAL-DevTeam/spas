@@ -33,6 +33,10 @@ class StoreMemberRequest extends FormRequest
             'designation' => ['required', 'string', 'max:255'],
             'wechat_id' => ['required', 'string', 'max:255'],
             'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email', 'max:255'],
+            'password' => ['required', 'string', 'max:255'],
         ];
     }
 }
