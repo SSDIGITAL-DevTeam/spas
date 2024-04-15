@@ -32,11 +32,16 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
     Route::apiResource('events', BackOffice\EventController::class)->parameters(['events' => 'event']);
     Route::apiResource('pages', BackOffice\PageController::class)->parameters(['pages' => 'page']);
     Route::apiResource('metas', BackOffice\MetaController::class)->parameters(['metas' => 'meta']);
+    Route::apiResource('operators', BackOffice\OperatorController::class);
 });
 
 Route::prefix('end-user')->as('end-user.')->group(function (): void {
 
-    Route::apiResource('members', BackOffice\MemberController::class)->parameters(['members' => 'member']);
+    Route::apiResource('operators', EndUser\OperatorController::class)->only('store', 'index', 'show');
+
+    Route::middleware(['auth:sanctum'])->group(function (): void {
+        Route::apiResource('operators', EndUser\OperatorController::class)->only('update');
+    });
 
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);
     Route::apiResource('events', BackOffice\EventController::class)->only(['index', 'show']);

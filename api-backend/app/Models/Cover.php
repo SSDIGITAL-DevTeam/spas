@@ -17,8 +17,13 @@ class Cover extends Model
         return $this->belongsTo(Post::class);
     }
 
-    public function member(): BelongsTo
+    public function operator(): BelongsTo
     {
-        return $this->belongsTo(Post::class);
+        return $this->belongsTo(Operator::class);
+    }
+
+    public function therapist(): BelongsTo
+    {
+        return $this->belongsTo(Therapist::class);
     }
 }
