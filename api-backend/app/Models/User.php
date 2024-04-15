@@ -49,8 +49,8 @@ class User extends Authenticatable
         return $this->hasMany(OneTimePassword::class);
     }
 
-    public function member(): BelongsTo
+    public function operator(): BelongsTo
     {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(Operator::class);
     }
 }
