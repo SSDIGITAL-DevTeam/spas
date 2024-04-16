@@ -31,7 +31,7 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = 'admin';
+        $user->role = $request->role;
         $user->save();
 
         return $this->success([

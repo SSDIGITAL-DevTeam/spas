@@ -33,14 +33,32 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
     Route::apiResource('pages', BackOffice\PageController::class)->parameters(['pages' => 'page']);
     Route::apiResource('metas', BackOffice\MetaController::class)->parameters(['metas' => 'meta']);
     Route::apiResource('operators', BackOffice\OperatorController::class);
+    Route::apiResource('therapist', BackOffice\TherapistController::class);
 });
 
 Route::prefix('end-user')->as('end-user.')->group(function (): void {
 
+    // GUEST
     Route::apiResource('operators', EndUser\OperatorController::class)->only('store', 'index', 'show');
+    Route::apiResource('therapists', EndUser\TherapistController::class)->only('store');
 
+    // IF LOGIN WITH ROLE OPERATOR OR THERAPIST
     Route::middleware(['auth:sanctum'])->group(function (): void {
-        Route::apiResource('operators', EndUser\OperatorController::class)->only('update');
+        // For Operators
+        Route::middleware('role:operator')->group(function () {
+            Route::prefix('operator')->group(function () {
+                Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
+                Route::apiResource('therapists', EndUser\TherapistController::class)->only('index', 'show');
+            });
+        });
+
+        // For Therapists
+        Route::middleware('role:therapist')->group(function () {
+            Route::prefix('therapist')->group(function () {
+                Route::apiResource('therapists', EndUser\TherapistController::class)->only('update', 'index', 'show');
+                Route::apiResource('operators', EndUser\OperatorController::class)->only('index', 'show');
+            });
+        });
     });
 
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);

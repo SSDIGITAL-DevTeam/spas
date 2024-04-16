@@ -80,7 +80,7 @@ class OperatorController extends Controller
         }
 
         return new OperatorResource($operator->load('user', 'cover'));
-    }   
+    }
 
     /**
      * Remove the specified resource from storage.

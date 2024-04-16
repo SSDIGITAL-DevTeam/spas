@@ -33,12 +33,12 @@ class DatabaseSeeder extends Seeder
             'role' => 'operator'
         ]);
 
-        // User::create([
-        //     'name' => 'therapistSPAS',
-        //     'therapist_id' => null,
-        //     'email' => 'therapist@gmail.com',
-        //     'password' => Hash::make('therapist'),
-        //     'role' => 'therapist'
-        // ]);
+        User::create([
+            'name' => 'therapistSPAS',
+            'therapist_id' => null,
+            'email' => 'therapist@gmail.com',
+            'password' => Hash::make('therapist'),
+            'role' => 'therapist'
+        ]);
     }
 }
