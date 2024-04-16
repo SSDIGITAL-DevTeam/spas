@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('therapists', function (Blueprint $table) {
             $table->id();
-            $table->string('profile_picture');
             $table->string('name');
             $table->string('passport_finno');
             $table->date('date_of_birth');
             $table->enum('sex', ['Male', 'Female']);
-            $table->string('contact_np');
+            $table->string('contact_no');
             $table->string('nationality');
             $table->date('date_of_issue');
             $table->string('address');

@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Controllers\EndUser;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Therapist\StoreTherapistRequest;
+use App\Http\Requests\Therapist\UpdateTherapistRequest;
+use App\Http\Resources\Therapist\TherapistCollection;
+use App\Http\Resources\Therapist\TherapistResource;
+use App\Models\Therapist;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class TherapistController extends Controller
+{
+    public function index()
+    {
+        return TherapistCollection::make(
+            Therapist::with('user', 'cover')
+                ->latest()
+                ->paginate(10)
+        );
+    }
+
+    public function store(StoreTherapistRequest $request)
+    {
+        return DB::transaction(function () use ($request): TherapistResource {
+            $therapistData = $request->validated();
+
+            $therapistData = new Therapist();
+            $therapistData->name = $request->name;
+            $therapistData->passport_finno = $request->passport_finno;
+            $therapistData->date_of_birth = $request->date_of_birth;
+            $therapistData->sex = $request->sex;
+            $therapistData->contact_no = $request->contact_no;
+            $therapistData->nationality = $request->nationality;
+            $therapistData->date_of_issue = $request->date_of_issue;
+            $therapistData->address = $request->address;
+            $therapistData->address_nearest_mrt = $request->address_nearest_mrt;
+            $therapistData->professional_certs = $request->file('professional_certs')->store('thrapist-certs');
+            $therapistData->employment_history = $request->employment_history;
+            $therapistData->save();
+
+            $therapistData->cover()->create([
+                'url' => $request->file('url')->store('therapist-picture')
+            ]);
+
+            $therapistData->user()->create([
+                'name' => $request->name, // Assuming you have a 'name' field for the user
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'therapist', // Set the role to default operator
+            ]);
+
+            return new TherapistResource($therapistData->load('user', 'cover'));
+        });
+    }
+
+    public function show(Therapist $therapist)
+    {
+        return new TherapistResource($therapist->load('user', 'cover'));
+    }
+
+    public function update(UpdateTherapistRequest $request, Therapist $therapist)
+    {
+        $therapist->update($request->validated());
+
+        $newFile = $request->file('url');
+
+        if ($newFile) {
+            $therapist->cover()->update(['url' => $newFile->store('therapist-picture')]);
+        }
+
+        return new TherapistResource($therapist->load('user', 'cover'));
+    }
+
+    public function destroy(Therapist $therapist)
+    {
+        try {
+            $therapist->cover()->delete();
+            $therapist->user()->delete();
+            $therapist->delete();
+            return response()->json(['message' => 'Therapist deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete therapist. ' . $e->getMessage()], 500);
+        }
+    }
+}
