@@ -7,7 +7,9 @@ import Card2 from "@/assets/membership-assets/card2.webp";
 import Card3 from "@/assets/membership-assets/card3.webp";
 import Card4 from "@/assets/membership-assets/card4.webp";
 import Ellipse from "@/assets/membership-assets/ellipse.png";
+import AssetBlank from "@/assets/images/blank.png";
 import Link from "next/link";
+import { Image, Button } from "@nextui-org/react";
 
 export default function Membership(): JSX.Element {
   return (
@@ -247,8 +249,53 @@ export default function Membership(): JSX.Element {
           </div>
         </section>
 
+        {/* Meet Spa Operators */}
+        <section className="mb-10">
+          <div className="container p-4 md:p-8">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
+              Meet All Our Spa Operators
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4 md:gap-10 mb-4 md:mb-8 lg:mb-20">
+              {[1, 2, 3, 4].map((op, index: number) => (
+                <div key={index} className="shadow-md border p-4 md:p-8">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                    <Image
+                      src={AssetBlank.src}
+                      radius="none"
+                      alt="Spa Operators"
+                      className="object-cover"
+                    />
+                    <div className="flex flex-col items-center md:items-start">
+                      <h3 className="text-lg md:text-2xl text-black font-semibold">
+                        Operators {op}
+                      </h3>
+                      <Link
+                        href={"/spa-operators/slug"}
+                        className="text-primary"
+                      >
+                        See Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="w-max mx-auto">
+              <Button
+                as={Link}
+                href="/spa-operators"
+                color="secondary"
+                size="lg"
+              >
+                View More
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* BECOME SPAS MEMBERS */}
-        <section className="pb-14 lg:pb-14 lg:pt-20">
+        {/* <section className="pb-14 lg:pb-14 lg:pt-20">
           <div className="container">
             <div className="flex flex-col gap-y-5">
               <header className="flex flex-col gap-y-4 text-center">
@@ -269,7 +316,7 @@ export default function Membership(): JSX.Element {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
     </>
   );
