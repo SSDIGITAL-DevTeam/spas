@@ -1,9 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
   html {
@@ -13,10 +12,13 @@
   body {
     @applay font-intern;
   }
+
+  .modal-close-button {
+    display: none;
+  }
 }
 
 @layer components {
-
   .btn-1 {
     @apply bg-tertiary rounded-lg px-6 py-3 text-white font-bold uppercase w-max cursor-pointer;
   }
@@ -42,19 +44,18 @@
   .fc-prev-button,
   .fc-next-button,
   .fc-today-button {
-    background-color: #1565C0;
+    background-color: #1565c0;
     /* Navigation button background color */
     color: black;
     /* Navigation button text color */
   }
 
   .fc-button-group button {
-    background-color: #1976D2;
+    background-color: #1976d2;
     /* Other button background color */
     color: skyblue;
     /* Other button text color */
   }
-
 }
 
 @layer utilities {

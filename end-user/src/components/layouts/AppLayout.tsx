@@ -4,20 +4,20 @@ import Navbar from "@/components/partials/Navbar";
 import Footer from "@/components/partials/Footer";
 
 type Props = {
-	children: ReactNode;
+  children: ReactNode;
 };
 
 export default function AppLayout({ children }: Props): JSX.Element {
-	// router
-	const router = useRouter();
+  // router
+  const router = useRouter();
 
-	return (
-		<>
-			<div className="flex min-h-screen flex-col overflow-hidden">
-				<Navbar />
-				{children}
-				<Footer />
-			</div>
-		</>
-	);
+  return (
+    <>
+      <div className="flex min-h-screen flex-col overflow-hidden">
+        <Navbar />
+        {children}
+        <Footer />
+      </div>
+    </>
+  );
 }

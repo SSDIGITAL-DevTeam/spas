@@ -16,6 +16,9 @@ import Img4 from "@/assets/therapist-assets/img4.webp";
 import Img5 from "@/assets/therapist-assets/img5.webp";
 import Img6 from "@/assets/therapist-assets/img6.webp";
 import Link from "next/link";
+import AssetBlank from "@/assets/images/blank-therapist.png";
+
+import { Image } from "@nextui-org/react";
 
 export default function Therapist(): JSX.Element {
   return (
@@ -324,8 +327,42 @@ export default function Therapist(): JSX.Element {
           </div>
         </section>
 
+        {/* Mett Spa Operators */}
+        <section className="mb-10">
+          <div className="container p-4 md:p-8">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
+              Meet All Our Spa Therapists
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4 md:gap-10">
+              {[1, 2, 3, 4, 5, 6].map((op, index: number) => (
+                <div key={index} className="shadow-md border p-4 md:p-8">
+                  <div className="flex flex-col items-center gap-4 md:gap-8">
+                    <Image
+                      src={AssetBlank.src}
+                      radius="none"
+                      alt="Spa Operators"
+                      className="object-cover"
+                    />
+                    <div className="flex flex-col items-center">
+                      <h3 className="text-lg md:text-2xl text-black font-semibold">
+                        Therapists {op}
+                      </h3>
+                      <Link
+                        href={"/spa-therapists/slug"}
+                        className="text-primary"
+                      >
+                        See Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* BECOME A PROFESSIONAL */}
-        <section className="pb-14 lg:pb-14 lg:pt-20">
+        {/* <section className="pb-14 lg:pb-14 lg:pt-20">
           <div className="container">
             <div className="flex flex-col gap-y-5">
               <header className="flex flex-col gap-y-4 text-center">
@@ -346,7 +383,7 @@ export default function Therapist(): JSX.Element {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
     </>
   );
