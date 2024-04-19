@@ -1,4 +1,4 @@
-import { JSX, useState, useMemo } from "react";
+import { JSX, useState, useMemo, FormEvent } from "react";
 import {
   Tabs,
   Tab,
@@ -21,6 +21,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import Select from "react-select";
 import countryList from "react-select-country-list";
+import axios from "axios";
+import Link from "next/link";
 
 export default function JoinUs(): JSX.Element {
   const [startDate, setStartDate] = useState(new Date());
@@ -35,6 +37,42 @@ export default function JoinUs(): JSX.Element {
   const inputStyle = {
     width: "100%",
   };
+
+  const registerOperator = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form: HTMLFormElement = e.currentTarget;
+    const formData: FormData = new FormData(form);
+
+    try {
+      await axios.post(
+        "http://10.10.10.113:8001/api/v1/end-user/operators",
+
+        formData
+      );
+
+      alert("success");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const registerTherapist = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form: HTMLFormElement = e.currentTarget;
+    const formData: FormData = new FormData(form);
+
+    try {
+      await axios.post(
+        "http://10.10.10.113:8001/api/v1/end-user/operators",
+        formData
+      );
+
+      alert("success");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -77,9 +115,9 @@ export default function JoinUs(): JSX.Element {
       </Head>
 
       <main className="pt-32 lg:pt-30">
-        <section className="">
+        <section className="mb-12 md:mb-24">
           <div className="container p-4 md:p-8">
-            <div className="flex w-full flex-col">
+            <div className="flex w-full flex-col space-y-4 md:space-y-8">
               <Tabs
                 color="primary"
                 aria-label="Tabs colors"
@@ -87,103 +125,163 @@ export default function JoinUs(): JSX.Element {
               >
                 <Tab key="operator" title="Operators" className="text-xl">
                   <Card className="text-base md:w-1/2 mx-auto py-8">
-                    <CardHeader className="text-xl md:text-2xl font-bold text-center flex items-center justify-center">
-                      Join as Spa Operator
-                    </CardHeader>
-                    <CardBody className="space-y-4">
-                      <div className="space-y-2">
-                        <Input
-                          className="flex "
-                          type="file"
-                          required
-                          endContent={<PiUploadFill />}
-                          size="lg"
-                        />
-                        <div className="flex items-center gap-x-4">
-                          <FaInfoCircle className="text-[#8D98AA]" />
-                          <p className="text-xs">
-                            The image file must be at least 2 MB in size, with
-                            equal dimensions (e.g., square or a 1:1 aspect
-                            ratio)
-                          </p>
+                    <form onSubmit={registerOperator}>
+                      <CardHeader className="text-xl md:text-2xl font-bold text-center flex items-center justify-center">
+                        Join as Spa Operator
+                      </CardHeader>
+                      <CardBody className="space-y-4">
+                        <div className="space-y-2">
+                          <label htmlFor="">Logo</label>
+                          <div></div>
+                          <input
+                            name="url"
+                            type="file"
+                            required
+                            // endContent={<PiUploadFill />}
+                            // size="lg"
+                          />
+                          <div className="flex items-center gap-x-4">
+                            <FaInfoCircle className="text-[#8D98AA]" />
+                            <p className="text-xs md:w-3/4">
+                              The image file must be at least 2 MB in size, with
+                              equal dimensions (e.g., square or a 1:1 aspect
+                              ratio)
+                            </p>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="space-y-2">
-                        <label htmlFor="" className="md:text-base text-sm">
-                          Company Name
-                        </label>
-                        <Input
-                          variant={"bordered"}
-                          color="secondary"
-                          size="sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="" className="md:text-base text-sm">
-                          UEN NO
-                        </label>
-                        <Input
-                          variant={"bordered"}
-                          color="secondary"
-                          size="sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="" className="md:text-base text-sm">
-                          Brand Name
-                        </label>
-                        <Input
-                          variant={"bordered"}
-                          color="secondary"
-                          size="sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="">Address</label>
-                        <Input
-                          variant={"bordered"}
-                          color="secondary"
-                          size="sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="">Contact No.</label>
-                        <PhoneInput
-                          inputProps={{ style: inputStyle }}
-                          style={{}}
-                          className="border-2 border-[#E4E4E7] rounded-md"
-                          defaultCountry="sg"
-                          // onChange={(phone: string) => setPhone(phone)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="">Contact Person Name</label>
-                        <Input
-                          variant={"bordered"}
-                          color="secondary"
-                          size="sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="">Contact Person No.</label>
-                        <PhoneInput
-                          inputProps={{ style: inputStyle }}
-                          style={{}}
-                          className="border-2 border-[#E4E4E7] rounded-md"
-                          defaultCountry="sg"
+                        <div className="space-y-2">
+                          <label htmlFor="" className="md:text-base text-sm">
+                            Company Name
+                          </label>
+                          <Input
+                            variant={"bordered"}
+                            color="secondary"
+                            size="sm"
+                            name="company_name"
+                          />
+                        </div>
 
-                          // onChange={(phone: string) => setPhone(phone)}
-                        />
-                      </div>
-                    </CardBody>
-                    <CardFooter>
-                      <Button color="primary" fullWidth size="md">
-                        Submit Now
-                      </Button>
-                    </CardFooter>
+                        <div className="space-y-2">
+                          <label htmlFor="">Email</label>
+                          <Input
+                            name="email"
+                            variant={"bordered"}
+                            color="secondary"
+                            size="sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2 hidden">
+                          <label htmlFor="">Password</label>
+                          <Input
+                            value="123456"
+                            name="password"
+                            variant={"bordered"}
+                            color="secondary"
+                            size="sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="" className="md:text-base text-sm">
+                            UEN NO
+                          </label>
+                          <Input
+                            name="uen_no"
+                            variant={"bordered"}
+                            color="secondary"
+                            size="sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="" className="md:text-base text-sm">
+                            Brand Name
+                          </label>
+                          <Input
+                            name="brand_name"
+                            variant={"bordered"}
+                            color="secondary"
+                            size="sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="">Address</label>
+                          <Input
+                            name="address"
+                            variant={"bordered"}
+                            color="secondary"
+                            size="md"
+                            radius="sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="">Contact No.</label>
+                          <PhoneInput
+                            name="contact_no"
+                            inputProps={{ style: inputStyle }}
+                            style={{}}
+                            className="border-2 border-[#E4E4E7] rounded-md"
+                            defaultCountry="sg"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="">Contact Person Name</label>
+                          <Input
+                            name="contact_person"
+                            variant={"bordered"}
+                            color="secondary"
+                            size="sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="">Contact Person No.</label>
+                          <PhoneInput
+                            name="contact_person_no"
+                            inputProps={{ style: inputStyle }}
+                            style={{}}
+                            className="border-2 border-[#E4E4E7] rounded-md"
+                            defaultCountry="sg"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="">Payment Slip</label>
+                          <div></div>
+                          <input
+                            name="payment_slip"
+                            type="file"
+                            required
+                            // endContent={<PiUploadFill />}
+                            // size="lg"
+                          />
+                          <div className="flex items-center gap-x-4">
+                            <FaInfoCircle className="text-[#8D98AA]" />
+                            <p className="text-xs md:w-3/4">
+                              The image file max 2 MB in size.
+                            </p>
+                          </div>
+                        </div>
+                      </CardBody>
+                      <CardFooter>
+                        <Button
+                          color="primary"
+                          fullWidth
+                          size="md"
+                          type="submit"
+                        >
+                          Submit Now
+                        </Button>
+                      </CardFooter>
+                    </form>
                   </Card>
                 </Tab>
+
                 <Tab key="therapist" title="Therapist" className="text-xl">
                   <Card className="text-base py-8">
                     <CardHeader className="text-xl md:text-2xl font-bold text-center flex items-center justify-center">
@@ -376,6 +474,13 @@ export default function JoinUs(): JSX.Element {
                   </Card>
                 </Tab>
               </Tabs>
+
+              <Link
+                href="/auth/sign-in"
+                className="font-semibold text-secondary w-max mx-auto"
+              >
+                Already have an account?
+              </Link>
             </div>
           </div>
         </section>
