@@ -22,18 +22,19 @@ class UpdateTherapistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'name' => ['required', 'string', 'max:255'],
-            'passport_finno' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['required', 'date'],
-            'sex' => ['required', 'in:Male,Female'],
-            'contact_no' => ['required', 'string'],
-            'nationality' => ['required', 'string'],
-            'date_of_issue' => ['required', 'date'],
-            'address' => ['required', 'string'],
-            'address_nearest_mrt' => ['required', 'string'],
-            'professional_certs' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'employment_history' => ['required', 'string'],
+            'url' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'passport_finno' => ['nullable', 'string', 'max:255'],
+            'date_of_birth' => ['nullable', 'date'],
+            'sex' => ['nullable', 'in:Male,Female'],
+            'contact_no' => ['nullable', 'string'],
+            'nationality' => ['nullable', 'string'],
+            'date_of_issue' => ['nullable', 'date'],
+            'address' => ['nullable', 'string'],
+            'address_nearest_mrt' => ['nullable', 'string'],
+            'professional_certs' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'employment_history' => ['nullable', 'string'],
+            'status' => ['nullable', 'in:pending,approve'],
         ];
     }
 }

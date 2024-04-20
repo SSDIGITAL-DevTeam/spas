@@ -29,6 +29,7 @@ class TherapistResource extends JsonResource
             'address_nearest_mrt' => $this->whenHas('address_nearest_mrt'),
             'employment_history' => $this->whenHas('employment_history'),
             'professional_certs' => $this->whenHas('professional_certs'),
+            'status' => $this->whenHas('status'),
             'cover' => CoverResource::make($this->whenLoaded('cover')),
             'user' => UserResource::make($this->whenLoaded('user')),
         ];

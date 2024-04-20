@@ -33,7 +33,14 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
     Route::apiResource('pages', BackOffice\PageController::class)->parameters(['pages' => 'page']);
     Route::apiResource('metas', BackOffice\MetaController::class)->parameters(['metas' => 'meta']);
     Route::apiResource('operators', BackOffice\OperatorController::class);
-    Route::apiResource('therapist', BackOffice\TherapistController::class);
+    Route::apiResource('therapists', BackOffice\TherapistController::class);
+
+    // this route for email send detail login member
+    Route::patch('send-mail-operator/{user}', [BackOffice\SendMailPasswordController::class, 'updatePasswordOperator'])->name('send-mail-operator');
+    Route::patch('send-mail-therapist/{user}', [BackOffice\SendMailPasswordController::class, 'updatePasswordTherapist'])->name('send-mail-therapist');
+
+    // this route for reject member
+    Route::post('reject/{user}', [BackOffice\SendMailPasswordController::class, 'reject'])->name('reject');
 });
 
 Route::prefix('end-user')->as('end-user.')->group(function (): void {
