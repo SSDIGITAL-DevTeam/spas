@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('address_nearest_mrt');
             $table->string('professional_certs');
             $table->string('employment_history');
+            $table->enum('status', ['pending', 'approve'])->default('pending');
             $table->timestamps();
         });
     }
