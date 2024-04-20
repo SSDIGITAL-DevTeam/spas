@@ -7,66 +7,67 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import { Toaster, toast } from "react-hot-toast";
 import AuthModule from "@/modules/AuthModule";
 import ApiError from "@/errors/ApiError";
+import { NextUIProvider } from "@nextui-org/react";
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
-	// router
-	const router = useRouter();
+  // router
+  const router = useRouter();
 
-	useEffect(() => {
-		if (!localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME)) {
-			router.push("/login");
+  useEffect(() => {
+    if (!localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME)) {
+      router.push("/login");
 
-			return;
-		} else {
-			const validatingToken = async () => {
-				try {
-					await new AuthModule().validateToken(router);
+      return;
+    } else {
+      const validatingToken = async () => {
+        try {
+          await new AuthModule().validateToken(router);
 
-					if (router.pathname === "/login") {
-						router.push("/");
-						return;
-					}
-				} catch (error) {
-					const err = error as ApiError;
+          if (router.pathname === "/login") {
+            router.push("/");
+            return;
+          }
+        } catch (error) {
+          const err = error as ApiError;
 
-					if (err.statusCode === 401) {
-						toast("Token invalid, please relogin", {
-							icon: "🚫",
-							style: {
-								backgroundColor: "#D81222",
-								color: "#ffffff",
-								paddingBlock: 12,
-							},
-						});
+          if (err.statusCode === 401) {
+            toast("Token invalid, please relogin", {
+              icon: "🚫",
+              style: {
+                backgroundColor: "#D81222",
+                color: "#ffffff",
+                paddingBlock: 12,
+              },
+            });
 
-						setTimeout(() => {
-							router.push("/login");
-						}, 1000);
-						return;
-					}
-				}
-			};
+            setTimeout(() => {
+              router.push("/login");
+            }, 1000);
+            return;
+          }
+        }
+      };
 
-			validatingToken();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+      validatingToken();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	return (
-		<>
-			{router.pathname !== "/login" ? (
-				<>
-					<Toaster />
-					<AppLayout>
-						<Component {...pageProps} />
-					</AppLayout>
-				</>
-			) : (
-				<AuthLayout>
-					<Component {...pageProps} />
-					<Toaster />
-				</AuthLayout>
-			)}
-		</>
-	);
+  return (
+    <NextUIProvider>
+      {router.pathname !== "/login" ? (
+        <>
+          <Toaster />
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
+        </>
+      ) : (
+        <AuthLayout>
+          <Component {...pageProps} />
+          <Toaster />
+        </AuthLayout>
+      )}
+    </NextUIProvider>
+  );
 }

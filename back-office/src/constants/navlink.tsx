@@ -17,6 +17,16 @@ export const navLinks: NavLink[] = [
     icon: AssetDashboard,
   },
   {
+    name: "New Members",
+    url: "/new-members",
+    icon: AssetDashboard,
+  },
+  {
+    name: "Member Lists",
+    url: "/member-lists",
+    icon: AssetDashboard,
+  },
+  {
     name: "Posts",
     url: "/posts?status=4",
     icon: AssetPosts,
