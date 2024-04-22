@@ -19,11 +19,14 @@ return new class extends Migration
             $table->enum('sex', ['Male', 'Female']);
             $table->string('contact_no');
             $table->string('nationality');
-            $table->date('date_of_issue');
             $table->string('address');
             $table->string('address_nearest_mrt');
             $table->string('professional_certs');
-            $table->string('employment_history');
+            $table->string('name_cert');
+            $table->string('issuing_organization');
+            $table->date('date_of_issue');
+            $table->date('expired_date');
+            $table->integer('credential_id');
             $table->enum('status', ['pending', 'approve'])->default('pending');
             $table->timestamps();
         });

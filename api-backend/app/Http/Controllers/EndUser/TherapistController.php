@@ -37,9 +37,13 @@ class TherapistController extends Controller
             $therapistData->nationality = $request->nationality;
             $therapistData->date_of_issue = $request->date_of_issue;
             $therapistData->address = $request->address;
-            $therapistData->address_nearest_mrt = $request->address_nearest_mrt;
+            $therapistData->address_nearest_mrt = "";
             $therapistData->professional_certs = $request->file('professional_certs')->store('thrapist-certs');
-            $therapistData->employment_history = $request->employment_history;
+            $therapistData->name_cert = $request->name_cert;
+            $therapistData->issuing_organization = $request->issuing_organization;
+            $therapistData->date_of_issue = $request->date_of_issue;
+            $therapistData->expired_date = $request->expired_date;
+            $therapistData->credential_id = $request->credential_id;
             $therapistData->save();
 
             $therapistData->cover()->create([

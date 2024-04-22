@@ -9,6 +9,7 @@ use App\Http\Requests\PasswordResetRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\ValidateOtpRequest;
 use App\Http\Resources\Otp\OtpResource;
+use App\Http\Resources\User\UserResource;
 use App\Mail\Otp;
 use App\Models\OneTimePassword;
 use App\Models\User;
@@ -122,5 +123,18 @@ class AuthController extends Controller
                 'message' => 'Failed to reset password. Please try again later.',
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function me(): UserResource
+    {
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user !== null) {
+            $user->load(['operator', 'therapist']);
+        }
+
+        return UserResource::make($user);
     }
 }

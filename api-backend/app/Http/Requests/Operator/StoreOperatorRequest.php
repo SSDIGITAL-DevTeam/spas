@@ -32,9 +32,6 @@ class StoreOperatorRequest extends FormRequest
             'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'payment_slip' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required'],
-            'role' => ['in:operator'],
-            // 'status' => ['nullable', 'in:pending,approve'],
         ];
     }
 
@@ -60,8 +57,6 @@ class StoreOperatorRequest extends FormRequest
             'email.required' => 'Email address is required.',
             'email.email' => 'Please provide a valid email address.',
             'email.unique' => 'This email address is already in use.',
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least :min characters long.',
         ];
     }
 }

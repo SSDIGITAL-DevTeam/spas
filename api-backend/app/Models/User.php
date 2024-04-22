@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Operator::class);
     }
+
+    public function therapist(): BelongsTo
+    {
+        return $this->belongsTo(Therapist::class);
+    }
 }

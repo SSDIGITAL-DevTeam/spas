@@ -33,7 +33,11 @@ class UpdateTherapistRequest extends FormRequest
             'address' => ['nullable', 'string'],
             'address_nearest_mrt' => ['nullable', 'string'],
             'professional_certs' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'employment_history' => ['nullable', 'string'],
+            'name_cert' => ['nullable'],
+            'issuing_organization' => ['nullable'],
+            'date_of_issue' => ['nullable', 'date'],
+            'expired_date' => ['nullable', 'date'],
+            'credential_id' => ['nullable', 'numeric'],
             'status' => ['nullable', 'in:pending,approve'],
         ];
     }
