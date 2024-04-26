@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('therapists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug');
             $table->string('passport_finno');
             $table->date('date_of_birth');
             $table->enum('sex', ['Male', 'Female']);

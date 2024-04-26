@@ -57,19 +57,22 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
 
         Route::middleware('role:operator')->group(function () {
             Route::prefix('operator')->group(function () {
-                Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
                 Route::apiResource('therapists', EndUser\TherapistController::class)->only('index', 'show');
+                Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
             });
         });
 
         // For Therapists
         Route::middleware('role:therapist')->group(function () {
-            Route::prefix('therapist')->group(function () {
-                Route::apiResource('therapists', EndUser\TherapistController::class)->only('update', 'index', 'show');
+            Route::prefix('therapists')->group(function () {
+                Route::apiResource('therapists', EndUser\TherapistController::class)->only('update', 'show');
                 Route::apiResource('operators', EndUser\OperatorController::class)->only('index', 'show');
+
+                Route::apiResource('carrers', EndUser\EmploymentHistoryController::class);
             });
         });
     });
+
 
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);
     Route::apiResource('events', BackOffice\EventController::class)->only(['index', 'show']);

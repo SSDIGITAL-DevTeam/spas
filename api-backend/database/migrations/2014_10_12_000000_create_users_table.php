@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserStatus;
 use App\Models\Operator;
 use App\Models\Therapist;
 use Illuminate\Database\Migrations\Migration;
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['operator', 'therapist', 'admin']);
+            $table->enum('role', UserStatus::values())->default(UserStatus::Admin);
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginUserRequest;
@@ -32,28 +33,32 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = $request->role;
+        $user->role = UserStatus::class;
         $user->save();
 
-        return $this->success([
-            'user' => $user
+        return response()->json([
+            'message' => $user
         ]);
     }
 
     public function login(LoginUserRequest $request)
     {
 
-        $request->validated($request->all());
+        $credentials = $request->validated();
 
-        if (!Auth::attempt($request->only(['email', 'password']))) {
-            return $this->error('', 'Credential not match !', 401);
+        if (!auth()->attempt($credentials)) {
+            return response()->json([
+                'message' => 'The provided credentials do not match our records.',
+            ], 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        /** @var User $user */
+        $user = auth()->user();
 
-        return $this->success([
-            'user' => $user,
-            'token' => $user->createToken('API Token of ' . $user->name)->plainTextToken
+        return response()->json([
+            'data' => [
+                'token' => $user->createToken('access-token')->plainTextToken,
+            ],
         ]);
     }
 
@@ -61,8 +66,8 @@ class AuthController extends Controller
     {
         Auth::user()->currentAccessToken()->delete();
 
-        return $this->success([
-            'message' => 'You have successfully been logged out and your token has been deleted'
+        return response()->json([
+            'message' => 'You have successfully been logged out'
         ]);
     }
 

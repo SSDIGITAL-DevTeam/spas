@@ -3,7 +3,10 @@
 namespace App\Http\Resources\Therapist;
 
 use App\Http\Resources\Cover\CoverResource;
+use App\Http\Resources\EmploysHistory\EmploymentHistoryCollection;
+use App\Http\Resources\EmploysHistory\EmploymentHistoryResource;
 use App\Http\Resources\User\UserResource;
+use App\Models\EmploymentHistory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +22,7 @@ class TherapistResource extends JsonResource
         return [
             'id' => $this->whenHas('id'),
             'name' => $this->whenHas('name'),
+            'slug' => $this->whenHas('slug'),
             'passport_finno' => $this->whenHas('passport_finno'),
             'date_of_birth' => $this->whenHas('date_of_birth'),
             'sex' => $this->whenHas('sex'),
@@ -35,6 +39,7 @@ class TherapistResource extends JsonResource
             'status' => $this->whenHas('status'),
             'cover' => CoverResource::make($this->whenLoaded('cover')),
             'user' => UserResource::make($this->whenLoaded('user')),
+            'employHistorys' => EmploymentHistoryCollection::make($this->whenLoaded('employHistorys')),
         ];
     }
 }

@@ -26,16 +26,16 @@ class StoreOperatorRequest extends FormRequest
             'uen_no' => ['required', 'string', 'max:255', 'unique:operators,uen_no'],
             'brand_name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
-            'contact_no' => ['required', 'string', 'max:255'],
+            'contact_no' => ['required', 'max:255', 'phone'],
             'contact_person' => ['required', 'string', 'max:255'],
-            'contact_person_no' => ['required', 'string', 'max:255'],
+            'contact_person_no' => ['required', 'string', 'max:255', 'phone'],
             'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'payment_slip' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'email' => ['required', 'email', 'unique:users,email'],
         ];
     }
 
-    public function message()
+    public function messages(): array
     {
         return [
             'company_name.required' => 'Company name is required.',
@@ -44,8 +44,10 @@ class StoreOperatorRequest extends FormRequest
             'brand_name.required' => 'Brand name is required.',
             'address.required' => 'Address is required.',
             'contact_no.required' => 'Contact number is required.',
+            'contact_no.phone' => 'Contact number is not valid.',
             'contact_person.required' => 'Contact person name is required.',
             'contact_person_no.required' => 'Contact person number is required.',
+            'contact_person_no.phone' => 'Contact person number is not valid.',
             'payment_slip.required' => 'Payment slip is required.',
             'payment_slip.image' => 'Payment slip must be an image.',
             'payment_slip.mimes' => 'Payment slip must be a file of type: jpeg, png, jpg, gif, svg.',
