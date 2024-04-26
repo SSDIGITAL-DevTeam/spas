@@ -19,6 +19,7 @@ class OperatorResource extends JsonResource
         return [
             'id' => $this->whenHas('id'),
             'company_name' => $this->whenHas('company_name'),
+            'slug' => $this->whenHas('slug'),
             'uen_no' => $this->whenHas('uen_no'),
             'brand_name' => $this->whenHas('brand_name'),
             'address' => $this->whenHas('address'),

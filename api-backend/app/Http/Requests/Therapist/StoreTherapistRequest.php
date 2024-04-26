@@ -27,16 +27,17 @@ class StoreTherapistRequest extends FormRequest
             'passport_finno' => ['required', 'string', 'max:255'],
             'date_of_birth' => ['required', 'date'],
             'sex' => ['required', 'in:Male,Female'],
-            'contact_no' => ['required', 'string'],
+            'contact_no' => ['required', 'max:255', 'phone'],
             'nationality' => ['required', 'string'],
             'date_of_issue' => ['required', 'date'],
             'address' => ['required', 'string'],
-            'address_nearest_mrt' => ['required', 'string'],
             'professional_certs' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'employment_history' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required'],
-            'role' => ['in:therapist'],
+            'name_cert' => ['required'],
+            'issuing_organization' => ['required'],
+            'date_of_issue' => ['required', 'date'],
+            'expired_date' => ['required', 'date'],
+            'credential_id' => ['required', 'numeric'],
         ];
     }
 
@@ -54,6 +55,7 @@ class StoreTherapistRequest extends FormRequest
             'sex.required' => 'Please select a gender.',
             'sex.in' => 'Gender must be male, female.',
             'contact_no.required' => 'A contact number is required.',
+            'contact_no.phone' => 'Contact number is not valid.',
             'nationality.required' => 'Nationality is required.',
             'date_of_issue.required' => 'Date of issue is required.',
             'date_of_issue.date' => 'Date of issue must be a valid date.',
@@ -64,6 +66,9 @@ class StoreTherapistRequest extends FormRequest
             'professional_certs.mimes' => 'Professional Certs must be a file of type: jpeg, png, jpg, gif, svg.',
             'professional_certs.max' => 'Professional Certs may not be greater than 2mb.',
             'employment_history.required' => 'Employment history is required.',
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Please provide a valid email address.',
+            'email.unique' => 'This email address is already in use.',
         ];
     }
 }

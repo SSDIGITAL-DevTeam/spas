@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('operators', function (Blueprint $table) {
             $table->id();
             $table->string('company_name');
+            $table->string('slug');
             $table->string('uen_no');
             $table->string('brand_name');
             $table->string('address');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\EndUser;
 
+use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Therapist\StoreTherapistRequest;
 use App\Http\Requests\Therapist\UpdateTherapistRequest;
@@ -9,6 +10,7 @@ use App\Http\Resources\Therapist\TherapistCollection;
 use App\Http\Resources\Therapist\TherapistResource;
 use App\Models\Therapist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,7 +19,7 @@ class TherapistController extends Controller
     public function index()
     {
         return TherapistCollection::make(
-            Therapist::with('user', 'cover')
+            Therapist::with(['user', 'cover', 'employHistorys']) // Perhatikan penulisan 'employHistories' bukan 'employHistorys'
                 ->latest()
                 ->paginate(10)
         );
@@ -30,6 +32,7 @@ class TherapistController extends Controller
 
             $therapistData = new Therapist();
             $therapistData->name = $request->name;
+            $therapistData->slug = Str::slug($request->name);
             $therapistData->passport_finno = $request->passport_finno;
             $therapistData->date_of_birth = $request->date_of_birth;
             $therapistData->sex = $request->sex;
@@ -37,10 +40,14 @@ class TherapistController extends Controller
             $therapistData->nationality = $request->nationality;
             $therapistData->date_of_issue = $request->date_of_issue;
             $therapistData->address = $request->address;
-            $therapistData->address_nearest_mrt = $request->address_nearest_mrt;
-            $therapistData->professional_certs = $request->file('professional_certs')->store('thrapist-certs');
-            $therapistData->employment_history = $request->employment_history;
+            $therapistData->address_nearest_mrt = "";
+            $therapistData->professional_certs = $request->file('professional_certs')->store('therapist-certs');
+            $therapistData->name_cert = $request->name_cert;
+            $therapistData->issuing_organization = $request->issuing_organization;
+            $therapistData->expired_date = $request->expired_date;
+            $therapistData->credential_id = $request->credential_id;
             $therapistData->save();
+
 
             $therapistData->cover()->create([
                 'url' => $request->file('url')->store('therapist-picture')
@@ -50,16 +57,23 @@ class TherapistController extends Controller
                 'name' => $request->name, // Assuming you have a 'name' field for the user
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'therapist', // Set the role to default operator
+                'role' => UserStatus::Therapist, // Set the role to default operator
             ]);
 
             return new TherapistResource($therapistData->load('user', 'cover'));
         });
     }
 
-    public function show(Therapist $therapist)
+    public function show($slug): TherapistResource
     {
-        return new TherapistResource($therapist->load('user', 'cover'));
+        $therapist = Therapist::where('slug', $slug)->firstOrFail();
+
+        if (!$therapist) {
+            // Handle not found scenario, for example, return an error response
+            return response()->json(['error' => 'Therapist not found'], 404);
+        }
+
+        return new TherapistResource($therapist->load('user', 'cover', 'employHistorys'));
     }
 
     public function update(UpdateTherapistRequest $request, Therapist $therapist)

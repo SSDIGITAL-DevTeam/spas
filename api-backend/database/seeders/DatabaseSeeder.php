@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'memberSPAS',
             'operator_id' => null,
-            'email' => 'member@gmail.com',
+            'email' => 'operator@gmail.com',
             'password' => Hash::make('member'),
             'role' => 'operator'
         ]);

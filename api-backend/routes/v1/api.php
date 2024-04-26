@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\BackOffice;
 use App\Http\Controllers\EndUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // PUBLIC ROUTES
@@ -52,21 +53,26 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
     // IF LOGIN WITH ROLE OPERATOR OR THERAPIST
     Route::middleware(['auth:sanctum'])->group(function (): void {
         // For Operators
+        Route::get('/me', [AuthController::class, 'me']);
+
         Route::middleware('role:operator')->group(function () {
             Route::prefix('operator')->group(function () {
-                Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
                 Route::apiResource('therapists', EndUser\TherapistController::class)->only('index', 'show');
+                Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
             });
         });
 
         // For Therapists
         Route::middleware('role:therapist')->group(function () {
-            Route::prefix('therapist')->group(function () {
-                Route::apiResource('therapists', EndUser\TherapistController::class)->only('update', 'index', 'show');
+            Route::prefix('therapists')->group(function () {
+                Route::apiResource('therapists', EndUser\TherapistController::class)->only('update', 'show');
                 Route::apiResource('operators', EndUser\OperatorController::class)->only('index', 'show');
+
+                Route::apiResource('carrers', EndUser\EmploymentHistoryController::class);
             });
         });
     });
+
 
     Route::apiResource('posts', EndUser\PostController::class)->only(['index', 'show']);
     Route::apiResource('events', BackOffice\EventController::class)->only(['index', 'show']);

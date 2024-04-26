@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,6 +43,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'role' => UserStatus::class,
     ];
 
     public function OneTimePassword(): HasMany
@@ -52,5 +54,10 @@ class User extends Authenticatable
     public function operator(): BelongsTo
     {
         return $this->belongsTo(Operator::class);
+    }
+
+    public function therapist(): BelongsTo
+    {
+        return $this->belongsTo(Therapist::class);
     }
 }
