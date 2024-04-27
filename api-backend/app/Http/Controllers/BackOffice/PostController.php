@@ -12,6 +12,7 @@ use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -46,16 +47,19 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         // return PostResource::make(Post::created($request->validated()));
-        $request->validated();
+        $validatedData = $request->validated();
 
-        // dd($cek);
+        $slug = Str::slug($request->title);
 
-        $post = Post::create($request->only([
-            'title',
-            'slug',
-            'content',
-            'status',
-        ]) + ['published_at' => now()]);
+        // Membuat instance baru Post dengan data yang sudah divalidasi dan menambahkan tanggal sekarang untuk published_at
+        $post = Post::create([
+            'title' => $validatedData['title'],
+            'slug' => $slug,
+            'content' => $validatedData['content'],
+            'status' => $validatedData['status'],
+            'published_at' => now(),
+        ]);
+
 
         $post->cover()->create([
             'url' => $request->file('url')->store('post-image')
@@ -96,7 +100,14 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
 
-        $post->update($request->all());
+        $validatedData = $request->validated();
+
+        $post->update($validatedData);
+
+        if (array_key_exists('company_name', $validatedData)) {
+            $post->slug = Str::slug($validatedData['company_name']);
+            $post->save();
+        }
 
         // Create tags and attach them to the post
         $tags = $request->input('tags');

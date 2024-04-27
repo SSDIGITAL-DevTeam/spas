@@ -27,7 +27,7 @@ class UpdateTherapistRequest extends FormRequest
             'passport_finno' => ['nullable', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'date'],
             'sex' => ['nullable', 'in:Male,Female'],
-            'contact_no' => ['nullable', 'string'],
+            'contact_no' => ['nullable', 'phone'],
             'nationality' => ['nullable', 'string'],
             'date_of_issue' => ['nullable', 'date'],
             'address' => ['nullable', 'string'],

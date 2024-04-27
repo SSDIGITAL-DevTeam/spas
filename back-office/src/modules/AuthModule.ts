@@ -4,7 +4,7 @@ import ApiModule from '@/modules/ApiModule'
 import ApiError from '@/errors/ApiError'
 
 export default class AuthModule {
-    private url: string = '/auth'
+    private url: string = '/auth'   
     private defaultHeaders: HeadersInit
 
     public constructor() {

@@ -86,12 +86,18 @@ class OperatorController extends Controller
      */
     public function update(UpdateOperatorRequest $request, Operator $operator)
     {
-        $operator->update($request->validated());
+        $validatedData = $request->validated();
+
+        $operator->update($validatedData);
+
+        if (array_key_exists('company_name', $validatedData)) {
+            $operator->slug = Str::slug($validatedData['company_name']);
+            $operator->save();
+        }
 
         $newFile = $request->file('url');
-
         if ($newFile) {
-            $operator->cover()->update(['url' => $newFile->store('operator-logo')]);
+            $operator->cover()->update(['url' => $newFile->store('operator-logo', 'public')]);
         }
 
         return new OperatorResource($operator->load('user', 'cover'));

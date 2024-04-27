@@ -5,9 +5,13 @@ namespace App\Http\Controllers\BackOffice;
 use App\Http\Controllers\Controller;
 use App\Mail\ApproveOperator;
 use App\Mail\ApproveTherapist;
+use App\Mail\RejectOperator;
+use App\Mail\RejectTherapist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMailPassword;
+use App\Models\Operator;
+use App\Models\Therapist;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -16,27 +20,21 @@ class SendMailPasswordController extends Controller
 {
     public function updatePasswordOperator(Request $request, $email)
     {
-        // Temukan pengguna berdasarkan alamat email
         $user = User::where('operator_id', $email)->first();
 
-        // Pastikan pengguna ditemukan sebelum melanjutkan
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Buat kata sandi baru
         $newPassword = Str::random(8);
 
-        // Update kata sandi pengguna dengan kata sandi baru yang di-hash
         $user->update([
             'password' => Hash::make($newPassword),
         ]);
 
-        // Kirim email dengan kata sandi baru
         Mail::to('lawakclub17@gmail.com')->send(new ApproveOperator($newPassword, $user));
         // Mail::mailer('smtp')->to('hello@spas.com.sg')->send(new SendMailPassword($newPassword, $user));
 
-        // Mengembalikan variabel $user dan $newPassword dalam bentuk array
         return response()->json([
             'status' => 'success',
             'mesagge' => 'Send email login success'
@@ -45,30 +43,90 @@ class SendMailPasswordController extends Controller
 
     public function updatePasswordTherapist(Request $request, $email)
     {
-        // Temukan pengguna berdasarkan alamat email
         $user = User::where('therapist_id', $email)->first();
 
-        // Pastikan pengguna ditemukan sebelum melanjutkan
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Buat kata sandi baru
         $newPassword = Str::random(8);
 
-        // Update kata sandi pengguna dengan kata sandi baru yang di-hash
         $user->update([
             'password' => Hash::make($newPassword),
         ]);
 
-        // Kirim email dengan kata sandi baru
         Mail::to('lawakclub17@gmail.com')->send(new ApproveTherapist($newPassword, $user));
         // Mail::mailer('smtp')->to('hello@spas.com.sg')->send(new SendMailPassword($newPassword, $user));
 
-        // Mengembalikan variabel $user dan $newPassword dalam bentuk array
         return response()->json([
             'status' => 'success',
             'mesagge' => 'Send email login success'
         ], 200);
+    }
+
+    public function rejectOperator(Request $request, $id)
+    {
+        $validateData = $request->validate([
+            'provide_issue' => ['required'],
+        ]);
+
+        $operator = Operator::find($id);
+
+        if (!$operator) {
+            return response()->json([
+                'message' => 'Operator not found!',
+            ]);
+        }
+
+        $user = $operator->user;
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ]);
+        }
+
+        Mail::to('lawakclub17@gmail.com')->send(new RejectOperator($validateData));
+
+        $operator->user()->delete();
+        $operator->cover()->delete();
+        $operator->delete();
+
+        return response()->json([
+            'message' => 'Send mail success'
+        ], 201);
+    }
+
+    public function rejectTherapist(Request $request, $id)
+    {
+        $validateData = $request->validate([
+            'provide_issue' => ['required'],
+        ]);
+
+        $therapist = Therapist::find($id);
+
+        if (!$therapist) {
+            return response()->json([
+                'message' => 'Therapist not found!',
+            ]);
+        }
+
+        $user = $therapist->user;
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ]);
+        }
+
+        Mail::to('lawakclub17@gmail.com')->send(new RejectTherapist($validateData));
+
+        $therapist->user()->delete();
+        $therapist->cover()->delete();
+        $therapist->delete();
+
+        return response()->json([
+            'message' => 'Send mail success'
+        ], 201);
     }
 }

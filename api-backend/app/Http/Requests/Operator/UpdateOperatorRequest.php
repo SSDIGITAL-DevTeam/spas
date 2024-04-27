@@ -26,9 +26,9 @@ class UpdateOperatorRequest extends FormRequest
             'uen_no' => ['nullable', 'string', 'max:255'],
             'brand_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:255'],
-            'contact_no' => ['nullable', 'string', 'max:255'],
+            'contact_no' => ['nullable', 'max:255', 'phone'],
             'contact_person' => ['nullable', 'string', 'max:255'],
-            'contact_person_no' => ['nullable', 'string', 'max:255'],
+            'contact_person_no' => ['nullable', 'max:255', 'phone'],
             'url' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'status' => ['nullable', 'in:pending,approve'],
         ];

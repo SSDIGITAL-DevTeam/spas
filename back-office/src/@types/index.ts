@@ -22,6 +22,52 @@ export type Post = {
     meta?: Meta[]
 }
 
+export type Operator = {
+    id: number
+    company_name: string
+    uen_no: string
+    brand_name: string
+    address: string
+    contact_no: string
+    contact_person: string
+    contact_person_no: string
+    payment_slip: string
+    email: string
+    cover: Cover
+    status: string
+}
+
+export type Therapist = {
+    id: number
+    name: string
+    passport_finno: string
+    date_of_birth: string
+    sex: string
+    contact_no: string
+    nationality: string
+    address: string
+    professional_certs: string
+    email: string
+    name_cert: string
+    issuing_organization: string
+    date_of_issue: string
+    expired_date: string
+    credential_id: number
+    employHistorys: Employment[]
+    cover: Cover
+    status: string
+}
+
+export type Employment = {
+    id: number
+    job_title: string
+    company_name: string
+    start_date: string
+    end_date: string
+    location: string
+    descripstion: string
+}
+
 export type Category = {
     id: number
     name: string

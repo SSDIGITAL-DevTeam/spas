@@ -24,7 +24,7 @@ export default function ViewPost(): JSX.Element {
         const res = await new PostModule().singlePost(+router.query.id!);
         setSinglePost(res.data);
 
-        console.log(res.data.categories);
+        // console.log(res.data.categories);
       } catch (error) {
       } finally {
         setIsLoading(false);
