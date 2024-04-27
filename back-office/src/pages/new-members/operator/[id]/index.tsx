@@ -8,6 +8,8 @@ import Head from "next/head";
 import Loading from "@/components/partials/Loading";
 import { useRouter } from "next/router";
 import axios from "axios";
+import toast from "react-hot-toast";
+import ModalRejected from "@/components/modals/Rejected";
 
 // import ModalApproved from "@/components/partials/ModalApproved";
 
@@ -18,6 +20,10 @@ export default function DetailMember(): JSX.Element {
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [operatorId, setOperatorId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedOperatorId, setSelectedOperatorId] = useState<number | null>(
+    null
+  );
+  const [isOpenRejected, setIsOpenRejected] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -78,6 +84,14 @@ export default function DetailMember(): JSX.Element {
     }
 
     // Tutup modal
+    toast("Operator has been approved.", {
+      icon: "✅",
+      style: {
+        backgroundColor: "#F4B202",
+        color: "#ffffff",
+        paddingBlock: 12,
+      },
+    });
     router.push("/member-lists");
   };
 
@@ -213,10 +227,17 @@ export default function DetailMember(): JSX.Element {
             <section>
               <div className="w-max mx-auto">
                 <div className="flex flex-col md:flex-row gap-x-10">
-                  <Button color="danger" size="lg">
+                  <Button
+                    onClick={() => {
+                      setSelectedOperatorId(singleOperator.id);
+                      setIsOpenRejected(!isOpenRejected);
+                    }}
+                    color="danger"
+                    size="lg"
+                  >
                     Reject
                   </Button>
-                  
+
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -242,9 +263,13 @@ export default function DetailMember(): JSX.Element {
             </section>
           </div>
         )}
-
-        {/* <ModalApproved isOpen={isOpenApproved} setIsOpen={setIsOpenApproved} /> */}
       </main>
+
+      <ModalRejected
+        isOpen={isOpenRejected}
+        setIsOpen={setIsOpenRejected}
+        operatorId={selectedOperatorId}
+      />
     </>
   );
 }

@@ -18,9 +18,10 @@ Route::prefix('auth')->as('auth.')->group(function (): void {
     Route::post('reset-password/{user}', [AuthController::class, 'resetPassword'])->name('reset-password');
 
     Route::middleware(['auth:sanctum'])->group(function (): void {
+        Route::post('/sign-out', [AuthController::class, 'logout']);
+
         Route::middleware('role:admin')->group(function (): void {
             Route::get('/validate-token', fn () => ['role' => true]);
-            Route::post('/sign-out', [AuthController::class, 'logout']);
 
             Route::put('change-password', [ChangePasswordController::class, 'update'])->name('change-password');
         });
@@ -44,7 +45,8 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
         Route::patch('send-mail-therapist/{user}', [BackOffice\SendMailPasswordController::class, 'updatePasswordTherapist'])->name('send-mail-therapist');
 
         // this route for reject member
-        Route::post('reject/{user}', [BackOffice\SendMailPasswordController::class, 'reject'])->name('reject');
+        Route::post('reject-operator/{user}', [BackOffice\SendMailPasswordController::class, 'rejectOperator'])->name('reject-operator');
+        Route::post('reject-therapist/{user}', [BackOffice\SendMailPasswordController::class, 'rejectTherapist'])->name('reject-therapist');
     });
 });
 

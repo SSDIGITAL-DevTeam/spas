@@ -25,7 +25,7 @@ class CategoryFactory extends Factory
         ];
 
         return [
-            'title' => fake()->unique()->randomElement($categories),
+            'name' => fake()->randomElement($categories),
         ];
     }
 }

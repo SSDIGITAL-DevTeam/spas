@@ -8,6 +8,8 @@ import { Therapist } from "@/@types";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import axios from "axios";
+import toast from "react-hot-toast";
+import TherapistRejected from "@/components/modals/RejectTherapist";
 
 export default function DetailMember(): JSX.Element {
   const [singleTherapist, setSingleTherapist] = useState<Therapist>(
@@ -16,6 +18,10 @@ export default function DetailMember(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [therapistId, setThearpistId] = useState<number>(0);
+  const [selectedTherapistId, setSelectedTherapistId] = useState<number | null>(
+    null
+  );
+  const [isOpenRejected, setIsOpenRejected] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -76,6 +82,14 @@ export default function DetailMember(): JSX.Element {
     }
 
     // Tutup modal
+    toast("Therapist has been approved.", {
+      icon: "✅",
+      style: {
+        backgroundColor: "#F4B202",
+        color: "#ffffff",
+        paddingBlock: 12,
+      },
+    });
     router.push("/member-lists");
   };
 
@@ -256,7 +270,14 @@ export default function DetailMember(): JSX.Element {
             <section>
               <div className="w-max mx-auto">
                 <div className="flex flex-col md:flex-row gap-x-10">
-                  <Button color="danger" size="lg">
+                  <Button
+                    onClick={() => {
+                      setSelectedTherapistId(singleTherapist.id);
+                      setIsOpenRejected(!isOpenRejected);
+                    }}
+                    color="danger"
+                    size="lg"
+                  >
                     Reject
                   </Button>
 
@@ -286,6 +307,11 @@ export default function DetailMember(): JSX.Element {
           </div>
         )}
       </main>
+      <TherapistRejected
+        isOpen={isOpenRejected}
+        setIsOpen={setIsOpenRejected}
+        therapistId={selectedTherapistId}
+      />
     </>
   );
 }
