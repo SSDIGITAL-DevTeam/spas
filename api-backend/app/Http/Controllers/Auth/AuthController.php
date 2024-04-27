@@ -137,7 +137,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($user !== null) {
-            $user->load(['operator', 'therapist']);
+            $user->load(['operator.cover', 'therapist.cover']);
         }
 
         return UserResource::make($user);

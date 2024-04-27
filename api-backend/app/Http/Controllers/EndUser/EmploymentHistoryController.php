@@ -32,24 +32,24 @@ class EmploymentHistoryController extends Controller
         return new EmploymentHistoryResource($employs->load('therapist'));
     }
 
-    public function show(EmploymentHistory $carrer): EmploymentHistoryResource
+    public function show(EmploymentHistory $career): EmploymentHistoryResource
     {
-        return new EmploymentHistoryResource($carrer->load('therapist'));
+        return new EmploymentHistoryResource($career->load('therapist'));
     }
 
-    public function update(UpdateEmploymentHistoryRequest $request, EmploymentHistory $carrer): EmploymentHistoryResource
+    public function update(UpdateEmploymentHistoryRequest $request, EmploymentHistory $career): EmploymentHistoryResource
     {
         $data = $request->validated();
         // dd($data);
-        $carrer->update($data);
+        $career->update($data);
 
-        return new EmploymentHistoryResource($carrer->load('therapist'));
+        return new EmploymentHistoryResource($career->load('therapist'));
     }
 
-    public function destroy(EmploymentHistory $carrer)
+    public function destroy(EmploymentHistory $career)
     {
         try {
-            $carrer->delete();
+            $career->delete();
 
             return response()->json(['message' => 'Employment deleted successfully'], 200);
         } catch (\Exception $e) {

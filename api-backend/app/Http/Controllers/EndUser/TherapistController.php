@@ -19,7 +19,7 @@ class TherapistController extends Controller
     public function index()
     {
         return TherapistCollection::make(
-            Therapist::with(['user', 'cover', 'employHistorys']) // Perhatikan penulisan 'employHistories' bukan 'employHistorys'
+            Therapist::with(['user', 'cover', 'employHistorys'])
                 ->latest()
                 ->paginate(10)
         );
@@ -78,10 +78,16 @@ class TherapistController extends Controller
 
     public function update(UpdateTherapistRequest $request, Therapist $therapist)
     {
-        $therapist->update($request->validated());
+        $data = $request->validated();
+
+        $therapist->update($data);
+
+        if (array_key_exists('name', $data)) {
+            $therapist->slug = Str::slug($data['name']);
+            $therapist->save();
+        }
 
         $newFile = $request->file('url');
-
         if ($newFile) {
             $therapist->cover()->update(['url' => $newFile->store('therapist-picture')]);
         }

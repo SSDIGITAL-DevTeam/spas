@@ -41,7 +41,6 @@ export default class PostModule {
             throw err satisfies ApiError
         }
     }
-
     
     public async singlePost(id: number): Promise<{ data: Post }> {
         try {

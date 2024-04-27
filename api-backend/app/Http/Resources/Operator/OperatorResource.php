@@ -27,8 +27,8 @@ class OperatorResource extends JsonResource
             'contact_person' => $this->whenHas('contact_person'),
             'contact_person_no' => $this->whenHas('contact_person_no'),
             'status' => $this->whenHas('status'),
-            'cover' => CoverResource::make($this->whenLoaded('cover')),
             'payment_slip' => $this->whenHas('payment_slip'),
+            'cover' => CoverResource::make($this->whenLoaded('cover')),
             'user' => UserResource::make($this->whenLoaded('user')),
         ];
     }
