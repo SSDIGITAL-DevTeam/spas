@@ -23,34 +23,93 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        try {
-            $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080');
 
-            if ($response->successful()) {
-                $imageContent = $response->body();
-                $imageName = 'operator-logo/' . uniqid() . '.jpg';
-                $saved = Storage::disk('public')->put($imageName, $imageContent);
+        Operator::factory(5)->create()->each(function ($operator) {
+            try {
+                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?spa');
 
-                if (!$saved) {
-                    Log::error("Failed to save the image to storage: $imageName");
+                if ($response->successful()) {
+                    $imageContent = $response->body();
+                    $imageName = 'operator-logo/' . uniqid() . '.jpg';
+                    $saved = Storage::disk('public')->put($imageName, $imageContent);
+
+                    if (!$saved) {
+                        Log::error("Failed to save the image to storage: $imageName");
+                    }
+
+                    if ($saved) {
+                        $operator->cover()->create([
+                            'url' => $imageName,
+                        ]);
+                    }
+                } else {
+                    Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
                 }
-            } else {
-                Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
-            }
-        } catch (\Exception $e) {
-            Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
-        }
-
-        Operator::factory()->count(5)->create()->each(function ($operator) use ($saved, $imageName) {
-            if ($saved) {
-                $operator->cover()->create([
-                    'url' => $imageName,
-                ]);
+            } catch (\Exception $e) {
+                Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
             }
         });
 
         // Create Therapist
-        Therapist::factory()->count(5)->create();
+        Therapist::factory()->count(5)->create()->each(function ($therapist) {
+            try {
+                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?spa');
+
+                if ($response->successful()) {
+                    $imageContent = $response->body();
+                    $imageName = 'therapist-certs/' . uniqid() . '.jpg';
+                    $saved = Storage::disk('public')->put($imageName, $imageContent);
+
+                    if (!$saved) {
+                        Log::error("Failed to save the image to storage: $imageName");
+                    }
+
+                    if ($saved) {
+                        $therapist->cover()->create([
+                            'url' => $imageName,
+                        ]);
+                    }
+                } else {
+                    Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
+                }
+            } catch (\Exception $e) {
+                Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
+            }
+        });
+
+        // Create 6 categories
+        Category::factory()->count(6)->create();
+
+        // Create 6 events
+        Event::factory()->count(6)->create();
+
+        // Create Post
+        Post::factory()->count(10)->create()->each(function ($post) {
+            try {
+                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?spa');
+
+                if ($response->successful()) {
+                    $imageContent = $response->body();
+                    $imageName = 'post-image/' . uniqid() . '.jpg';
+                    $saved = Storage::disk('public')->put($imageName, $imageContent);
+
+                    if (!$saved) {
+                        Log::error("Failed to save the image to storage: $imageName");
+                    }
+
+                    if ($saved) {
+                        $post->cover()->create([
+                            'url' => $imageName,
+                        ]);
+                    }
+                } else {
+                    Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
+                }
+            } catch (\Exception $e) {
+                Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
+            }
+        });
+
 
         User::create([
             'name' => 'adminSPAS',
@@ -75,14 +134,5 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('therapist'),
             'role' => 'therapist'
         ]);
-
-        // Create 6 categories
-        Category::factory()->count(6)->create();
-
-        // Create 6 events
-        Event::factory()->count(6)->create();
-
-        // Create Post
-        Post::factory()->count(10)->create();
     }
 }

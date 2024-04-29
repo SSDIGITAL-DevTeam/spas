@@ -104,7 +104,9 @@ export default function DetailMember(): JSX.Element {
                 onChange={changeHandler}
               >
                 {options.map((country) => (
-                  <option value="">{country.label}</option>
+                  <option value="" key={country.label}>
+                    {country.label}
+                  </option>
                 ))}
               </select>
             </div>

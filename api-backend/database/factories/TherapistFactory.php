@@ -22,7 +22,7 @@ class TherapistFactory extends Factory
     {
         // Attempt to download the image and save it locally.
         try {
-            $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080?payment');
+            $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?certificate,spa');
 
             if ($response->successful()) {
                 $imageContent = $response->body();
