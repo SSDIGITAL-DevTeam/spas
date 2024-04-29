@@ -8,12 +8,15 @@ import {
   CardFooter,
   Input,
   Button,
+  Image,
 } from "@nextui-org/react";
 import Head from "next/head";
 import { FaInfoCircle } from "react-icons/fa";
-import { PiUploadFill } from "react-icons/pi";
 
-import { PhoneInput } from "react-international-phone";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { PhoneInput, CountryData } from "react-international-phone";
 import "react-international-phone/style.css";
 
 import DatePicker from "react-datepicker";
@@ -21,14 +24,60 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import Select from "react-select";
 import countryList from "react-select-country-list";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 
-export default function JoinUs(): JSX.Element {
-  const [startDate, setStartDate] = useState(new Date());
+import AssetBank from "@/assets/logo/UOB.webp";
+import { IoCopyOutline, IoCopySharp } from "react-icons/io5";
 
+type OperatorErrorResponse = {
+  errors: {
+    company_name: string[];
+    uen_no: string[];
+    brand_name: string[];
+    address: string[];
+    contact_no: string[];
+    contact_person: string[];
+    contact_person_no: string[];
+    url: string[];
+    payment_slip: string[];
+    email: string[];
+  };
+};
+
+type TherapistErrorResponse = {
+  errors: {
+    name: string[];
+    passport_finno: string[];
+    date_of_birth: string[];
+    sex: string[];
+    nationality: string[];
+    date_of_issue: string[];
+    issuing_organization: string[];
+    professional_certs: string[];
+    email: string[];
+    url: string[];
+    address: string[];
+    contact_no: string[];
+    name_cert: string[];
+    expired_date: string[];
+    credential_id: string[];
+  };
+};
+
+export default function JoinUs(): JSX.Element {
+  const [expiredDate, setExpiredDate] = useState(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [issueDate, setIssueDate] = useState(new Date());
+  const [isCopied, setIsCopied] = useState<boolean>(false);
   const [value, setValue] = useState("");
   const options = useMemo(() => countryList().getData(), []);
+  const [errMsgOperator, setErrMsgOperator] = useState<OperatorErrorResponse>(
+    {} as OperatorErrorResponse
+  );
+
+  const [errMsgTherapist, setErrMsgTherapist] =
+    useState<TherapistErrorResponse>({} as TherapistErrorResponse);
 
   const changeHandler = (value: any) => {
     setValue(value);
@@ -36,23 +85,37 @@ export default function JoinUs(): JSX.Element {
 
   const inputStyle = {
     width: "100%",
+    fontSize: "16px",
   };
 
   const registerOperator = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form: HTMLFormElement = e.currentTarget;
     const formData: FormData = new FormData(form);
+    const formReset = e.target as HTMLFormElement;
 
     try {
       await axios.post(
-        "http://10.10.10.113:8001/api/v1/end-user/operators",
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators`,
 
         formData
       );
-
-      alert("success");
+      toast.success("Register success, please check your email", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      formReset.reset();
     } catch (error) {
       console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMsgOperator(errorMessage.response?.data as OperatorErrorResponse);
     }
   };
 
@@ -60,17 +123,41 @@ export default function JoinUs(): JSX.Element {
     e.preventDefault();
     const form: HTMLFormElement = e.currentTarget;
     const formData: FormData = new FormData(form);
+    const formReset = e.target as HTMLFormElement;
 
     try {
       await axios.post(
-        "http://10.10.10.113:8001/api/v1/end-user/operators",
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapists`,
         formData
       );
 
-      alert("success");
+      toast.success("Register success, please check your email", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      formReset.reset();
     } catch (error) {
       console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMsgTherapist(errorMessage.response?.data as TherapistErrorResponse);
     }
+  };
+
+  const copyClipboard = () => {
+    navigator.clipboard?.writeText("339-317540-9");
+    setIsCopied(true);
+
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1500);
   };
 
   return (
@@ -126,153 +213,206 @@ export default function JoinUs(): JSX.Element {
                 <Tab key="operator" title="Operators" className="text-xl">
                   <Card className="text-base md:w-1/2 mx-auto py-8">
                     <form onSubmit={registerOperator}>
-                      <CardHeader className="text-xl md:text-2xl font-bold text-center flex items-center justify-center">
-                        Join as Spa Operator
+                      <CardHeader className="text-xl md:text-2xl font-bold text-center flex flex-col items-center justify-center">
+                        <h2 className="mb-4 md:mb-8">Join as Spa Operator</h2>
+                        <div className="md:w-1/2 space-y-2">
+                          <h3 className="text-base md:text-lg">
+                            Make a payment of SGD$200 to:
+                          </h3>
+                          <div className="bg-[#00296620] border-2 border-[#002966] p-4 rounded-xl">
+                            <div className="flex flex-col items-center gap-y-4">
+                              <Image
+                                src={AssetBank.src}
+                                className="object-cover"
+                                removeWrapper
+                              />
+                              <div
+                                className="flex gap-x-10 items-center cursor-pointer"
+                                onClick={copyClipboard}
+                              >
+                                <h3>339-317540-9</h3>
+                                {isCopied ? (
+                                  <IoCopySharp className="text-secondary" />
+                                ) : (
+                                  <IoCopyOutline />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </CardHeader>
                       <CardBody className="space-y-4">
-                        <div className="space-y-2">
-                          <label htmlFor="">Logo</label>
-                          <div></div>
-                          <input
-                            name="url"
-                            type="file"
-                            required
-                            // endContent={<PiUploadFill />}
-                            // size="lg"
-                          />
+                        <div className="flex flex-col gap-y-2">
+                          <label>Logo</label>
+
+                          <input name="url" type="file" />
                           <div className="flex items-center gap-x-4">
                             <FaInfoCircle className="text-[#8D98AA]" />
                             <p className="text-xs md:w-3/4">
-                              The image file must be at least 2 MB in size, with
-                              equal dimensions (e.g., square or a 1:1 aspect
-                              ratio)
+                              Image file size max 2 MB
                             </p>
                           </div>
+                          {errMsgOperator?.errors?.url && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.url[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="" className="md:text-base text-sm">
+                        <div className="flex flex-col gap-y-2 relative">
+                          <label className="md:text-base text-sm">
                             Company Name
                           </label>
-                          <Input
-                            variant={"bordered"}
-                            color="secondary"
-                            size="sm"
+                          <input
                             name="company_name"
-                          />
+                            type="text"
+                            className={`border-2 rounded-md py-1.5 pl-4 outline-slate-400`}
+                          />{" "}
+                          {errMsgOperator?.errors?.company_name && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.company_name[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="">Email</label>
-                          <Input
+                        <div className="flex flex-col gap-y-2">
+                          <label className="md:text-base text-sm">Email</label>
+                          <input
                             name="email"
-                            variant={"bordered"}
-                            color="secondary"
-                            size="sm"
+                            type="text"
+                            className="border-2 rounded-md py-1.5 pl-4  outline-slate-400"
                           />
+                          {errMsgOperator?.errors?.email && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.email[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2 hidden">
-                          <label htmlFor="">Password</label>
-                          <Input
-                            value="123456"
-                            name="password"
-                            variant={"bordered"}
-                            color="secondary"
-                            size="sm"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <label htmlFor="" className="md:text-base text-sm">
+                        <div className="flex flex-col gap-y-2">
+                          <label className="md:text-base text-sm ">
                             UEN NO
                           </label>
-                          <Input
+                          <input
                             name="uen_no"
-                            variant={"bordered"}
-                            color="secondary"
-                            size="sm"
+                            type="text"
+                            className="border-2 rounded-md py-1.5 pl-4  outline-slate-400"
                           />
+                          {errMsgOperator?.errors?.uen_no && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.uen_no[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="" className="md:text-base text-sm">
+                        <div className="flex flex-col gap-y-2">
+                          <label className="md:text-base text-sm ">
                             Brand Name
                           </label>
-                          <Input
+                          <input
                             name="brand_name"
-                            variant={"bordered"}
-                            color="secondary"
-                            size="sm"
+                            type="text"
+                            className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
                           />
+                          {errMsgOperator?.errors?.brand_name && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.brand_name[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="">Address</label>
-                          <Input
+                        <div className="flex flex-col gap-y-2">
+                          <label className="md:text-base text-sm ">
+                            Address
+                          </label>
+                          <input
                             name="address"
-                            variant={"bordered"}
-                            color="secondary"
-                            size="md"
-                            radius="sm"
+                            type="text"
+                            className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
                           />
+                          {errMsgOperator?.errors?.address && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.address[0]}
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-2">
-                          <label htmlFor="">Contact No.</label>
+                          <label className="md:text-base text-sm">
+                            Contact No.
+                          </label>
                           <PhoneInput
                             name="contact_no"
                             inputProps={{ style: inputStyle }}
                             style={{}}
-                            className="border-2 border-[#E4E4E7] rounded-md"
+                            className="border border-[#E4E4E7] rounded-md"
                             defaultCountry="sg"
                           />
+                          {errMsgOperator?.errors?.contact_no && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.contact_no[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="">Contact Person Name</label>
-                          <Input
+                        <div className="gap-y-2 flex flex-col">
+                          <label className="md:text-base text-sm">
+                            Contact Person Name
+                          </label>
+                          <input
                             name="contact_person"
-                            variant={"bordered"}
-                            color="secondary"
-                            size="sm"
+                            type="text"
+                            className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
                           />
+                          {errMsgOperator?.errors?.contact_person && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.contact_person[0]}
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-2">
-                          <label htmlFor="">Contact Person No.</label>
+                          <label className="md:text-base text-sm">
+                            Contact Person No.
+                          </label>
                           <PhoneInput
                             name="contact_person_no"
                             inputProps={{ style: inputStyle }}
                             style={{}}
-                            className="border-2 border-[#E4E4E7] rounded-md"
+                            className="border border-[#E4E4E7] rounded-md "
                             defaultCountry="sg"
                           />
+                          {errMsgOperator?.errors?.contact_person_no && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.contact_person_no[0]}
+                            </p>
+                          )}
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="">Payment Slip</label>
-                          <div></div>
-                          <input
-                            name="payment_slip"
-                            type="file"
-                            required
-                            // endContent={<PiUploadFill />}
-                            // size="lg"
-                          />
+                        <div className="flex flex-col gap-y-2">
+                          <label className="md:text-base text-sm">
+                            Payment Slip
+                          </label>
+
+                          <input name="payment_slip" type="file" />
                           <div className="flex items-center gap-x-4">
                             <FaInfoCircle className="text-[#8D98AA]" />
                             <p className="text-xs md:w-3/4">
-                              The image file max 2 MB in size.
+                              Image file size max 2 MB.
                             </p>
                           </div>
+                          {errMsgOperator?.errors?.payment_slip && (
+                            <p className="text-xs text-red-500">
+                              {errMsgOperator.errors.payment_slip[0]}
+                            </p>
+                          )}
                         </div>
                       </CardBody>
                       <CardFooter>
                         <Button
                           color="primary"
                           fullWidth
-                          size="md"
+                          size="lg"
                           type="submit"
                         >
                           Submit Now
@@ -284,196 +424,328 @@ export default function JoinUs(): JSX.Element {
 
                 <Tab key="therapist" title="Therapist" className="text-xl">
                   <Card className="text-base py-8">
-                    <CardHeader className="text-xl md:text-2xl font-bold text-center flex items-center justify-center">
-                      Join as Spa Therapist
-                    </CardHeader>
-                    <div className="flex flex-col md:flex-row p-4 md:p-8 gap-x-10 gap-y-4">
-                      <div className="border-2 border-[#E4E4E7] p-2 md:p-8">
-                        <CardBody className="space-y-4">
-                          <h2 className="font-bold text-lg md:text-xl">
-                            Personal Information
-                          </h2>
-                          <div className="space-y-2">
-                            <label htmlFor="">Profile Picture</label>
-                            <Input type="file" required />
-                            <div className="flex items-center gap-x-4">
-                              <FaInfoCircle className="text-[#8D98AA]" />
-                              <p className="text-xs">
-                                The image file must be at least 2 MB in size,
-                                with equal dimensions (e.g., square or a 1:1
-                                aspect ratio)
-                              </p>
+                    <form onSubmit={registerTherapist}>
+                      <CardHeader className="text-xl md:text-2xl font-bold text-center flex items-center justify-center">
+                        Join as Spa Therapist
+                      </CardHeader>
+                      <div className="flex flex-col lg:flex-row p-3 lg:p-4 md:p-8 lg:gap-x-10 gap-y-4">
+                        <div className="border-2 border-[#E4E4E7] lg:p-2 md:p-8 w-full">
+                          <CardBody className="space-y-4">
+                            <h2 className="font-bold text-lg md:text-xl">
+                              Personal Information
+                            </h2>
+                            <div className="gap-y-2 flex flex-col">
+                              <label>Profile Picture</label>
+                              <input type="file" name="url" />
+                              <div className="flex items-center gap-x-4">
+                                <FaInfoCircle className="text-[#8D98AA]" />
+                                <p className="text-xs">
+                                  Image file size max 2 MB
+                                </p>
+                              </div>
+                              {errMsgTherapist?.errors?.url && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.url[0]}
+                                </p>
+                              )}
                             </div>
-                          </div>
 
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Full Name
-                            </label>
-                            <Input
-                              variant={"bordered"}
-                              color="secondary"
-                              size="sm"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Passport/Fin No.
-                            </label>
-                            <Input
-                              variant={"bordered"}
-                              color="secondary"
-                              size="sm"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Date of Birth
-                            </label>
-                            <div className="border-2 border-[#E4E4E7] py-1 rounded-md">
-                              <DatePicker
-                                selected={startDate}
-                                onChange={(date) => setStartDate(date!)}
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Full Name
+                              </label>
+                              <input
+                                name="name"
+                                type="text"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
                               />
+                              {errMsgTherapist?.errors?.name && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.name[0]}
+                                </p>
+                              )}
                             </div>
-                          </div>
-                          <div className="flex flex-col space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Sex
-                            </label>
-                            <select
-                              name=""
-                              id=""
-                              className="border-2 border-[#E4E4E7] py-1 rounded-md"
-                            >
-                              <option value="" disabled>
-                                Select an Option
-                              </option>
-                              <option value="">Male</option>
-                              <option value="">Female</option>
-                            </select>
-                          </div>
 
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Contact No.
-                            </label>
-                            <PhoneInput
-                              inputProps={{ style: inputStyle }}
-                              style={{}}
-                              className="border-2 border-[#E4E4E7] rounded-md"
-                              defaultCountry="sg"
-                              // onChange={(phone: string) => setPhone(phone)}
-                            />
-                          </div>
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Passport/Fin No.
+                              </label>
+                              <input
+                                name="passport_finno"
+                                type="text"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
+                              />
+                              {errMsgTherapist?.errors?.passport_finno && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.passport_finno[0]}
+                                </p>
+                              )}
+                            </div>
 
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Nationality
-                            </label>
-                            <Select
-                              className="z-20"
-                              // options={options as CountryData}
-                              value={value}
-                              onChange={changeHandler}
-                            />
-                          </div>
-                        </CardBody>
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Address
+                              </label>
+                              <input
+                                name="address"
+                                type="text"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
+                              />
+                              {errMsgTherapist?.errors?.address && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.address[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2 w-full">
+                              <label className="md:text-base text-sm">
+                                Date of Birth
+                              </label>
+                              <div className=" border-2 pl-4 py-1.5 border-[#E4E4E7] w-full rounded-md">
+                                <DatePicker
+                                  name="date_of_birth"
+                                  selected={dateOfBirth}
+                                  onChange={(date) => setDateOfBirth(date!)}
+                                  className="outline-none"
+                                  dateFormat={"yyyy/MM/dd"}
+                                />
+                              </div>
+                              {errMsgTherapist?.errors?.date_of_birth && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.date_of_birth[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Email
+                              </label>
+                              <input
+                                name="email"
+                                type="email"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
+                              />
+                              {errMsgTherapist?.errors?.email && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.email[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col space-y-2">
+                              <label className="md:text-base text-sm">
+                                Sex
+                              </label>
+                              <select
+                                name="sex"
+                                className="border-2 border-[#E4E4E7] pl-4 py-1.5 rounded-md outline-slate-400"
+                              >
+                                <option value="" disabled>
+                                  Select an Option
+                                </option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                              </select>
+                              {errMsgTherapist?.errors?.sex && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.sex[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="md:text-base text-sm">
+                                Contact No.
+                              </label>
+                              <PhoneInput
+                                inputProps={{ style: inputStyle }}
+                                name="contact_no"
+                                className="border-2 border-[#E4E4E7] rounded-md"
+                                defaultCountry="sg"
+                                // onChange={(phone: string) => setPhone(phone)}
+                              />
+                              {errMsgTherapist?.errors?.contact_no && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.contact_no[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Nationality
+                              </label>
+                              <select
+                                name="nationality"
+                                className="z-20 w-full border-2 pl-2 py-1.5 rounded-md outline-slate-400"
+                              >
+                                {options.map((country) => (
+                                  <option
+                                    key={country.label}
+                                    value={country.label}
+                                  >
+                                    {country.label}
+                                  </option>
+                                ))}
+                              </select>
+                              {errMsgTherapist?.errors?.nationality && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.nationality[0]}
+                                </p>
+                              )}
+                            </div>
+                          </CardBody>
+                        </div>
+
+                        <div
+                          className="border-2 border-[#E4E4E7] 
+                        lg:p-2 md:p-8 w-full"
+                        >
+                          <CardBody className="space-y-4">
+                            <h2 className="font-bold text-lg md:text-xl ">
+                              Professional Certificate
+                            </h2>
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Certificate File
+                              </label>
+                              <input type="file" name="professional_certs" />
+                              <div className="flex items-center gap-x-4">
+                                <FaInfoCircle className="text-[#8D98AA]" />
+                                <p className="text-xs">
+                                  Image file size max 2 MB
+                                </p>
+                              </div>
+                              {errMsgTherapist?.errors?.professional_certs && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.professional_certs[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Certificate Name
+                              </label>
+                              <input
+                                name="name_cert"
+                                type="text"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
+                              />
+                              {errMsgTherapist?.errors?.name_cert && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.name_cert[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Issuing Organization
+                              </label>
+                              <input
+                                name="issuing_organization"
+                                type="text"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
+                              />
+                              {errMsgTherapist?.errors
+                                ?.issuing_organization && (
+                                <p className="text-xs text-red-500">
+                                  {
+                                    errMsgTherapist.errors
+                                      .issuing_organization[0]
+                                  }
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Issue Date
+                              </label>
+                              <div className="border-2 border-[#E4E4E7] pl-4 py-1.5 rounded-md">
+                                <DatePicker
+                                  selected={issueDate}
+                                  onChange={(date) => setIssueDate(date!)}
+                                  className="outline-none"
+                                  name="date_of_issue"
+                                  dateFormat={"yyyy/MM/dd"}
+                                />
+                                {errMsgTherapist?.errors?.date_of_issue && (
+                                  <p className="text-xs text-red-500">
+                                    {errMsgTherapist.errors.date_of_issue[0]}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Expiration Date
+                              </label>
+                              <div className="border-2 border-[#E4E4E7] pl-4 py-1.5 rounded-md">
+                                <DatePicker
+                                  selected={expiredDate}
+                                  onChange={(date) => setExpiredDate(date!)}
+                                  className="outline-none"
+                                  name="expired_date"
+                                  dateFormat={"yyyy/MM/dd"}
+                                />
+                              </div>
+                              {errMsgTherapist?.errors?.expired_date && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.expired_date[0]}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-y-2">
+                              <label className="md:text-base text-sm">
+                                Credential ID
+                              </label>
+                              <input
+                                name="credential_id"
+                                type="text"
+                                className="border-2 rounded-md py-1.5 pl-4 outline-slate-400"
+                              />{" "}
+                              {errMsgTherapist?.errors?.credential_id && (
+                                <p className="text-xs text-red-500">
+                                  {errMsgTherapist.errors.credential_id[0]}
+                                </p>
+                              )}
+                            </div>
+                          </CardBody>
+                        </div>
                       </div>
-
-                      <div className="border-2 border-[#E4E4E7] p-2 md:p-8">
-                        <CardBody className="space-y-4">
-                          <h2 className="font-bold text-lg md:text-xl ">
-                            Professional Certificate
-                          </h2>
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Profile Picture
-                            </label>
-                            <Input type="file" required />
-                            <div className="flex items-center gap-x-4">
-                              <FaInfoCircle className="text-[#8D98AA]" />
-                              <p className="text-xs">
-                                The image file must be at least 2 MB in size,
-                                with equal dimensions (e.g., square or a 1:1
-                                aspect ratio)
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Name
-                            </label>
-                            <Input
-                              variant={"bordered"}
-                              color="secondary"
-                              size="sm"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Issuing Organization
-                            </label>
-                            <Input
-                              variant={"bordered"}
-                              color="secondary"
-                              size="sm"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Issue Date
-                            </label>
-                            <div className="border-2 border-[#E4E4E7] py-1 rounded-md">
-                              <DatePicker
-                                selected={startDate}
-                                onChange={(date) => setStartDate(date!)}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              Expiration Date
-                            </label>
-                            <div className="border-2 border-[#E4E4E7] py-1 rounded-md">
-                              <DatePicker
-                                selected={startDate}
-                                onChange={(date) => setStartDate(date!)}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <label htmlFor="" className="md:text-base text-sm">
-                              {" "}
-                              Credential ID
-                            </label>
-                            <Input
-                              variant={"bordered"}
-                              color="secondary"
-                              size="sm"
-                            />
-                          </div>
-                        </CardBody>
-                      </div>
-                    </div>
-                    <CardFooter>
-                      <Button
-                        color="primary"
-                        size="md"
-                        className="md:w-1/2 mx-auto"
-                      >
-                        Submit Now
-                      </Button>
-                    </CardFooter>
+                      <CardFooter>
+                        <Button
+                          type="submit"
+                          color="primary"
+                          size="md"
+                          className="md:w-1/2 mx-auto"
+                        >
+                          Submit Now
+                        </Button>
+                      </CardFooter>
+                    </form>
                   </Card>
                 </Tab>
               </Tabs>
+
+              <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
 
               <Link
                 href="/auth/sign-in"

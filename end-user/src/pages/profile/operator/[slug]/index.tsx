@@ -1,10 +1,6 @@
 import Head from "next/head";
-import Link from "next/link";
-import React from "react";
-import { BsArrowLeftSquareFill } from "react-icons/bs";
-
+import React, { FormEvent, useEffect, useState } from "react";
 import "react-international-phone/style.css";
-import AssetBlank from "@/assets/images/blank-therapist.png";
 import {
   Button,
   Image,
@@ -18,16 +14,154 @@ import {
 } from "@nextui-org/react";
 import { LuMapPin, LuPhone, LuUser2 } from "react-icons/lu";
 import { FaPen } from "react-icons/fa6";
-import { PiUploadFill } from "react-icons/pi";
 import { FaInfoCircle } from "react-icons/fa";
 import { PhoneInput } from "react-international-phone";
+import axios, { AxiosError } from "axios";
+import { Operator } from "@/@types";
+import { useRouter } from "next/router";
+import { IoLogOut } from "react-icons/io5";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import AssetProfile from "@/assets/dev/profile.png";
+import "react-toastify/dist/ReactToastify.css";
+
+type ErrorResponse = {
+  errors: {
+    company_name: string[];
+    uen_no: string[];
+    brand_name: string[];
+    address: string[];
+    contact_no: string[];
+    contact_person: string[];
+    contact_person_no: string[];
+    url: string[];
+    email: string[];
+  };
+};
 
 export default function OperatorProfile() {
+  // states
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [profile, setProfile] = useState<Operator>();
+  const [id, setId] = useState<string>("");
+  const [errMessage, setErrorMessage] = useState<ErrorResponse>(
+    {} as ErrorResponse
+  );
+  const [newSlug, setNewSlug] = useState<string>("");
 
+  const router = useRouter();
+
+  const slug = router.query.slug;
+
+  // phone css
   const inputStyle = {
     width: "100%",
   };
+
+  // get profile data
+  const getProfile = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators/${slug}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+
+      setNewSlug(response.data.data.slug);
+
+      setProfile(response.data.data);
+      setId(response.data.data.id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // push to sign in when not logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem(
+      process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+    );
+    if (!isLoggedIn) {
+      router.push("/auth/sign-in");
+    }
+  }, []);
+
+  useEffect(() => {
+    getProfile();
+
+    // const interval = setInterval(() => {
+    //   getProfile();
+    // }, 3000);
+
+    // return () => clearInterval(interval);
+  }, [slug]);
+
+  // function edit data form
+  const handleEditData = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form: HTMLFormElement = e.currentTarget;
+    const formData: FormData = new FormData(form);
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/operators/${id}?_method=PUT`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+
+      toast.success("Profile updated", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      router.replace(`/profile/operator/${res.data.data.slug}`);
+    } catch (error) {
+      console.log(error);
+      const errMessage = error as AxiosError;
+      setErrorMessage(errMessage.response?.data as ErrorResponse);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-out`,
+        undefined,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+
+      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`);
+
+      router.push("/auth/sign-in");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {" "}
@@ -73,27 +207,39 @@ export default function OperatorProfile() {
         <section className="pb-10 md:pb-20">
           <div className="container p-4 md:p-8">
             <div className="flex flex-col gap-y-8 md:flex-row gap-x-20">
-              <div className="space-y-4 flex flex-col items-center md:items-start">
+              <div className="space-y-4 flex flex-col items-center md:items-start md:max-w-64">
                 <Image
-                  src={AssetBlank.src}
+                  src={AssetProfile.src}
                   alt="Operators"
                   className="object-cover"
                   radius="none"
                 />
+
                 <div className="">
                   <span className="font-bold text-lg md:text-2xl">
-                    Brand Name
+                    {profile?.brand_name}
                   </span>
                 </div>
+
                 <div className="flex flex-col text-center md:text-start md:text-lg">
                   <span>SINGAPORE</span>
                   <span>SPAS Community</span>
                 </div>
+
+                <Button
+                  onClick={handleLogout}
+                  startContent={<IoLogOut />}
+                  className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white w-full rounded-md"
+                  radius="none"
+                  size="lg"
+                >
+                  Logout
+                </Button>
               </div>
 
               <div className="flex-1">
                 <h2 className="font-bold md:text-2xl mb-8 text-center md:text-start">
-                  Operators A
+                  {profile?.company_name}
                 </h2>
 
                 <div className="space-y-14">
@@ -102,14 +248,14 @@ export default function OperatorProfile() {
                       <div>
                         <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
                       </div>
-                      <span className="text-lg">Singapore</span>
+                      <span className="text-lg">{profile?.address}</span>
                     </div>
 
                     <div className="flex items-center gap-x-4">
                       <div>
                         <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
                       </div>
-                      <span className="text-lg">(65) 6278 1800</span>
+                      <span className="text-lg">{profile?.contact_no}</span>
                     </div>
                   </div>
 
@@ -119,14 +265,16 @@ export default function OperatorProfile() {
                       <div>
                         <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
                       </div>
-                      <span className="text-lg">User</span>
+                      <span className="text-lg">{profile?.contact_person}</span>
                     </div>
 
                     <div className="flex items-center gap-x-4">
                       <div>
                         <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
                       </div>
-                      <span className="text-lg">(65) 6278 1800</span>
+                      <span className="text-lg">
+                        {profile?.contact_person_no}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -147,28 +295,37 @@ export default function OperatorProfile() {
           </div>
         </section>
 
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+
+        <Modal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          size="2xl"
+          hideCloseButton
+        >
           <ModalContent>
             {(onClose) => (
-              <>
+              <form onSubmit={handleEditData}>
                 <ModalHeader className="flex flex-col gap-1">
                   Edit Profile
                 </ModalHeader>
                 <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1">
                   <div className="md:space-y-2">
-                    <Input
-                      className="flex "
-                      type="file"
-                      required
-                      endContent={<PiUploadFill />}
-                      size="lg"
-                    />
+                    <input className="" type="file" />
                     <div className="flex items-center gap-x-4">
                       <FaInfoCircle className="text-[#8D98AA]" />
-                      <p className="text-xs">
-                        The image file must be at least 2 MB in size, with equal
-                        dimensions (e.g., square or a 1:1 aspect ratio)
-                      </p>
+                      <p className="text-xs">Image file size max 2 MB</p>
                     </div>
                   </div>
 
@@ -177,10 +334,12 @@ export default function OperatorProfile() {
                       Company Name
                     </label>
                     <Input
+                      name="company_name"
                       variant={"bordered"}
                       color="secondary"
                       size="md"
                       radius="sm"
+                      defaultValue={profile?.company_name}
                     />
                   </div>
 
@@ -193,6 +352,7 @@ export default function OperatorProfile() {
                       color="secondary"
                       size="md"
                       radius="sm"
+                      defaultValue={profile?.uen_no}
                     />
                   </div>
 
@@ -205,6 +365,8 @@ export default function OperatorProfile() {
                       color="secondary"
                       size="md"
                       radius="sm"
+                      name="brand_name"
+                      defaultValue={profile?.brand_name}
                     />
                   </div>
 
@@ -215,6 +377,8 @@ export default function OperatorProfile() {
                       color="secondary"
                       size="md"
                       radius="sm"
+                      name="address"
+                      defaultValue={profile?.address}
                     />
                   </div>
 
@@ -225,6 +389,10 @@ export default function OperatorProfile() {
                       style={{}}
                       className="border-2 border-[#E4E4E7] rounded-md"
                       defaultCountry="sg"
+                      value={profile?.contact_no}
+                      name="contact_no"
+                      // placeholder={profile?.contact_no}
+
                       // onChange={(phone: string) => setPhone(phone)}
                     />
                   </div>
@@ -236,6 +404,8 @@ export default function OperatorProfile() {
                       color="secondary"
                       size="md"
                       radius="sm"
+                      name="contact_person"
+                      defaultValue={profile?.contact_person}
                     />
                   </div>
 
@@ -246,8 +416,9 @@ export default function OperatorProfile() {
                       style={{}}
                       className="border-2 border-[#E4E4E7] rounded-md"
                       defaultCountry="sg"
-
-                      // onChange={(phone: string) => setPhone(phone)}
+                      value={profile?.contact_person_no}
+                      name="contact_person_no"
+                      // defaultValue={profile?.contact_person_no}
                     />
                   </div>
                 </ModalBody>
@@ -255,11 +426,11 @@ export default function OperatorProfile() {
                   <Button color="danger" variant="light" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Action
+                  <Button color="primary" type="submit" onPress={onClose}>
+                    Update
                   </Button>
                 </ModalFooter>
-              </>
+              </form>
             )}
           </ModalContent>
         </Modal>

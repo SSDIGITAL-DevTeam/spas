@@ -318,7 +318,7 @@ export default function Contact(): JSX.Element {
         <section className="pb-12 lg:pb-14">
           <div className="container">
             <div className="relative lg:flex gap-y-8 bg-[#F0F6FF] rounded-lg">
-              <div className="space-y-3 p-9">
+              <div className="space-y-3 p-4 lg:p-8">
                 <h2 className="text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-secondary font-semibold">
                   Keep Up-to-Date with Us
                 </h2>
