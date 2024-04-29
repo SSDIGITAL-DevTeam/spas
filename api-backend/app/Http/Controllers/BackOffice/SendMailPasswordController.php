@@ -32,8 +32,8 @@ class SendMailPasswordController extends Controller
             'password' => Hash::make($newPassword),
         ]);
 
-        Mail::to('lawakclub17@gmail.com')->send(new ApproveOperator($newPassword, $user));
-        // Mail::mailer('smtp')->to('hello@spas.com.sg')->send(new SendMailPassword($newPassword, $user));
+        // Mail::to('lawakclub17@gmail.com')->send(new ApproveOperator($newPassword, $user));
+        Mail::to('hello@spas.com.sg')->send(new ApproveOperator($newPassword, $user));
 
         return response()->json([
             'status' => 'success',
@@ -55,8 +55,8 @@ class SendMailPasswordController extends Controller
             'password' => Hash::make($newPassword),
         ]);
 
-        Mail::to('lawakclub17@gmail.com')->send(new ApproveTherapist($newPassword, $user));
-        // Mail::mailer('smtp')->to('hello@spas.com.sg')->send(new SendMailPassword($newPassword, $user));
+        // Mail::to('lawakclub17@gmail.com')->send(new ApproveTherapist($newPassword, $user));
+        Mail::to('hello@spas.com.sg')->send(new ApproveTherapist($newPassword, $user));
 
         return response()->json([
             'status' => 'success',
@@ -86,7 +86,7 @@ class SendMailPasswordController extends Controller
             ]);
         }
 
-        Mail::to('lawakclub17@gmail.com')->send(new RejectOperator($validateData));
+        Mail::to('hello@spas.com.sg')->send(new RejectOperator($validateData));
 
         $operator->user()->delete();
         $operator->cover()->delete();
@@ -119,7 +119,7 @@ class SendMailPasswordController extends Controller
             ]);
         }
 
-        Mail::to('lawakclub17@gmail.com')->send(new RejectTherapist($validateData));
+        Mail::to('hello@spas.com.sg')->send(new RejectTherapist($validateData));
 
         $therapist->user()->delete();
         $therapist->cover()->delete();
