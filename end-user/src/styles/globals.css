@@ -58,6 +58,11 @@
   }
 }
 
+.full-width-datepicker-container {
+  width: 100%;
+  border: 3px;
+}
+
 @layer utilities {
   /*  */
 }

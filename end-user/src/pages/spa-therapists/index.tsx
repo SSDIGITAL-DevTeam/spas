@@ -1,9 +1,59 @@
 import Head from "next/head";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AssetBlank from "@/assets/images/blank-therapist.png";
 import Link from "next/link";
 import { Image, Pagination } from "@nextui-org/react";
+import axios from "axios";
+import AssetProfile from "@/assets/dev/profile.png";
+import { Therapist } from "@/@types";
 export default function SpaOperators() {
+  const [role, setRole] = useState<string>("");
+  const [therapists, setTherapists] = useState<[]>([]);
+
+  const me = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+            )}`,
+          },
+        }
+      );
+
+      setRole(response.data.data.role);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    me();
+  }, []);
+
+  const getTherapists = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/therapists`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      setTherapists(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTherapists();
+  }, []);
   return (
     <>
       <Head>
@@ -63,21 +113,21 @@ export default function SpaOperators() {
         <section className="mb-10">
           <div className="container p-4 md:p-8">
             <div className="grid md:grid-cols-3 gap-4 md:gap-10 mb-10">
-              {[1, 2, 3, 4, 5, 6].map((op, index: number) => (
+              {therapists.map((therapist: Therapist, index: number) => (
                 <div key={index} className="shadow-md border p-4 md:p-8">
                   <div className="flex flex-col items-center gap-4 md:gap-8">
                     <Image
-                      src={AssetBlank.src}
+                      src={AssetProfile.src}
                       radius="none"
                       alt="Spa Operators"
                       className="object-cover"
                     />
                     <div className="flex flex-col items-center">
                       <h3 className="text-lg md:text-2xl text-black font-semibold">
-                        Therapists {op}
+                        {therapist.name}
                       </h3>
                       <Link
-                        href={"/spa-therapists/slug"}
+                        href={`/spa-therapists/${therapist.slug}`}
                         className="text-primary"
                       >
                         See Details
@@ -87,9 +137,9 @@ export default function SpaOperators() {
                 </div>
               ))}
             </div>{" "}
-            <div className="w-max mx-auto">
+            {/* <div className="w-max mx-auto">
               <Pagination showControls total={6} initialPage={1} />
-            </div>
+            </div> */}
           </div>
         </section>
       </main>

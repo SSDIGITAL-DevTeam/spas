@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BsArrowLeftSquareFill } from "react-icons/bs";
 import AssetBlank from "@/assets/images/blank-therapist.png";
 import { Button, Image, Tab, Tabs } from "@nextui-org/react";
@@ -11,7 +11,40 @@ import AssetGender from "@/assets/therapist-assets/gender.svg";
 import AssetCerfiticate from "@/assets/therapist-assets/certificate.png";
 import { PiGlobeHemisphereEastBold } from "react-icons/pi";
 import { IoReload } from "react-icons/io5";
+import AssetProfile from "@/assets/dev/profile.png";
+import { useRouter } from "next/router";
+import { Therapist } from "@/@types";
+import axios from "axios";
+
 export default function DetailTherapist() {
+  const [profile, setProfile] = useState<Therapist>();
+
+  const router = useRouter();
+  const slug = router.query.slug;
+
+  const getProfile = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/therapists/${slug}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      setProfile(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, [slug]);
+
+  console.log(profile);
   return (
     <>
       <Head>
@@ -52,7 +85,7 @@ export default function DetailTherapist() {
           content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
-      <main className="pt-24">
+      <main className="pt-32">
         <header className="container p-4 md:p-8 mb-10">
           <Link
             href="/spa-therapists"
@@ -73,14 +106,14 @@ export default function DetailTherapist() {
               <div className="relative md:w-max mx-auto mb-8 space-y-2">
                 <div className="space-y-4 flex flex-col items-center">
                   <Image
-                    src={AssetBlank.src}
+                    src={AssetProfile.src}
                     alt="Operators"
                     className="object-cover"
                     radius="none"
                   />
                   <div className="text-center">
                     <h2 className="font-bold text-lg md:text-2xl ">
-                      Jocelyn Huang
+                      {profile?.name}
                     </h2>
                   </div>
                 </div>
@@ -93,7 +126,7 @@ export default function DetailTherapist() {
 
               <Tabs className="flex items-center justify-center">
                 <Tab title="Personal Information" key="personal" className="">
-                  <div className="w-max mx-auto border p-4 md:p-8">
+                  <div className="lg:w-3/4 mx-auto border p-4 md:p-8">
                     <div className="md:columns-2 md:gap-x-40 space-y-4">
                       <div className="flex items-center gap-x-4">
                         <div>
@@ -104,7 +137,7 @@ export default function DetailTherapist() {
                             Name
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
-                            Jocelyn Huang
+                            {profile?.name}
                           </span>
                         </div>
                       </div>
@@ -118,7 +151,7 @@ export default function DetailTherapist() {
                             Passport / Fin No.
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
-                            ABC4567890
+                            {profile?.passport_finno}
                           </span>
                         </div>
                       </div>
@@ -132,7 +165,7 @@ export default function DetailTherapist() {
                             Date of Birth
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
-                            March 28, 1998
+                            {profile?.date_of_birth}
                           </span>
                         </div>
                       </div>
@@ -150,7 +183,7 @@ export default function DetailTherapist() {
                             Sex
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
-                            Female
+                            {profile?.sex}
                           </span>
                         </div>
                       </div>
@@ -164,7 +197,7 @@ export default function DetailTherapist() {
                             Contact No
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
-                            +6512122112
+                            {profile?.contact_no}
                           </span>
                         </div>
                       </div>
@@ -192,7 +225,7 @@ export default function DetailTherapist() {
                             Address
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
-                            194 Canberra Drive
+                            {profile?.address}
                           </span>
                         </div>
                       </div>

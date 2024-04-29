@@ -25,8 +25,6 @@ export default function BlogDetail({ slug }: { slug: string }): JSX.Element {
   // fetch single post with custom hooks
   const { singlePost, isLoading } = useSinglePost(slug);
 
-  // console.log(singlePost.title);
-
   // fetch recent post with custom hooks
   const { posts } = usePosts();
   return (

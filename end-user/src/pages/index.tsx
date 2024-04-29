@@ -123,18 +123,18 @@ export default function Home(): JSX.Element {
         <div className="container">
           <div className="flex flex-col md:flex-row gap-x-6 md:items-center">
             <div className="flex flex-col gap-y-4 md:w-1/2">
-              <h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
+              <h1 className="text-center lg:text-start text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
                 Elevate{" "}
                 <span className="text-black">
                   your Spa & Wellness Business with Us!
                 </span>
               </h1>
-              <p className="mr-5 text-secondary">
+              <p className="mr-5 text-secondary md:text-lg text-justify">
                 We are here to promote and protect business entities,
                 practitioners, stakeholders, and consumers of the Beauty, Spa
                 and Wellness Industry in Singapore.
               </p>
-              <Link href={"/membership"}>
+              <Link href={"/join-us"}>
                 <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
                   JOIN SPAS
                 </span>
@@ -283,7 +283,7 @@ export default function Home(): JSX.Element {
                       and Wellness industry to new heights.
                     </p>
                   </div>
-                  <Link href={"/membership"}>
+                  <Link href={"/join-us"}>
                     <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
                       JOIN SPAS
                     </span>

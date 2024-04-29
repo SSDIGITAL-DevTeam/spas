@@ -38,8 +38,6 @@ export default function EventMedia(): JSX.Element {
       `${process.env.NEXT_PUBLIC_API_URL}/end-user/posts`
     );
     setCategoryPost(response.data?.data);
-
-    //  console.log(response.data);
   };
 
   useEffect(() => {
@@ -52,8 +50,6 @@ export default function EventMedia(): JSX.Element {
     start: event.start_date,
     end: event.end_date,
   }));
-
-  // console.log(parseEvents);
 
   const loadMore = () => {
     setPostsPerPage(postsPerPage + 3);
@@ -194,7 +190,7 @@ export default function EventMedia(): JSX.Element {
             <div className="flex justify-between gap-x-8 whitespace-nowrap overflow-scroll md:overflow-auto mb-4 p-5 bg-[#F5F5F5] rounded-lg shadow-xl">
               <button
                 key="0"
-                className={`p-3 border-1 font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out w-40
+                className={`p-3 font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out w-40
               ${selectedCategoryId === 0 ? "bg-primary text-white" : ""}`}
                 onClick={() => setSelectedCategoryId(0)}
               >
@@ -203,7 +199,7 @@ export default function EventMedia(): JSX.Element {
               {categories.data?.map((category: Category, index: number) => (
                 <button
                   key={category.id}
-                  className={`p-3 border-1 font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out w-40
+                  className={`p-3  font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out w-40
 									${category.id == selectedCategoryId ? "bg-primary text-white" : ""}`}
                   onClick={() => setSelectedCategoryId(category.id)}
                 >

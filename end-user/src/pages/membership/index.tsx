@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import Head from "next/head";
 import HeroMember from "@/assets/membership-assets/member-hero.webp";
 import Card1 from "@/assets/membership-assets/card1.webp";
@@ -7,11 +7,38 @@ import Card2 from "@/assets/membership-assets/card2.webp";
 import Card3 from "@/assets/membership-assets/card3.webp";
 import Card4 from "@/assets/membership-assets/card4.webp";
 import Ellipse from "@/assets/membership-assets/ellipse.png";
-import AssetBlank from "@/assets/images/blank.png";
+import AssetProfile from "@/assets/dev/profile.png";
 import Link from "next/link";
 import { Image, Button } from "@nextui-org/react";
+import axios from "axios";
+import { GetServerSideProps } from "next";
+import { DataWithPagination, Operator } from "@/@types";
 
-export default function Membership(): JSX.Element {
+export const getServerSideProps: GetServerSideProps<{
+  operators: DataWithPagination<Operator>;
+}> = async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators`
+    );
+    const operators = await res.data.data.slice(0, 3);
+
+    return { props: { operators } };
+  } catch (error) {
+    console.log(error);
+    return {
+      props: {
+        operators: [],
+      },
+    };
+  }
+};
+
+export default function Membership({
+  operators,
+}: {
+  operators: Operator[];
+}): JSX.Element {
   return (
     <>
       <Head>
@@ -65,10 +92,10 @@ export default function Membership(): JSX.Element {
               />
             </div>
             <div className="md:w-1/2 grid items-center">
-              <h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
+              <h1 className="text-center lg:text-start text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
                 {/* Elevate{" "} */}
                 <span className="text-black">
-                  Get connnected with the SPAS community.
+                  Get connected with the SPAS community.
                 </span>
               </h1>
             </div>
@@ -256,21 +283,22 @@ export default function Membership(): JSX.Element {
               Meet All Our Spa Operators
             </h2>
             <div className="grid md:grid-cols-2 gap-4 md:gap-10 mb-4 md:mb-8 lg:mb-20">
-              {[1, 2, 3, 4].map((op, index: number) => (
-                <div key={index} className="shadow-md border p-4 md:p-8">
+              {operators.map((operator: Operator) => (
+                <div key={operator.id} className="shadow-md border p-4 md:p-8">
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                     <Image
-                      src={AssetBlank.src}
+                      src={AssetProfile.src}
+                      // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
                       radius="none"
                       alt="Spa Operators"
-                      className="object-cover"
+                      className="object-cover aspect-square w-40 h-40"
                     />
                     <div className="flex flex-col items-center md:items-start">
                       <h3 className="text-lg md:text-2xl text-black font-semibold">
-                        Operators {op}
+                        {operator.company_name}
                       </h3>
                       <Link
-                        href={"/spa-operators/slug"}
+                        href={`/spa-operators/${operator.slug}`}
                         className="text-primary"
                       >
                         See Details

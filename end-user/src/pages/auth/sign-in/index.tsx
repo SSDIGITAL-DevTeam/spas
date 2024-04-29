@@ -7,12 +7,25 @@ import Logo from "@/components/utils/Logo";
 import { LuUser2 } from "react-icons/lu";
 import AssetLogo from "@/assets/logo/spas-logo.png";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/router";
+
+type ErrorResponse = {
+  errors: {
+    message: string;
+  };
+};
 
 export default function SpaOperators() {
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const [errMessage, setErrMessage] = useState<ErrorResponse>(
+    {} as ErrorResponse
+  );
   const [token, setToken] = useState<string>("");
+  const [isError, setIsError] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,10 +37,16 @@ export default function SpaOperators() {
       );
       setToken(response.data.data.token);
 
-      localStorage.setItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN || "", token);
-      console.log("succeed");
+      localStorage.setItem(
+        process.env.NEXT_PUBLIC_ACCESS_TOKEN || "",
+        response.data.data.token
+      );
+      router.push("/");
     } catch (error) {
       console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMessage(errorMessage.response?.data as ErrorResponse);
+      setIsError(true);
     }
   };
   return (
@@ -72,17 +91,19 @@ export default function SpaOperators() {
       </Head>
 
       <main>
-        <div className="bg-[url('/hero-sign-in.webp')] bg-cover bg-no-repeat h-screen">
-          <div className="w-1/3 mx-auto">
+        <div className="bg-[url('/hero-sign-in.webp')] bg-center lg:bg-cover bg-no-repeat h-screen">
+          <div className="md:w-1/3 mx-auto">
             <div className="bg-white/70 h-screen md:py-10 space-y-4 md:space-y-10">
               <form onSubmit={handleSubmit} className="container p-4 md:p-8">
                 <div className="flex flex-col items-center gap-y-10">
-                  <Image
-                    src={AssetLogo.src}
-                    alt="SPAS"
-                    className="object-cover md:w-3/4"
-                    removeWrapper
-                  />
+                  <Link href={"/"} className="">
+                    <Image
+                      src={AssetLogo.src}
+                      alt="SPAS"
+                      className="object-cover md:w-3/4 mx-auto"
+                      removeWrapper
+                    />
+                  </Link>
 
                   <div className="md:w-3/4">
                     <Input
@@ -122,12 +143,19 @@ export default function SpaOperators() {
                     />
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="md:w-3/4 bg-secondary text-white"
-                  >
-                    Submit
-                  </Button>
+                  <div className="w-full  md:w-3/4 mx-auto">
+                    {isError && (
+                      <p className="text-center text-red-500">
+                        Wrong email or password
+                      </p>
+                    )}
+                    <Button
+                      type="submit"
+                      className="w-full bg-secondary text-white"
+                    >
+                      Submit
+                    </Button>
+                  </div>
 
                   <Link
                     href="/join-us"

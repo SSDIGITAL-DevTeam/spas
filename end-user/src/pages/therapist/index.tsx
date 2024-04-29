@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import Head from "next/head";
 import HeroTherapist from "@/assets/therapist-assets/therapist-hero.webp";
 import ImgTherapist from "@/assets/therapist-assets/therapist-img.webp";
@@ -16,11 +16,61 @@ import Img4 from "@/assets/therapist-assets/img4.webp";
 import Img5 from "@/assets/therapist-assets/img5.webp";
 import Img6 from "@/assets/therapist-assets/img6.webp";
 import Link from "next/link";
-import AssetBlank from "@/assets/images/blank-therapist.png";
+import AssetProfile from "@/assets/dev/profile.png";
 
 import { Image } from "@nextui-org/react";
+import axios from "axios";
+import { Therapist } from "@/@types";
 
-export default function Therapist(): JSX.Element {
+export default function Therapists(): JSX.Element {
+  const [role, setRole] = useState<string>("");
+  const [therapists, setTherapists] = useState<[]>([]);
+
+  const me = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+            )}`,
+          },
+        }
+      );
+
+      setRole(response.data.data.role);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    me();
+  }, []);
+
+  const getTherapists = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/therapists`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      setTherapists(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTherapists();
+  }, []);
+
   return (
     <>
       <Head>
@@ -67,19 +117,19 @@ export default function Therapist(): JSX.Element {
         <div className="container">
           <div className="flex flex-col md:flex-row md:gap-x-6 md:items-center">
             <div className="flex flex-col gap-y-4 md:w-1/2">
-              <h1 className="text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
+              <h1 className="text-center lg:text-start text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
                 Gain Recognition{" "}
                 <span className="text-black">
                   By getting a Professional status!
                 </span>
               </h1>
-              <p className="mr-5 text-secondary text-sm md:text-lg">
+              <p className="mr-5 text-secondary md:text-lg text-justify">
                 <strong>SPAS</strong> offers a platform for
                 <strong> Complementary Therapists</strong> to enroll their
                 competencies, demonstrating their expertise and skills in
                 specific treatments and sectors of the Wellness Industry.
               </p>
-              <Link href={"/membership"}>
+              <Link href={"/join-us"}>
                 <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
                   JOIN SPAS
                 </span>
@@ -222,7 +272,7 @@ export default function Therapist(): JSX.Element {
         </section>
 
         {/* YOU ARE WELCOME */}
-        <section className="pb-14 lg:pb-0 lg:pt-20">
+        <section className="pb-14 lg:pb-0 lg:pt-20 mb-10 md:mb-20">
           <div className="container">
             <div className="flex flex-col">
               <header className="flex flex-col gap-y-6 text-center pb-10">
@@ -328,62 +378,42 @@ export default function Therapist(): JSX.Element {
         </section>
 
         {/* Mett Spa Operators */}
-        <section className="mb-10">
-          <div className="container p-4 md:p-8">
-            <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
-              Meet All Our Spa Therapists
-            </h2>
-            <div className="grid md:grid-cols-3 gap-4 md:gap-10">
-              {[1, 2, 3, 4, 5, 6].map((op, index: number) => (
-                <div key={index} className="shadow-md border p-4 md:p-8">
-                  <div className="flex flex-col items-center gap-4 md:gap-8">
-                    <Image
-                      src={AssetBlank.src}
-                      radius="none"
-                      alt="Spa Operators"
-                      className="object-cover"
-                    />
-                    <div className="flex flex-col items-center">
-                      <h3 className="text-lg md:text-2xl text-black font-semibold">
-                        Therapists {op}
-                      </h3>
-                      <Link
-                        href={"/spa-therapists/slug"}
-                        className="text-primary"
-                      >
-                        See Details
-                      </Link>
+        {role == "operator" ? (
+          <section className="mb-10">
+            <div className="container p-4 md:p-8">
+              <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
+                Meet All Our Spa Therapists
+              </h2>
+              <div className="grid md:grid-cols-3 gap-4 md:gap-10">
+                {therapists.map((therapist: Therapist, index: number) => (
+                  <div key={index} className="shadow-md border p-4 md:p-8">
+                    <div className="flex flex-col items-center gap-4 md:gap-8">
+                      <Image
+                        src={AssetProfile.src}
+                        radius="none"
+                        alt="Spa Operators"
+                        className="object-cover"
+                      />
+                      <div className="flex flex-col items-center">
+                        <h3 className="text-lg md:text-2xl text-black font-semibold">
+                          {therapist.name}
+                        </h3>
+                        <Link
+                          href={`/spa-therapists/${therapist.slug}`}
+                          className="text-primary"
+                        >
+                          See Details
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* BECOME A PROFESSIONAL */}
-        {/* <section className="pb-14 lg:pb-14 lg:pt-20">
-          <div className="container">
-            <div className="flex flex-col gap-y-5">
-              <header className="flex flex-col gap-y-4 text-center">
-                <h2 className="mx-auto text-2xl leading-snug md:leading-normal lg:text-3xl xl:text-5xl lg:leading-tight text-black font-semibold md:mb-10">
-                  Become a Professional
-                </h2>
-              </header>
-
-              <div className="flex flex-col lg:flex-row justify-center">
-                <Link
-                  href={"/SPAS Membership Application Form.pdf"}
-                  download="SPAS Membership Application Form"
-                >
-                  <span className="btn-1 block capitalize text-center w-full lg:w-max hover:bg-primary transition-colors ease-out">
-                    DOWNLOAD APPLICATION FORM
-                  </span>
-                </Link>
+                ))}
               </div>
             </div>
-          </div>
-        </section> */}
+          </section>
+        ) : (
+          ""
+        )}
       </main>
     </>
   );

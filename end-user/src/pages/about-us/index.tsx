@@ -87,7 +87,7 @@ export default function AboutUs(): JSX.Element {
                   <FaRegCircleCheck className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold">Uniting World-class Spa Operators</h3>
-                <p className="text-sm md:text-base">
+                <p className=" text-justify">
                   We believe in the power of collaboration. By bringing together
                   spa and wellness professionals, stakeholders, and consumers,
                   we create an environment where ideas flow freely, partnerships
@@ -103,7 +103,7 @@ export default function AboutUs(): JSX.Element {
                 <h3 className="font-bold">
                   Delivering World-class Spa Professionals
                 </h3>
-                <p className="text-sm md:text-base">
+                <p className="text-justify">
                   Your growth is our priority. Whether you're a seasoned owner
                   or a budding therapist, SPAS is designed to be the catalyst
                   for your professional journey. We empower Spa Therapists to be
