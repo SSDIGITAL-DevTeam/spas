@@ -9,6 +9,7 @@ use App\Http\Requests\Therapist\UpdateTherapistRequest;
 use App\Http\Resources\Therapist\TherapistCollection;
 use App\Http\Resources\Therapist\TherapistResource;
 use App\Models\Therapist;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -48,17 +49,18 @@ class TherapistController extends Controller
             $therapistData->credential_id = $request->credential_id;
             $therapistData->save();
 
-
             $therapistData->cover()->create([
                 'url' => $request->file('url')->store('therapist-picture')
             ]);
 
-            $therapistData->user()->create([
-                'name' => $request->name, // Assuming you have a 'name' field for the user
+            $user = $therapistData->user()->create([
+                'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => UserStatus::Therapist, // Set the role to default operator
+                'role' => UserStatus::Therapist,
             ]);
+
+            // dd($user->role);
 
             return new TherapistResource($therapistData->load('user', 'cover'));
         });
