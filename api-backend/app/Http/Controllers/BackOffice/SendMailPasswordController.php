@@ -33,7 +33,7 @@ class SendMailPasswordController extends Controller
         ]);
 
         // Mail::to('lawakclub17@gmail.com')->send(new ApproveOperator($newPassword, $user));
-        Mail::to('hello@spas.com.sg')->send(new ApproveOperator($newPassword, $user));
+        Mail::to($user->email)->send(new ApproveOperator($newPassword, $user));
 
         return response()->json([
             'status' => 'success',
@@ -56,7 +56,7 @@ class SendMailPasswordController extends Controller
         ]);
 
         // Mail::to('lawakclub17@gmail.com')->send(new ApproveTherapist($newPassword, $user));
-        Mail::to('hello@spas.com.sg')->send(new ApproveTherapist($newPassword, $user));
+        Mail::to($user->email)->send(new ApproveTherapist($newPassword, $user));
 
         return response()->json([
             'status' => 'success',
@@ -86,7 +86,7 @@ class SendMailPasswordController extends Controller
             ]);
         }
 
-        Mail::to('hello@spas.com.sg')->send(new RejectOperator($validateData));
+        Mail::to($user->email)->send(new RejectOperator($validateData));
 
         $operator->user()->delete();
         $operator->cover()->delete();
@@ -119,7 +119,7 @@ class SendMailPasswordController extends Controller
             ]);
         }
 
-        Mail::to('hello@spas.com.sg')->send(new RejectTherapist($validateData));
+        Mail::to($user->email)->send(new RejectTherapist($validateData));
 
         $therapist->user()->delete();
         $therapist->cover()->delete();
