@@ -22,7 +22,7 @@ class OperatorFactory extends Factory
     {
         // Attempt to download the image and save it locally.
         try {
-            $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080?payment');
+            $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?payment,receipt');
 
             if ($response->successful()) {
                 $imageContent = $response->body();
@@ -31,15 +31,12 @@ class OperatorFactory extends Factory
 
                 if (!$saved) {
                     Log::error("Failed to save the image to storage.");
-                    // Optionally handle the error, e.g., by notifying the user or retrying.
                 }
             } else {
                 Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
-                // Optionally handle the failure, e.g., by providing fallback logic.
             }
         } catch (\Exception $e) {
             Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
-            // Optionally handle exceptions, e.g., by notifying the user or retrying.
         }
 
         return [
