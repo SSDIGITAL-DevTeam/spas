@@ -85,7 +85,7 @@ class DatabaseSeeder extends Seeder
         Event::factory()->count(6)->create();
 
         // Create 6 Page
-        Page::factory()->count(6)->create();
+        Page::factory()->count(4)->create();
 
         // Create Post
         Post::factory()->count(10)->create()->each(function ($post) {
