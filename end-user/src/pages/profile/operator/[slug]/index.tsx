@@ -131,7 +131,7 @@ export default function OperatorProfile() {
         theme: "light",
         transition: Bounce,
       });
-
+      getProfile();
       router.replace(`/profile/operator/${res.data.data.slug}`);
     } catch (error) {
       console.log(error);
@@ -162,6 +162,7 @@ export default function OperatorProfile() {
     }
   };
 
+  console.log(profile);
   return (
     <>
       {" "}
@@ -210,8 +211,9 @@ export default function OperatorProfile() {
               <div className="space-y-4 flex flex-col items-center md:items-start md:max-w-64">
                 <Image
                   src={AssetProfile.src}
+                  // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover.url}`}
                   alt="Operators"
-                  className="object-cover"
+                  className="object-cover aspect-square md:w-40 md:h-40 rounded-full"
                   radius="none"
                 />
 
@@ -322,7 +324,7 @@ export default function OperatorProfile() {
                 </ModalHeader>
                 <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1">
                   <div className="md:space-y-2">
-                    <input className="" type="file" />
+                    <input className="" type="file" name="url" />
                     <div className="flex items-center gap-x-4">
                       <FaInfoCircle className="text-[#8D98AA]" />
                       <p className="text-xs">Image file size max 2 MB</p>

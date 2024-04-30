@@ -49,6 +49,8 @@ export default function Navbar(): JSX.Element {
   const [role, setRole] = useState<string>("");
   const [slugTherapist, setSlugTherapist] = useState<string>("");
   const [slugOperator, setSlugOperator] = useState<string>("");
+  const [coverTherapist, setCoverTherapist] = useState<string>("");
+  const [coverOperator, setCoverOperator] = useState<string>("");
   const [cover, setCover] = useState<string>("");
   const [id, setId] = useState<string>("");
 
@@ -78,8 +80,10 @@ export default function Navbar(): JSX.Element {
           },
         }
       );
-
+      console.log(response.data.data);
       setId(response.data.data.id);
+      setCoverOperator(response.data.data?.operator?.cover?.url);
+      setCoverTherapist(response.data.data?.therapist?.cover?.url);
       setCover(response.data.data?.therapist?.cover?.url);
       setSlugTherapist(response.data.data?.therapist?.slug);
       setSlugOperator(response.data.data?.operator?.slug);
@@ -92,12 +96,14 @@ export default function Navbar(): JSX.Element {
   useEffect(() => {
     me();
 
-    const interval = setInterval(() => {
-      me();
-    }, 3000);
+    // const interval = setInterval(() => {
+    //   me();
+    // }, 3000);
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, []);
+
+  console.log(coverTherapist);
 
   return (
     <nav
@@ -228,7 +234,7 @@ export default function Navbar(): JSX.Element {
                     ? `/profile/operator/${slugOperator}`
                     : `/profile/therapist/${slugTherapist}`
                 }`}
-                className=" text-white w-20 h-20 aspect-square bg-transparent"
+                className=" text-white lg:w-20 lg:h-20 aspect-square bg-transparent"
               >
                 {cover == undefined ? (
                   <Image
@@ -239,10 +245,11 @@ export default function Navbar(): JSX.Element {
                   />
                 ) : (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover}`}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${coverTherapist}`}
                     removeWrapper
                     isBlurred
-                    className="object-cover"
+                    className="object-cover aspect-square"
+                    radius="full"
                   />
                 )}
               </Button>

@@ -18,7 +18,7 @@ import Img6 from "@/assets/therapist-assets/img6.webp";
 import Link from "next/link";
 import AssetProfile from "@/assets/dev/profile.png";
 
-import { Image } from "@nextui-org/react";
+import { Button, Image } from "@nextui-org/react";
 import axios from "axios";
 import { Therapist } from "@/@types";
 
@@ -384,7 +384,7 @@ export default function Therapists(): JSX.Element {
               <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
                 Meet All Our Spa Therapists
               </h2>
-              <div className="grid md:grid-cols-3 gap-4 md:gap-10">
+              <div className="grid md:grid-cols-3 gap-4 md:gap-10 mb-4 md:mb-8 lg:mb-20">
                 {therapists.map((therapist: Therapist, index: number) => (
                   <div key={index} className="shadow-md border p-4 md:p-8">
                     <div className="flex flex-col items-center gap-4 md:gap-8">
@@ -408,6 +408,17 @@ export default function Therapists(): JSX.Element {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="w-max mx-auto">
+                <Button
+                  as={Link}
+                  href="/spa-therapists"
+                  color="secondary"
+                  size="lg"
+                >
+                  View More
+                </Button>
               </div>
             </div>
           </section>

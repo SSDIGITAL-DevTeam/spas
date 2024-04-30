@@ -287,11 +287,11 @@ export default function Membership({
                 <div key={operator.id} className="shadow-md border p-4 md:p-8">
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                     <Image
-                      src={AssetProfile.src}
-                      // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
+                      // src={AssetProfile.src}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
                       radius="none"
                       alt="Spa Operators"
-                      className="object-cover aspect-square w-40 h-40"
+                      className="object-cover aspect-square lg:w-40 lg:h-40 rounded-md"
                     />
                     <div className="flex flex-col items-center md:items-start">
                       <h3 className="text-lg md:text-2xl text-black font-semibold">

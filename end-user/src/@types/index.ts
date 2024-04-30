@@ -44,6 +44,17 @@ export type Therapist = {
   slug: string;
   status: string;
   user: { id: number; email: string; role: string };
+  employeHistorys: EmployeHistory[];
+};
+
+export type EmployeHistory = {
+  id: number;
+  job_title: string;
+  company_name: string;
+  start_date: string;
+  end_date: string;
+  location: string;
+  description: string;
 };
 
 export type Post = {
