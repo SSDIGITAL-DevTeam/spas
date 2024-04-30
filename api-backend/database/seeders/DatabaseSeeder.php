@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Operator;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\Therapist;
 use App\Models\User;
@@ -26,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         Operator::factory(5)->create()->each(function ($operator) {
             try {
-                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?spa');
+                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
 
                 if ($response->successful()) {
                     $imageContent = $response->body();
@@ -53,7 +54,7 @@ class DatabaseSeeder extends Seeder
         // Create Therapist
         Therapist::factory()->count(5)->create()->each(function ($therapist) {
             try {
-                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?spa');
+                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
 
                 if ($response->successful()) {
                     $imageContent = $response->body();
@@ -78,15 +79,18 @@ class DatabaseSeeder extends Seeder
         });
 
         // Create 6 categories
-        Category::factory()->count(6)->create();
+        Category::factory()->count(5)->create();
 
         // Create 6 events
         Event::factory()->count(6)->create();
 
+        // Create 6 Page
+        Page::factory()->count(6)->create();
+
         // Create Post
         Post::factory()->count(10)->create()->each(function ($post) {
             try {
-                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/1920x1080/?spa');
+                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
 
                 if ($response->successful()) {
                     $imageContent = $response->body();

@@ -11,12 +11,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import ModalRejected from "@/components/modals/Rejected";
 
-// import ModalApproved from "@/components/partials/ModalApproved";
-
 export default function DetailMember(): JSX.Element {
   const [singleOperator, setSingleOperator] = useState<Operator>(
     {} as Operator
   );
+
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [operatorId, setOperatorId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -38,7 +37,7 @@ export default function DetailMember(): JSX.Element {
         setSingleOperator(res.data);
         setIsLoading(true);
 
-        // console.log(setSingleOperator);
+        console.log(setSingleOperator);
       } catch (error) {
       } finally {
         setIsLoading(false);

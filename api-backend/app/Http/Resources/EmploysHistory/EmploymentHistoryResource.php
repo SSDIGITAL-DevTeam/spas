@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\EmploysHistory;
 
+use App\Http\Resources\Therapist\TherapistCollection;
+use App\Http\Resources\Therapist\TherapistResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +24,7 @@ class EmploymentHistoryResource extends JsonResource
             'end_date' => $this->when($this->end_date !== null, $this->end_date),
             'location' => $this->when($this->location !== null, $this->location),
             'description' => $this->when($this->description !== null, $this->description),
+            // 'therapist' => TherapistCollection::make($this->whenLoaded('therapist')),
         ];
     }
 }

@@ -15,6 +15,7 @@ export default function DetailMember(): JSX.Element {
   const [singleTherapist, setSingleTherapist] = useState<Therapist>(
     {} as Therapist
   );
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [therapistId, setThearpistId] = useState<number>(0);

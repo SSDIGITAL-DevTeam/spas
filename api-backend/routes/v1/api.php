@@ -65,7 +65,7 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
                 Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
             });
         });
-
+        
         // For Therapists
         Route::middleware('role:therapist')->group(function () {
             Route::prefix('therapist')->group(function () {
