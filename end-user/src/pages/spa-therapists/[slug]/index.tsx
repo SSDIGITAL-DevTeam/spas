@@ -13,12 +13,13 @@ import { PiGlobeHemisphereEastBold } from "react-icons/pi";
 import { IoReload } from "react-icons/io5";
 import AssetProfile from "@/assets/dev/profile.png";
 import { useRouter } from "next/router";
-import { Therapist } from "@/@types";
+import { EmployeHistory, Therapist } from "@/@types";
 import axios from "axios";
+import moment from "moment";
 
 export default function DetailTherapist() {
   const [profile, setProfile] = useState<Therapist>();
-
+  const [employeHistory, setEmployeHistory] = useState<[]>([]);
   const router = useRouter();
   const slug = router.query.slug;
 
@@ -35,6 +36,7 @@ export default function DetailTherapist() {
         }
       );
       setProfile(res.data.data);
+      setEmployeHistory(res.data.data.employHistorys);
     } catch (error) {
       console.log(error);
     }
@@ -45,6 +47,7 @@ export default function DetailTherapist() {
   }, [slug]);
 
   console.log(profile);
+  console.log(employeHistory);
   return (
     <>
       <Head>
@@ -106,9 +109,9 @@ export default function DetailTherapist() {
               <div className="relative md:w-max mx-auto mb-8 space-y-2">
                 <div className="space-y-4 flex flex-col items-center">
                   <Image
-                    src={AssetProfile.src}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover.url}`}
                     alt="Operators"
-                    className="object-cover"
+                    className="w-max lg:w-40 lg:h-40 mx-auto object-cover rounded-full"
                     radius="none"
                   />
                   <div className="text-center">
@@ -253,27 +256,20 @@ export default function DetailTherapist() {
                       <h3 className="text-[#A3A3A3] md:text-lg font-bold mb-4 md:mb-8">
                         Employment History
                       </h3>
-
-                      <div className="flex flex-col gap-y-2">
-                        <h3 className="text-black text-lg md:text-xl font-bold">
-                          Back Massage Specialists
-                        </h3>
-                        <span>Spa A</span>
-                        <span>Feb 2022 - Mar 2023</span>
-                        <span>Singapore</span>
-                        <ul className="list-disc">
-                          <li>
-                            ase Back Pain & Tension: I use targeted massage
-                            techniques to relieve discomfort and promote
-                            relaxation in your back, shoulders, and neck.
-                          </li>
-                          <li>
-                            Client-Focused Care: Every massage is tailored to
-                            your needs and preferences, ensuring a comfortable
-                            and effective experience.
-                          </li>
-                        </ul>
-                      </div>
+                      {employeHistory.map((history: EmployeHistory) => (
+                        <div key={history.id} className="flex flex-col gap-y-2">
+                          <h3 className="text-black text-lg md:text-xl font-bold">
+                            {history.job_title}
+                          </h3>
+                          <span>{history.company_name}</span>
+                          <span>
+                            {moment(history.start_date).format("MMMM YYYY")} -{" "}
+                            {moment(history.end_date).format("MMMM YYYY")}
+                          </span>
+                          <span>{history.location}</span>
+                          <p>{history.description}</p>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="border p-4 md:p-8 md:w-3/4 mx-auto ">
@@ -284,20 +280,20 @@ export default function DetailTherapist() {
                       <div className="flex flex-col md:flex-row gap-x-8 gap-y-2">
                         <div>
                           <Image
-                            src={AssetCerfiticate.src}
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.professional_certs}`}
                             alt="Therapist Certificate SPAS"
-                            className="w-max mx-auto"
+                            className="w-max lg:w-40 lg:h-40 mx-auto rounded-md"
                             removeWrapper
                             radius="none"
                           />
                         </div>
                         <div className="flex flex-col gap-y-2">
                           <h3 className="text-black md:text-lg font-bold">
-                            CIBTAC Level 3 Diploma in Spa Therapy
+                            {profile?.name_cert}
                           </h3>
-                          <span>CIBTAC</span>
+                          <span>{profile?.issuing_organization}</span>
                           <span>Issued Nov 2021 - Expires Mar 2025</span>
-                          <span>Credential ID: 1A2B3C4DXYZ</span>
+                          <span>Credential ID: {profile?.credential_id}</span>
                           <Button color="secondary" endContent={<IoReload />}>
                             Show credential
                           </Button>
