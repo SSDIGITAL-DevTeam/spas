@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EndUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmploysHistory\StoreEmploymentHistoryRequest;
 use App\Http\Requests\EmploysHistory\UpdateEmploymentHistoryRequest;
+use App\Http\Resources\EmploysHistory\EmploymentHistoryCollection;
 use App\Http\Resources\EmploysHistory\EmploymentHistoryResource;
 use App\Models\EmploymentHistory;
 use Illuminate\Http\Request;
@@ -14,9 +15,11 @@ class EmploymentHistoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): EmploymentHistoryCollection
     {
-        //
+        return EmploymentHistoryCollection::make([
+            EmploymentHistory::with('therapist')->latest()->paginate(10)
+        ]);
     }
 
     public function store(StoreEmploymentHistoryRequest $request): EmploymentHistoryResource
@@ -29,27 +32,27 @@ class EmploymentHistoryController extends Controller
 
         $employs = EmploymentHistory::create($data);
 
-        return new EmploymentHistoryResource($employs->load('therapist'));
+        return new EmploymentHistoryResource($employs);
     }
 
-    public function show(EmploymentHistory $career): EmploymentHistoryResource
+    public function show(EmploymentHistory $carrer): EmploymentHistoryResource
     {
-        return new EmploymentHistoryResource($career->load('therapist'));
+        return new EmploymentHistoryResource($carrer);
     }
 
-    public function update(UpdateEmploymentHistoryRequest $request, EmploymentHistory $career): EmploymentHistoryResource
+    public function update(UpdateEmploymentHistoryRequest $request, EmploymentHistory $carrer): EmploymentHistoryResource
     {
         $data = $request->validated();
         // dd($data);
-        $career->update($data);
+        $carrer->update($data);
 
-        return new EmploymentHistoryResource($career->load('therapist'));
+        return new EmploymentHistoryResource($carrer);
     }
 
-    public function destroy(EmploymentHistory $career)
+    public function destroy(EmploymentHistory $carrer)
     {
         try {
-            $career->delete();
+            $carrer->delete();
 
             return response()->json(['message' => 'Employment deleted successfully'], 200);
         } catch (\Exception $e) {

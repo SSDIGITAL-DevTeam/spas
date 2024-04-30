@@ -27,7 +27,7 @@ class UpdateEmploymentHistoryRequest extends FormRequest
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date'],
             'location' => ['nullable', 'string', 'max:255'],
-            'descripstion' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
         ];
     }
 }

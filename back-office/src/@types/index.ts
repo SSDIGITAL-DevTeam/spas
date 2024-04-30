@@ -52,7 +52,7 @@ export type Therapist = {
     issuing_organization: string
     date_of_issue: string
     expired_date: string
-    credential_id: number
+    credential_id: string
     employHistorys: Employment[]
     cover: Cover
     status: string

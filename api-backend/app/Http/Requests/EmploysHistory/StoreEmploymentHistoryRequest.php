@@ -27,7 +27,7 @@ class StoreEmploymentHistoryRequest extends FormRequest
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'location' => ['required', 'string', 'max:255'],
-            'descripstion' => ['required', 'string'],
+            'description' => ['required', 'string'],
         ];
     }
 }

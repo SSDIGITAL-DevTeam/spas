@@ -21,7 +21,7 @@ class PostFactory extends Factory
             'title' => $title = fake()->sentence,
             'slug' => Str::slug($title),
             'content' => fake()->paragraph,
-            'status' => fake()->randomElement(['draft', 'published']),
+            'status' => fake()->randomElement(['2', '4']),
             'published_at' => fake()->dateTimeThisYear,
         ];
     }
