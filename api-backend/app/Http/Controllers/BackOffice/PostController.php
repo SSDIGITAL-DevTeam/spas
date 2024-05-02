@@ -21,23 +21,12 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        // $status = $request->input('status');
-
-        $status = PostStatusEnum::tryFrom($request->integer('status', PostStatusEnum::PUBLISHED->value));
-
-        if (!$status) {
-            return new JsonResponse([
-                'status' => false,
-                'message' => 'Invalid post status.',
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
 
         return PostResource::collection(
             Post::with('cover', 'categories', 'tags', 'metas')
-                ->where('status', $status)
                 ->latest()
                 ->filterByCategory($request->input('search'))
-                ->paginate(3)
+                ->paginate(10)
         );
     }
 
@@ -51,7 +40,6 @@ class PostController extends Controller
 
         $slug = Str::slug($request->title);
 
-        // Membuat instance baru Post dengan data yang sudah divalidasi dan menambahkan tanggal sekarang untuk published_at
         $post = Post::create([
             'title' => $validatedData['title'],
             'slug' => $slug,
