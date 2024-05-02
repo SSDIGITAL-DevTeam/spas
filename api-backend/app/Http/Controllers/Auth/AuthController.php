@@ -141,7 +141,6 @@ class AuthController extends Controller
             $user->load(['operator', 'therapist']);
 
             // Initialize covers array to safely handle cases where cover might be null
-            $covers = ['operator' => [], 'therapist' => []];
 
             // Collect cover URLs for operators
             if ($user->operator instanceof Illuminate\Database\Eloquent\Collection) {
