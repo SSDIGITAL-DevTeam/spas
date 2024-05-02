@@ -1,5 +1,5 @@
 import { JSX, useEffect, useReducer, useState } from "react";
-
+import { Tabs, Tab, Button } from "@nextui-org/react";
 import Image from "next/image";
 import Head from "next/head";
 import { Cover, DataWithPagination, Post, Pagination } from "@/@types";
@@ -98,43 +98,6 @@ export default function Posts(): JSX.Element {
 
         {/* TODO */}
         <section>
-          {/* tabs */}
-          {/* <div className="flex gap-x-2 py-4">
-            <Link
-              onClick={() => {
-                fetchPosts(PostStatusEnum.PUBLISHED.toString());
-              }}
-              href={{
-                pathname: "/posts",
-                query: { status: PostStatusEnum.PUBLISHED.toString() },
-              }}
-              className={`${
-                !router.query.status ||
-                router.query.status === PostStatusEnum.PUBLISHED.toString()
-                  ? "bg-[#002966] text-white"
-                  : "hover:bg-gray-200"
-              } c-tab`}
-            >
-              Publish
-            </Link>
-            <Link
-              onClick={() => {
-                fetchPosts(PostStatusEnum.PUBLISHED.toString());
-              }}
-              href={{
-                pathname: "/posts",
-                query: { status: PostStatusEnum.DRAFTED.toString() },
-              }}
-              className={`${
-                router.query.status === PostStatusEnum.DRAFTED.toString()
-                  ? "bg-[#002966] text-white"
-                  : "hover:bg-gray-200"
-              } c-tab`}
-            >
-              Draft
-            </Link>
-          </div> */}
-
           {!posts?.data}
 
           <div className="grid gap-4 md:gap-8">
@@ -144,81 +107,168 @@ export default function Posts(): JSX.Element {
               </div>
             )}
 
-            <div className="overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                <thead className="lg:text-base text-sm text-center text-white uppercase bg-secondary">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      Title
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Slug
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Status
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan={4}>{isPostsLoading && <Loading />}</td>
-                  </tr>
-                  {posts?.data.map((post: Post) => (
-                    <tr
-                      className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
-                      key={post.id}
-                    >
-                      <td className="text-left p-6">
-                        <Link href={`/posts/view/${post.id}`}>
-                          {post.title}
-                        </Link>
-                      </td>
-                      <td className="text-center p-6">{post.slug}</td>
-                      <td className="text-center">
-                        <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
-                          {post.status === "4"
-                            ? "PUBLISHED"
-                            : post.status === "2"
-                            ? "DRAFTED"
-                            : "Unknown"}
-                        </p>
-                      </td>
-                      <td>
-                        <div className="flex gap-x-2 p-2 w-max">
-                          <Link href={`/posts/view/${post.id}`}>
-                            <Image
-                              className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5 object-cover"
-                              src={AssetView}
-                              alt="Asset View"
-                            />
-                          </Link>
+            <div className="flex w-full flex-col space-y-4 md:space-y-8">
+              <Tabs aria-label="Options" color="secondary" className="mx-auto">
+                <Tab key="operators" title="PUBLISHED" className="relative">
+                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead className="lg:text-base text-center text-white uppercase bg-secondary">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                          Title
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Slug
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Status
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
 
-                          <Link href={`/posts/edit/${post.id}`}>
-                            <Image
-                              className="w-10 cursor-pointer rounded-lg bg-primary p-2.5"
-                              src={AssetEdit}
-                              alt="Asset View"
-                            />
-                          </Link>
+                    <tbody>
+                      <tr>
+                        <td colSpan={5}>{isPostsLoading && <Loading />}</td>
+                      </tr>
+                      {posts?.data
+                        .filter((posts) => posts.status === "4")
+                        .map((post, index) => (
+                          <tr
+                            className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                            key={post.id}
+                          >
+                            <td className="text-left p-6">
+                              <Link href={`/posts/view/${post.id}`}>
+                                {post.title}
+                              </Link>
+                            </td>
+                            <td className="text-center p-6">{post.slug}</td>
+                            <td className="text-center">
+                              <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
+                                {post.status === "4"
+                                  ? "PUBLISHED"
+                                  : post.status === "2"
+                                  ? "DRAFTED"
+                                  : "Unknown"}
+                              </p>
+                            </td>
+                            <td>
+                              <div className="flex gap-x-2 p-2 w-max">
+                                <Link href={`/posts/view/${post.id}`}>
+                                  <Image
+                                    className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5 object-cover"
+                                    src={AssetView}
+                                    alt="Asset View"
+                                  />
+                                </Link>
 
-                          <Image
-                            onClick={() => {
-                              setPostId(post.id);
-                              setIsOpen(true);
-                            }}
-                            className="w-10 cursor-pointer rounded-lg bg-red-600 p-2.5"
-                            src={AssetDelete}
-                            alt="Asset View"
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                                <Link href={`/posts/edit/${post.id}`}>
+                                  <Image
+                                    className="w-10 cursor-pointer rounded-lg bg-primary p-2.5"
+                                    src={AssetEdit}
+                                    alt="Asset View"
+                                  />
+                                </Link>
+
+                                <Image
+                                  onClick={() => {
+                                    setPostId(post.id);
+                                    setIsOpen(true);
+                                  }}
+                                  className="w-10 cursor-pointer rounded-lg bg-red-600 p-2.5"
+                                  src={AssetDelete}
+                                  alt="Asset View"
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </Tab>
+
+                <Tab key="therapist" title="DRAFT">
+                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead className="lg:text-base text-center text-white uppercase bg-secondary">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                          Title
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Slug
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Status
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr>
+                        <td colSpan={5}>{isPostsLoading && <Loading />}</td>
+                      </tr>
+                      {posts?.data
+                        .filter((posts) => posts.status === "2")
+                        .map((post, index) => (
+                          <tr
+                            className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                            key={post.id}
+                          >
+                            <td className="text-left p-6">
+                              <Link href={`/posts/view/${post.id}`}>
+                                {post.title}
+                              </Link>
+                            </td>
+                            <td className="text-center p-6">{post.slug}</td>
+                            <td className="text-center">
+                              <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
+                                {post.status === "4"
+                                  ? "PUBLISHED"
+                                  : post.status === "2"
+                                  ? "DRAFTED"
+                                  : "Unknown"}
+                              </p>
+                            </td>
+                            <td>
+                              <div className="flex gap-x-2 p-2 w-max">
+                                <Link href={`/posts/view/${post.id}`}>
+                                  <Image
+                                    className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5 object-cover"
+                                    src={AssetView}
+                                    alt="Asset View"
+                                  />
+                                </Link>
+
+                                <Link href={`/posts/edit/${post.id}`}>
+                                  <Image
+                                    className="w-10 cursor-pointer rounded-lg bg-primary p-2.5"
+                                    src={AssetEdit}
+                                    alt="Asset View"
+                                  />
+                                </Link>
+
+                                <Image
+                                  onClick={() => {
+                                    setPostId(post.id);
+                                    setIsOpen(true);
+                                  }}
+                                  className="w-10 cursor-pointer rounded-lg bg-red-600 p-2.5"
+                                  src={AssetDelete}
+                                  alt="Asset View"
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </Tab>
+              </Tabs>
             </div>
             <div className="mt-12 flex flex-col md:flex-row w-full gap-x-2 justify-between items-center gap-y-4">
               <div>

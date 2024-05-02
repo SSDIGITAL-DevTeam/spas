@@ -130,16 +130,42 @@ class AuthController extends Controller
         }
     }
 
-    public function me(): UserResource
+    public function me()
     {
 
         /** @var User $user */
         $user = Auth::user();
 
         if ($user !== null) {
-            $user->load(['operator.cover', 'therapist.cover']);
+            // Load 'cover' relationships
+            $user->load(['operator', 'therapist']);
+
+            // Initialize covers array to safely handle cases where cover might be null
+            $covers = ['operator' => [], 'therapist' => []];
+
+            // Collect cover URLs for operators
+            if ($user->operator instanceof Illuminate\Database\Eloquent\Collection) {
+                $covers['url'] = $user->operator->map(function ($op) {
+                    return $op->cover ? $op->cover->url : null;
+                })->filter()->values()->toArray();
+            } elseif ($user->operator && $user->operator->cover) {
+                $covers['url'] = [$user->operator->cover->url];
+            }
+
+            // Collect cover URLs for therapists
+            if ($user->therapist instanceof Illuminate\Database\Eloquent\Collection) {
+                $covers['url'] = $user->therapist->map(function ($th) {
+                    return $th->cover ? $th->cover->url : null;
+                })->filter()->values()->toArray();
+            } elseif ($user->therapist && $user->therapist->cover) {
+                $covers['url'] = [$user->therapist->cover->url];
+            }
+
+            // Add covers directly to the user object
+            $user->covers = $covers;
         }
 
-        return UserResource::make($user);
+        // Return user data using the UserResource
+        return new UserResource($user);
     }
 }

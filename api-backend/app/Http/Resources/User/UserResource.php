@@ -19,10 +19,11 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->whenHas('id'),
-            'name' => $this->whenHas('name'),
-            'email' => $this->whenHas('email'),
-            'role' => $this->whenHas('role'),
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+            'covers' => $this->covers ?? [],
             'operator' => OperatorResource::make($this->whenLoaded('operator')),
             'therapist' => TherapistResource::make($this->whenLoaded('therapist')),
         ];
