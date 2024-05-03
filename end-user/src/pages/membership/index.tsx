@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<{
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators`
     );
-    const operators = await res.data.data.slice(0, 3);
+    const operators = await res.data.data.slice(0, 4);
 
     return { props: { operators } };
   } catch (error) {

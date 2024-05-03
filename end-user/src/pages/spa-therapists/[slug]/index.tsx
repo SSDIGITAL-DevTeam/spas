@@ -46,8 +46,6 @@ export default function DetailTherapist() {
     getProfile();
   }, [slug]);
 
-  console.log(profile);
-  console.log(employeHistory);
   return (
     <>
       <Head>
@@ -256,20 +254,27 @@ export default function DetailTherapist() {
                       <h3 className="text-[#A3A3A3] md:text-lg font-bold mb-4 md:mb-8">
                         Employment History
                       </h3>
-                      {employeHistory.map((history: EmployeHistory) => (
-                        <div key={history.id} className="flex flex-col gap-y-2">
-                          <h3 className="text-black text-lg md:text-xl font-bold">
-                            {history.job_title}
-                          </h3>
-                          <span>{history.company_name}</span>
-                          <span>
-                            {moment(history.start_date).format("MMMM YYYY")} -{" "}
-                            {moment(history.end_date).format("MMMM YYYY")}
-                          </span>
-                          <span>{history.location}</span>
-                          <p>{history.description}</p>
-                        </div>
-                      ))}
+                      {employeHistory.length == 0 ? (
+                        <p>No history found</p>
+                      ) : (
+                        employeHistory.map((history: EmployeHistory) => (
+                          <div
+                            key={history.id}
+                            className="flex flex-col gap-y-2"
+                          >
+                            <h3 className="text-black text-lg md:text-xl font-bold">
+                              {history.job_title}
+                            </h3>
+                            <span>{history.company_name}</span>
+                            <span>
+                              {moment(history.start_date).format("MMMM YYYY")} -{" "}
+                              {moment(history.end_date).format("MMMM YYYY")}
+                            </span>
+                            <span>{history.location}</span>
+                            <p>{history.description}</p>
+                          </div>
+                        ))
+                      )}
                     </div>
 
                     <div className="border p-4 md:p-8 md:w-3/4 mx-auto ">

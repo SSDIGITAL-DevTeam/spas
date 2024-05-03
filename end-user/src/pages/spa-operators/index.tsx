@@ -95,8 +95,7 @@ export default function SpaOperators({
                 <div key={operator.id} className="shadow-md border p-4 md:p-8">
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                     <Image
-                      src={AssetProfile.src}
-                      // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
                       radius="none"
                       alt="Spa Operators"
                       className="object-cover lg:w-40 lg:h-40 aspect-square"

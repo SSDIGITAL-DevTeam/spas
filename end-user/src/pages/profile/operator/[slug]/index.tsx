@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { LuMapPin, LuPhone, LuUser2 } from "react-icons/lu";
-import { FaPen } from "react-icons/fa6";
+import { FaPen, FaUser } from "react-icons/fa6";
 import { FaInfoCircle } from "react-icons/fa";
 import { PhoneInput } from "react-international-phone";
 import axios, { AxiosError } from "axios";
@@ -162,7 +162,6 @@ export default function OperatorProfile() {
     }
   };
 
-  console.log(profile);
   return (
     <>
       {" "}
@@ -209,13 +208,17 @@ export default function OperatorProfile() {
           <div className="container p-4 md:p-8">
             <div className="flex flex-col gap-y-8 md:flex-row gap-x-20">
               <div className="space-y-4 flex flex-col items-center md:items-start md:max-w-64">
-                <Image
-                  src={AssetProfile.src}
-                  // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover.url}`}
-                  alt="Operators"
-                  className="object-cover aspect-square md:w-40 md:h-40 rounded-full"
-                  radius="none"
-                />
+                {profile?.cover?.url == undefined ? (
+                  <FaUser className="text-gray-400 md:w-40 md:h-40" />
+                ) : (
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                    alt="Operators"
+                    className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
+                    removeWrapper
+                    radius="full"
+                  />
+                )}
 
                 <div className="">
                   <span className="font-bold text-lg md:text-2xl">
