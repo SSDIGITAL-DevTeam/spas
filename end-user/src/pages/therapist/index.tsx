@@ -389,10 +389,10 @@ export default function Therapists(): JSX.Element {
                   <div key={index} className="shadow-md border p-4 md:p-8">
                     <div className="flex flex-col items-center gap-4 md:gap-8">
                       <Image
-                        src={AssetProfile.src}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
                         radius="none"
                         alt="Spa Operators"
-                        className="object-cover"
+                        className="object-cover md:w-40 md:h-40 aspect-square"
                       />
                       <div className="flex flex-col items-center">
                         <h3 className="text-lg md:text-2xl text-black font-semibold">

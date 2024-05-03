@@ -17,18 +17,14 @@ import {
   Card,
   CardBody,
   Input,
-  // DatePicker
 } from "@nextui-org/react";
-// import { DatePicker } from "@nextui-org/react";
 import { LuMapPin, LuPhone, LuUser2 } from "react-icons/lu";
-import { FaRegAddressCard } from "react-icons/fa6";
+import { FaRegAddressCard, FaUser } from "react-icons/fa6";
 import { CgCalendarDates } from "react-icons/cg";
 import AssetGender from "@/assets/therapist-assets/gender.svg";
-import AssetCerfiticate from "@/assets/therapist-assets/certificate.png";
 import { PiGlobeHemisphereEastBold } from "react-icons/pi";
-import { IoReload } from "react-icons/io5";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import { EmployeHistory, Therapist } from "@/@types";
 import { PhoneInput } from "react-international-phone";
@@ -37,25 +33,35 @@ import AssetProfile from "@/assets/dev/profile.png";
 import countryList from "react-select-country-list";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { MdDelete, MdEdit } from "react-icons/md";
+import DetailOperator from "@/pages/spa-operators/[slug]";
+
+type ErrorResponse = {
+  errors: {
+    job_title: string[];
+    company_name: string[];
+    start_date: string[];
+    end_date: string[];
+    location: string[];
+    description: string[];
+  };
+};
 
 export default function TherapistProfile(): JSX.Element {
   // state
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isOpenModalEdit, setisOpenModalEdit] = useState<boolean>(false);
-  const [stepNumber, setStepNumber] = useState<number>(1);
+  const [isOpenModalEdit, setIsOpenModalEdit] = useState<boolean>(false);
+  const [isOpenModalDelete, setIsOpenModalDelete] = useState<boolean>(false);
   const [profile, setProfile] = useState<Therapist>();
   const [employeHistory, setEmployeHistory] = useState<[]>([]);
   const [id, setId] = useState<string>("");
   const [isAddEmployeHistory, setIsAddEmployeHistory] =
     useState<boolean>(false);
 
-  // states of date picker
-  const [startBirthOfDate, setStarBirthOfDate] = useState(new Date());
-  const [startExiprationDate, setStartExpirationDate] = useState(new Date());
-  const [startOfIssuingDate, setStartOfIssuingDate] = useState(new Date());
-  const [startEmployeeDate, setStartEmployeeDate] = useState(new Date());
-  const [endEmployeeDate, setEndEmployeeDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
+  const [errMessage, setErrMessage] = useState<ErrorResponse>(
+    {} as ErrorResponse
+  );
 
   // states of input data
   const [address, setAddress] = useState<string>("");
@@ -72,19 +78,8 @@ export default function TherapistProfile(): JSX.Element {
   const [passportFinno, setPassportFinno] = useState<string>("");
   const [sex, setSex] = useState<string>("");
 
-  const [jobTitle, setJobTitle] = useState<string>("");
-  const [companyName, setCompanyName] = useState<string>("");
-  const [startJob, setStartJob] = useState<string>("");
-  const [endJob, setEndJob] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [jobDescription, setJobDescription] = useState<string>("");
-
   const router = useRouter();
   const slug = router.query.slug;
-
-  const changeHandler = (value: any) => {
-    setNationality(value);
-  };
 
   const options = useMemo(() => countryList().getData(), []);
   const inputStyle = {
@@ -186,12 +181,6 @@ export default function TherapistProfile(): JSX.Element {
       formData.append("passport_finno", passportFinno);
       formData.append("sex", sex);
       formData.append("address_nearest_mrt", addressNearerstMRT);
-      formData.append("job_title", jobTitle);
-      formData.append("company_name", companyName);
-      formData.append("start_date", startJob);
-      formData.append("end_date", endJob);
-      formData.append("location", location);
-      formData.append("description", jobDescription);
 
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/therapists/${id}?_method=PUT`,
@@ -216,7 +205,7 @@ export default function TherapistProfile(): JSX.Element {
         theme: "light",
         transition: Bounce,
       });
-
+      getProfile();
       router.replace(`/profile/therapist/${res.data.data.slug}`);
     } catch (error) {
       console.log(error);
@@ -257,7 +246,8 @@ export default function TherapistProfile(): JSX.Element {
         transition: Bounce,
       });
 
-      router.replace(`/profile/therapist/${res.data.data.slug}`);
+      getProfile();
+      // router.replace(`/profile/therapist/${res.data.data.slug}`);
     } catch (error) {
       console.log(error);
     }
@@ -291,13 +281,122 @@ export default function TherapistProfile(): JSX.Element {
         transition: Bounce,
       });
       getProfile();
+      setIsAddEmployeHistory(false);
       formReset.reset();
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error as AxiosError;
+      setErrMessage(errorMessage.response?.data as ErrorResponse);
+    }
+  };
+
+  const [detailEmployeeHistory, setDetailEmployeeHistory] =
+    useState<EmployeHistory>();
+  const [idEmployeeHistory, setIdEmployeeHistory] = useState<string>("");
+  const getDetailEmployeeHistory = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/carrers/${idEmployeeHistory}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      setDetailEmployeeHistory(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(profile);
+  useEffect(() => {
+    getDetailEmployeeHistory();
+  }, [idEmployeeHistory]);
+
+  const handleDeleteEmployeeHistory = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/carrers/${idEmployeeHistory}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      toast.success("Employe History updated", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      getProfile();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEditEmployeeHistory = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form: HTMLFormElement = e.currentTarget;
+    const formReset = e.target as HTMLFormElement;
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/carrers/${idEmployeeHistory}?_method=PUT`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      toast.success("Employe History updated", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      formReset.reset();
+
+      getProfile();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const openModalEdit = (id: string) => {
+    setIdEmployeeHistory(id);
+    setTimeout(() => {
+      setIsOpenModalEdit(true);
+    }, 500);
+  };
+
+  const openModalDelete = (id: string) => {
+    setIdEmployeeHistory(id);
+    setTimeout(() => {
+      setIsOpenModalDelete(true);
+    }, 500);
+  };
+
   return (
     <>
       <Head>
@@ -346,18 +445,12 @@ export default function TherapistProfile(): JSX.Element {
               <div className="relative md:w-max mx-auto mb-8 space-y-2">
                 <div className="space-y-4 flex flex-col items-center">
                   {profile?.cover?.url == undefined ? (
-                    <Image
-                      src={AssetProfile.src}
-                      alt="Operators"
-                      className="object-cover aspect-square md:w-40 md:h-40"
-                      removeWrapper
-                      radius="none"
-                    />
+                    <FaUser className="text-gray-400 md:w-40 md:h-40" />
                   ) : (
                     <Image
                       src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
                       alt="Operators"
-                      className="object-cover aspect-square md:w-40 md:h-40"
+                      className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
                       removeWrapper
                       radius="full"
                     />
@@ -386,8 +479,8 @@ export default function TherapistProfile(): JSX.Element {
 
               <Tabs className="flex items-center justify-center">
                 <Tab title="Personal Information" key="personal" className="">
-                  <div className="w-3/4 mx-auto border p-4 md:p-8">
-                    <div className="md:columns-2 md:gap-x-40 space-y-4">
+                  <div className="md:w-3/4 mx-auto border p-4 md:p-8">
+                    <div className="grid md:grid-cols-2 md:gap-x-40 space-y-4">
                       <div className="flex items-center gap-x-4">
                         <div>
                           <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
@@ -510,28 +603,48 @@ export default function TherapistProfile(): JSX.Element {
                 <Tab title="Career Information" key="career">
                   <div className="space-y-4 md:space-y-8">
                     <div className="border p-4 md:p-8 md:w-3/4 mx-auto space-y-4 md:space-y-8">
-                      <h3 className="text-[#A3A3A3] md:text-lg font-bold ">
+                      <h3 className="text-[#A3A3A3] md:text-lg font-bold">
                         Employment History
                       </h3>
-
-                      {employeHistory.map((history: EmployeHistory) => (
-                        <div
-                          key={history.id}
-                          className="flex flex-col gap-y-2 cursor-pointer"
-                        >
-                          <h3 className="text-black text-lg md:text-xl font-bold cursor-pointer">
-                            {history.job_title}
-                          </h3>
-                          <span>{history.company_name}</span>
-                          <span>
-                            {moment(history.start_date).format("MMMM YYYY")} -{" "}
-                            {moment(history.end_date).format("MMMM YYYY")}
-                          </span>
-                          <span>{history.location}</span>
-                          <p>{history.description}</p>
-                        </div>
-                      ))}
-
+                      <div className="grid gap-y-4 md:gap-y-8">
+                        {employeHistory.length == 0 ? (
+                          <p>No history found</p>
+                        ) : (
+                          employeHistory.map((history: EmployeHistory) => (
+                            <div
+                              key={history.id}
+                              className="flex flex-col gap-y-2"
+                            >
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-black text-lg md:text-xl font-bold">
+                                  {history.job_title}
+                                </h3>
+                                <div className="flex items-center gap-4">
+                                  <MdDelete
+                                    className="text-gray-500 w-6 h-6 cursor-pointer hover:text-red-500 duration-150"
+                                    onClick={() =>
+                                      openModalDelete(history.id.toString())
+                                    }
+                                  />
+                                  <MdEdit
+                                    className=" w-6 h-6 cursor-pointer hover:text-primary text-secondary"
+                                    onClick={() =>
+                                      openModalEdit(history.id.toString())
+                                    }
+                                  />
+                                </div>
+                              </div>
+                              <span>{history.company_name}</span>
+                              <span>
+                                {moment(history.start_date).format("MMMM YYYY")}{" "}
+                                - {moment(history.end_date).format("MMMM YYYY")}
+                              </span>
+                              <span>{history.location}</span>
+                              <p>{history.description}</p>
+                            </div>
+                          ))
+                        )}
+                      </div>
                       <div className="mx-auto w-max">
                         <Button
                           onClick={() =>
@@ -552,28 +665,37 @@ export default function TherapistProfile(): JSX.Element {
                                 <label className="md:text-base text-sm">
                                   Job Title
                                 </label>
-                                <Input
-                                  variant={"bordered"}
-                                  color="secondary"
-                                  size="md"
-                                  radius="sm"
-                                  name="job_title"
-                                  // onChange={(e) => setJobTitle(e.target.value)}
-                                />
+                                <div className="flex flex-col gap-y-2">
+                                  <Input
+                                    variant={"bordered"}
+                                    color="secondary"
+                                    size="md"
+                                    radius="sm"
+                                    name="job_title"
+                                  />
+                                  {errMessage?.errors?.job_title && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.job_title[0]}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   Start Date
                                 </label>
-                                <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                                  <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date!)}
-                                    dateFormat={"yyyy/MM/dd"}
-                                    value={profile?.date_of_birth}
+                                <div className="flex flex-col gap-y-2">
+                                  <input
                                     name="start_date"
+                                    type="date"
+                                    className="border-2 border-[#E4E4E7] py-2 lg:py-1.5 rounded-lg pl-2 w-full"
                                   />
+                                  {errMessage?.errors?.start_date && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.start_date[0]}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
 
@@ -581,28 +703,37 @@ export default function TherapistProfile(): JSX.Element {
                                 <label className="md:text-base text-sm">
                                   Company Name
                                 </label>
-                                <Input
-                                  variant={"bordered"}
-                                  color="secondary"
-                                  size="md"
-                                  radius="sm"
-                                  name="company_name"
-                                  // onChange={(e) => setJobTitle(e.target.value)}
-                                />
+                                <div className="flex flex-col gap-y-2">
+                                  <Input
+                                    variant={"bordered"}
+                                    color="secondary"
+                                    size="md"
+                                    radius="sm"
+                                    name="company_name"
+                                  />
+                                  {errMessage?.errors?.company_name && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.company_name[0]}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   End Date
                                 </label>
-                                <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                                  <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date!)}
-                                    dateFormat={"yyyy/MM/dd"}
-                                    value={profile?.date_of_birth}
+                                <div className="flex flex-col gap-y-2">
+                                  <input
                                     name="end_date"
+                                    type="date"
+                                    className="border-2 border-[#E4E4E7] py-2 lg:py-1.5 rounded-lg pl-2 w-full"
                                   />
+                                  {errMessage?.errors?.end_date && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.end_date[0]}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
 
@@ -610,28 +741,40 @@ export default function TherapistProfile(): JSX.Element {
                                 <label className="md:text-base text-sm">
                                   Description
                                 </label>
-                                <Input
-                                  variant={"bordered"}
-                                  color="secondary"
-                                  size="md"
-                                  radius="sm"
-                                  name="description"
-                                  // onChange={(e) => setJobTitle(e.target.value)}
-                                />
+                                <div className="flex flex-col gap-y-2">
+                                  <Input
+                                    variant={"bordered"}
+                                    color="secondary"
+                                    size="md"
+                                    radius="sm"
+                                    name="description"
+                                  />
+                                  {errMessage?.errors?.description && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.description[0]}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   Location
                                 </label>
-                                <Input
-                                  variant={"bordered"}
-                                  color="secondary"
-                                  size="md"
-                                  radius="sm"
-                                  name="location"
-                                  // onChange={(e) => setJobTitle(e.target.value)}
-                                />
+                                <div className="flex flex-col gap-y-2">
+                                  <Input
+                                    variant={"bordered"}
+                                    color="secondary"
+                                    size="md"
+                                    radius="sm"
+                                    name="location"
+                                  />
+                                  {errMessage?.errors?.location && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.location[0]}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
@@ -659,7 +802,7 @@ export default function TherapistProfile(): JSX.Element {
                           <Image
                             src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.professional_certs}`}
                             alt="Therapist Certificate SPAS"
-                            className="w-max lg:w-40 lg:h-40 mx-auto"
+                            className="w-full lg:w-40 lg:h-40 mx-auto object-cover"
                             removeWrapper
                             radius="none"
                           />
@@ -703,7 +846,7 @@ export default function TherapistProfile(): JSX.Element {
           onOpenChange={onOpenChange}
           size="2xl"
           hideCloseButton
-          className="md:h-11/12"
+          className="md:h-11/12 w-full"
         >
           <ModalContent>
             {(onClose) => (
@@ -715,36 +858,41 @@ export default function TherapistProfile(): JSX.Element {
                 </ModalHeader>
                 <ModalBody>
                   <div className="flex w-full flex-col">
-                    <Tabs aria-label="Options" className="mx-auto">
-                      <Tab key="personal" title="Personal Information">
+                    <Tabs aria-label="Options" className="md:mx-auto ">
+                      <Tab
+                        key="personal"
+                        title="Personal Information"
+                        className=""
+                      >
                         <Card className="lg:h-[23rem]">
                           <CardBody className="">
-                            <div className="grid md:grid-cols-2 md:gap-x-4 gap-y-4">
+                            <div className="grid md:grid-cols-2 md:gap-x-4 gap-y-2 md:gap-y-4">
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   Profile Picture
                                 </label>
-                                <input type="file" />
+                                {/* <Image
+                                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                                  alt="Operators"
+                                  className="object-cover aspect-square w-20 h-20"
+                                  removeWrapper
+                                  radius="none"
+                                /> */}
+                                <input type="file" className="w-full" />
                               </div>
 
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   Date of Birth
                                 </label>
-                                <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                                  {/* <DatePicker
-                                    label="Birth date"
-                                    // defaultValue={profile?.date_of_birth}
-                                    // onChange={(date) => setDateOfBirth()}
-                                    name="date_of_birth"
-                                    className="max-w-[284px]"
-                                  /> */}
-                                  <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date!)}
-                                    dateFormat={"yyyy/MM/dd"}
-                                    value={profile?.date_of_birth}
-                                    name="date_of_birth"
+                                <div className="">
+                                  <input
+                                    defaultValue={profile?.date_of_birth}
+                                    onChange={(e) =>
+                                      setDateOfBirth(e.target.value)
+                                    }
+                                    type="date"
+                                    className="border-2 border-[#E4E4E7] py-1.5 rounded-lg pl-2 w-full"
                                   />
                                 </div>
                               </div>
@@ -764,7 +912,7 @@ export default function TherapistProfile(): JSX.Element {
                                 />
                               </div>
 
-                              <div className="flex flex-col space-y-2">
+                              <div className="flex flex-col md:gap-y-2">
                                 <label className="md:text-base text-sm">
                                   Sex
                                 </label>
@@ -782,7 +930,7 @@ export default function TherapistProfile(): JSX.Element {
                                 </select>
                               </div>
 
-                              <div className="space-y-2">
+                              <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   Contact No.
                                 </label>
@@ -813,7 +961,7 @@ export default function TherapistProfile(): JSX.Element {
                                 />
                               </div>
 
-                              <div className="flex flex-col space-y-2">
+                              <div className="flex flex-col md:gap-y-2">
                                 <label className="md:text-base text-sm">
                                   Nationality
                                 </label>
@@ -848,22 +996,25 @@ export default function TherapistProfile(): JSX.Element {
                                 <label className="md:text-base text-sm">
                                   Add Certificate
                                 </label>
-                                <input type="file" name="professional_certs" />
+                                <input
+                                  type="file"
+                                  name="professional_certs"
+                                  className="w-full"
+                                />
                               </div>
 
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
                                   Issuing Date
                                 </label>
-                                <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                                  <DatePicker
-                                    selected={startOfIssuingDate}
-                                    onChange={(date) =>
-                                      setStartOfIssuingDate(date!)
+                                <div>
+                                  <input
+                                    defaultValue={profile?.date_of_issue}
+                                    onChange={(e) =>
+                                      setDateOfIssue(e.target.value)
                                     }
-                                    dateFormat={"yyyy/MM/dd"}
-                                    value={profile?.date_of_issue}
-                                    name="date_of_issue"
+                                    type="date"
+                                    className="border-2 border-[#E4E4E7] py-1.5 rounded-lg pl-2 w-full"
                                   />
                                 </div>
                               </div>
@@ -879,6 +1030,7 @@ export default function TherapistProfile(): JSX.Element {
                                   radius="sm"
                                   defaultValue={profile?.name_cert}
                                   name="name_cert"
+                                  className="md:text-base text-sm"
                                   onChange={(e) => setNameCert(e.target.value)}
                                 />
                               </div>
@@ -887,8 +1039,16 @@ export default function TherapistProfile(): JSX.Element {
                                 <label className="md:text-base text-sm">
                                   Expiration Date
                                 </label>
-                                <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                                  <DatePicker
+                                <div>
+                                  <input
+                                    defaultValue={profile?.expired_date}
+                                    onChange={(e) =>
+                                      setExpiredDate(e.target.value)
+                                    }
+                                    type="date"
+                                    className="border-2 border-[#E4E4E7] py-1.5 rounded-lg pl-2 w-full"
+                                  />
+                                  {/* <DatePicker
                                     selected={startExiprationDate}
                                     onChange={(date) =>
                                       setStartExpirationDate(date!)
@@ -896,7 +1056,7 @@ export default function TherapistProfile(): JSX.Element {
                                     dateFormat={"yyyy/MM/dd"}
                                     value={profile?.expired_date}
                                     name="expired_date"
-                                  />
+                                  /> */}
                                 </div>
                               </div>
 
@@ -959,14 +1119,14 @@ export default function TherapistProfile(): JSX.Element {
         {/* Modal Edit employe history */}
         <Modal
           isOpen={isOpenModalEdit}
-          onOpenChange={setisOpenModalEdit}
+          onOpenChange={setIsOpenModalEdit}
           size="2xl"
           hideCloseButton
           className="md:h-11/12"
         >
           <ModalContent>
             {(onClose) => (
-              <form onSubmit={handleEditDataEmployeHistory}>
+              <form onSubmit={handleEditEmployeeHistory}>
                 <ModalHeader className="flex flex-col gap-1">
                   <div className="flex justify-between items-center">
                     <h3>Edit Employe History</h3>
@@ -982,18 +1142,17 @@ export default function TherapistProfile(): JSX.Element {
                         size="md"
                         radius="sm"
                         name="job_title"
+                        defaultValue={detailEmployeeHistory?.job_title!}
                       />
                     </div>
 
                     <div className="md:space-y-2">
                       <label className="md:text-base text-sm">Start Date</label>
-                      <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                        <DatePicker
-                          selected={startDate}
-                          onChange={(date) => setStartDate(date!)}
-                          dateFormat={"yyyy/MM/dd"}
-                          value={profile?.date_of_birth}
-                          name="start_date"
+                      <div>
+                        <input
+                          defaultValue={detailEmployeeHistory?.start_date}
+                          type="date"
+                          className="border-2 border-[#E4E4E7] py-1.5 rounded-lg pl-2 w-full"
                         />
                       </div>
                     </div>
@@ -1008,18 +1167,17 @@ export default function TherapistProfile(): JSX.Element {
                         size="md"
                         radius="sm"
                         name="company_name"
+                        defaultValue={detailEmployeeHistory?.company_name}
                       />
                     </div>
 
                     <div className="md:space-y-2">
                       <label className="md:text-base text-sm">End Date</label>
-                      <div className="border-2 border-[#E4E4E7] py-1 rounded-md pl-2">
-                        <DatePicker
-                          selected={startDate}
-                          onChange={(date) => setStartDate(date!)}
-                          dateFormat={"yyyy/MM/dd"}
-                          value={profile?.date_of_birth}
-                          name="end_date"
+                      <div>
+                        <input
+                          defaultValue={detailEmployeeHistory?.end_date}
+                          type="date"
+                          className="border-2 border-[#E4E4E7] py-1.5 rounded-lg pl-2 w-full"
                         />
                       </div>
                     </div>
@@ -1034,7 +1192,7 @@ export default function TherapistProfile(): JSX.Element {
                         size="md"
                         radius="sm"
                         name="description"
-                        // onChange={(e) => setJobTitle(e.target.value)}
+                        defaultValue={detailEmployeeHistory?.description}
                       />
                     </div>
 
@@ -1046,7 +1204,7 @@ export default function TherapistProfile(): JSX.Element {
                         size="md"
                         radius="sm"
                         name="location"
-                        // onChange={(e) => setJobTitle(e.target.value)}
+                        defaultValue={detailEmployeeHistory?.location}
                       />
                     </div>
                   </div>
@@ -1057,6 +1215,41 @@ export default function TherapistProfile(): JSX.Element {
                   </Button>
                   <Button color="primary" type="submit" onPress={onClose}>
                     Save Changes
+                  </Button>
+                  {/* <Button color="primary" onPress={onClose}>
+                    Next
+                  </Button> */}
+                </ModalFooter>
+              </form>
+            )}
+          </ModalContent>
+        </Modal>
+
+        {/* Modal Edit employe history */}
+        <Modal
+          isOpen={isOpenModalDelete}
+          onOpenChange={setIsOpenModalDelete}
+          size="md"
+          hideCloseButton
+          className="md:h-11/12"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <form onSubmit={handleDeleteEmployeeHistory}>
+                <ModalHeader className="flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                    <h3>Delete Employe History</h3>
+                  </div>
+                </ModalHeader>
+                <ModalBody>
+                  <h3>Are you sure?</h3>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button color="danger" type="submit" onPress={onClose}>
+                    Delete
                   </Button>
                   {/* <Button color="primary" onPress={onClose}>
                     Next

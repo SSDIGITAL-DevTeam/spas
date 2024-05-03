@@ -92,8 +92,8 @@ export default function DetailOperator(): JSX.Element {
             <div className="flex flex-col  gap-y-8 md:flex-row gap-x-20">
               <div className="space-y-4 flex flex-col items-center md:items-start">
                 <Image
-                  src={AssetProfile.src}
-                  // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover.url}`}
+                  // src={AssetProfile.src}
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover.url}`}
                   alt="Operators"
                   className="object-cover lg:w-40 lg:h-40 aspect-square"
                   radius="none"

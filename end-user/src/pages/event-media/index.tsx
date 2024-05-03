@@ -199,7 +199,7 @@ export default function EventMedia(): JSX.Element {
               {categories.data?.map((category: Category, index: number) => (
                 <button
                   key={category.id}
-                  className={`p-3  font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out w-40
+                  className={`p-3  font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out
 									${category.id == selectedCategoryId ? "bg-primary text-white" : ""}`}
                   onClick={() => setSelectedCategoryId(category.id)}
                 >

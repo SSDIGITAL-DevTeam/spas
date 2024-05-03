@@ -8,7 +8,7 @@ import { Button } from "@nextui-org/react";
 import axios from "axios";
 import AssetProfile from "@/assets/dev/profile.png";
 import { Image } from "@nextui-org/react";
-import { FaRegUser } from "react-icons/fa6";
+import { FaRegUser, FaUser } from "react-icons/fa6";
 
 type NavLink = {
   name: string;
@@ -80,11 +80,11 @@ export default function Navbar(): JSX.Element {
           },
         }
       );
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setId(response.data.data.id);
       setCoverOperator(response.data.data?.operator?.cover?.url);
       setCoverTherapist(response.data.data?.therapist?.cover?.url);
-      setCover(response.data.data?.therapist?.cover?.url);
+      setCover(response.data.data?.covers?.url);
       setSlugTherapist(response.data.data?.therapist?.slug);
       setSlugOperator(response.data.data?.operator?.slug);
       setRole(response.data.data.role);
@@ -102,8 +102,6 @@ export default function Navbar(): JSX.Element {
 
     // return () => clearInterval(interval);
   }, []);
-
-  console.log(coverTherapist);
 
   return (
     <nav
@@ -237,15 +235,10 @@ export default function Navbar(): JSX.Element {
                 className=" text-white lg:w-20 lg:h-20 aspect-square bg-transparent"
               >
                 {cover == undefined ? (
-                  <Image
-                    src={AssetProfile.src}
-                    removeWrapper
-                    isBlurred
-                    className="object-cover"
-                  />
+                  <FaUser className="text-gray-400 w-10 h-10" />
                 ) : (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${coverTherapist}`}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
                     removeWrapper
                     isBlurred
                     className="object-cover aspect-square"
