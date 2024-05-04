@@ -225,7 +225,7 @@ export default function DetailMember(): JSX.Element {
 
             <section>
               <div className="w-max mx-auto">
-                <div className="flex flex-col md:flex-row gap-x-10">
+                <div className="flex flex-col md:flex-row gap-x-10 gap-y-4">
                   <Button
                     onClick={() => {
                       setSelectedOperatorId(singleOperator.id);
