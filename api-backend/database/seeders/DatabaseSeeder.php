@@ -29,27 +29,11 @@ class DatabaseSeeder extends Seeder
 
         foreach ($operators as $operator) {
             try {
-                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
-
-                if ($response->successful()) {
-                    $imageContent = $response->body();
-                    $imageName = 'operator-logo/' . uniqid() . '.jpg';
-                    $saved = Storage::disk('public')->put($imageName, $imageContent);
-
-                    if (!$saved) {
-                        Log::error("Failed to save the image to storage: $imageName");
-                    }
-
-                    if ($saved) {
-                        $operator->cover()->create([
-                            'url' => $imageName,
-                        ]);
-                    }
-                } else {
-                    Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
-                }
+                $operator->cover()->create([
+                    'url' => 'https://source.unsplash.com/random/800x600/?spa', // Ganti dengan URL default gambar
+                ]);
             } catch (\Exception $e) {
-                Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
+                Log::error("An error occurred while saving operator cover: " . $e->getMessage());
             }
 
             // Create a user for the operator
@@ -67,27 +51,11 @@ class DatabaseSeeder extends Seeder
 
         foreach ($therapists as $therapist) {
             try {
-                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
-
-                if ($response->successful()) {
-                    $imageContent = $response->body();
-                    $imageName = 'therapist-certs/' . uniqid() . '.jpg';
-                    $saved = Storage::disk('public')->put($imageName, $imageContent);
-
-                    if (!$saved) {
-                        Log::error("Failed to save the image to storage: $imageName");
-                    }
-
-                    if ($saved) {
-                        $therapist->cover()->create([
-                            'url' => $imageName,
-                        ]);
-                    }
-                } else {
-                    Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
-                }
+                $operator->cover()->create([
+                    'url' => 'https://source.unsplash.com/random/800x600/?spa', // Ganti dengan URL default gambar
+                ]);
             } catch (\Exception $e) {
-                Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
+                Log::error("An error occurred while saving operator cover: " . $e->getMessage());
             }
 
             // Create a user for each therapist
@@ -110,32 +78,15 @@ class DatabaseSeeder extends Seeder
         Page::factory()->count(6)->create();
 
         // Create Post
-        Post::factory()->count(10)->create()->each(function ($post) {
+        Post::factory(10)->create()->each(function ($post) {
             try {
-                $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
-
-                if ($response->successful()) {
-                    $imageContent = $response->body();
-                    $imageName = 'post-image/' . uniqid() . '.jpg';
-                    $saved = Storage::disk('public')->put($imageName, $imageContent);
-
-                    if (!$saved) {
-                        Log::error("Failed to save the image to storage: $imageName");
-                    }
-
-                    if ($saved) {
-                        $post->cover()->create([
-                            'url' => $imageName,
-                        ]);
-                    }
-                } else {
-                    Log::error("Failed to retrieve the image from Unsplash: " . $response->status());
-                }
+                $post->cover()->create([
+                    'url' => 'https://source.unsplash.com/random/800x600/?spa', // URL gambar acak dari Unsplash
+                ]);
             } catch (\Exception $e) {
-                Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
+                Log::error("An error occurred while saving post cover: " . $e->getMessage());
             }
         });
-
 
         User::create([
             'name' => 'adminSPAS',
