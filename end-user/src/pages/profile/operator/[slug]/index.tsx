@@ -21,7 +21,7 @@ import { Operator } from "@/@types";
 import { useRouter } from "next/router";
 import { IoLogOut } from "react-icons/io5";
 import { Bounce, ToastContainer, toast } from "react-toastify";
-import AssetProfile from "@/assets/dev/profile.png";
+
 import "react-toastify/dist/ReactToastify.css";
 
 type ErrorResponse = {

@@ -145,20 +145,6 @@ export default function DetailTherapist() {
 
                       <div className="flex items-center gap-x-4">
                         <div>
-                          <FaRegAddressCard className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Passport / Fin No.
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.passport_finno}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
                           <CgCalendarDates className="text-secondary w-6 h-6 md:w-8 md:h-8" />
                         </div>
                         <div className="flex flex-col gap-y-1">
@@ -213,20 +199,6 @@ export default function DetailTherapist() {
                           </span>
                           <span className="text-secondary text-lg md:text-xl">
                             Singapore
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Address
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.address}
                           </span>
                         </div>
                       </div>

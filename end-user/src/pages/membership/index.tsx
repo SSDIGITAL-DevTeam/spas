@@ -14,31 +14,52 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import { DataWithPagination, Operator } from "@/@types";
 
-export const getServerSideProps: GetServerSideProps<{
-  operators: DataWithPagination<Operator>;
-}> = async () => {
-  try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators`
-    );
-    const operators = await res.data.data.slice(0, 4);
+// export const getServerSideProps: GetServerSideProps<{
+//   operators: DataWithPagination<Operator>;
+// }> = async () => {
+//   try {
+//     const res = await axios.get(
+//       `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators`
+//     );
+//     const operators = await res.data.data.slice(0, 4);
 
-    return { props: { operators } };
-  } catch (error) {
-    console.log(error);
-    return {
-      props: {
-        operators: [],
-      },
-    };
-  }
-};
+//     return { props: { operators } };
+//   } catch (error) {
+//     console.log(error);
+//     return {
+//       props: {
+//         operators: [],
+//       },
+//     };
+//   }
+// };
 
-export default function Membership({
-  operators,
-}: {
-  operators: Operator[];
-}): JSX.Element {
+export default function Membership(): JSX.Element {
+  // states
+  const [role, setRole] = useState<string>("");
+
+  const me = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+            )}`,
+          },
+        }
+      );
+
+      setRole(response.data.data.role);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    me();
+  }, []);
   return (
     <>
       <Head>
@@ -215,7 +236,7 @@ export default function Membership({
         </section>
 
         {/* MEMBERSHIP SUBS FEE */}
-        <section className="pb-14 lg:pb-0 lg:pt-20">
+        <section className={`pb-14 lg:pb-20 lg:pt-20`}>
           <div className="container">
             <div className="flex flex-col gap-y-8">
               <header className="flex flex-col gap-y-4 text-center">
@@ -257,7 +278,7 @@ export default function Membership({
               </header>
 
               <div className="flex flex-col">
-                <div className="pb-10">
+                <div className="">
                   <div className="text-left md:text-center">
                     <h2 className="text-secondary lg:text-4xl font-semibold text-2xl text-center">
                       S$100
@@ -272,55 +293,25 @@ export default function Membership({
                   </div>
                 </div>
               </div>
+
+              {role !== "operator" && (
+                <section className="pb-14 lg:pb-0 mb-10 md:mb-20">
+                  <div className="container p-4 md:p-8">
+                    <div className="w-max mx-auto">
+                      <Link href={"/join-us/spa-operator"}>
+                        <span className="btn-1 block my-4  text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                          JOIN SPAS
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                </section>
+              )}
             </div>
           </div>
         </section>
 
         {/* Meet Spa Operators */}
-        <section className="mb-10">
-          <div className="container p-4 md:p-8">
-            <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
-              Meet All Our Spa Operators
-            </h2>
-            <div className="grid md:grid-cols-2 gap-4 md:gap-10 mb-4 md:mb-8 lg:mb-20">
-              {operators.map((operator: Operator) => (
-                <div key={operator.id} className="shadow-md border p-4 md:p-8">
-                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-                    <Image
-                      // src={AssetProfile.src}
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
-                      radius="none"
-                      alt="Spa Operators"
-                      className="object-cover aspect-square lg:w-40 lg:h-40 rounded-md"
-                    />
-                    <div className="flex flex-col items-center md:items-start">
-                      <h3 className="text-lg md:text-2xl text-black font-semibold">
-                        {operator.company_name}
-                      </h3>
-                      <Link
-                        href={`/spa-operators/${operator.slug}`}
-                        className="text-primary"
-                      >
-                        See Details
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="w-max mx-auto">
-              <Button
-                as={Link}
-                href="/spa-operators"
-                color="secondary"
-                size="lg"
-              >
-                View More
-              </Button>
-            </div>
-          </div>
-        </section>
 
         {/* BECOME SPAS MEMBERS */}
         {/* <section className="pb-14 lg:pb-14 lg:pt-20">

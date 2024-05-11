@@ -25,19 +25,20 @@ const navLinks: NavLink[] = [
     path: "/membership",
   },
   {
-    name: "Therapist",
+    name: "Spa Therapist",
     path: "/therapist",
   },
   {
-    name: "Event & Media",
-    path: "/event-media",
+    name: "Spa Operator",
+    path: "/spa-operators",
   },
+
   {
-    name: "About Us",
+    name: "About",
     path: "/about-us",
   },
   {
-    name: "Contact Us",
+    name: "Contact",
     path: "/contact-us",
   },
 ];
@@ -95,12 +96,6 @@ export default function Navbar(): JSX.Element {
 
   useEffect(() => {
     me();
-
-    // const interval = setInterval(() => {
-    //   me();
-    // }, 3000);
-
-    // return () => clearInterval(interval);
   }, []);
 
   return (
@@ -202,12 +197,6 @@ export default function Navbar(): JSX.Element {
             <Link href="/">
               <Logo />
             </Link>
-
-            <div>
-              {/* <p className="font-bold">SPAS</p>
-
-							<p></p> */}
-            </div>
           </div>
 
           <ul className="flex gap-x-8 items-center text-[#1374B1]">
@@ -223,6 +212,29 @@ export default function Navbar(): JSX.Element {
                 <Link href={navLink.path}>{navLink.name}</Link>
               </li>
             ))}
+
+            {/* <Link
+                  href={"/spa-operators"}
+                  className={`${
+                    router.pathname === "/spa-operators"
+                      ? "text-secondary font-bold"
+                      : ""
+                  } px-2 font-semibold`}
+                >
+                  Spa Operator
+                </Link> */}
+            {role == "operator" && (
+              <Link
+                href={"/event-media"}
+                className={`${
+                  router.pathname === "/event-media"
+                    ? "text-secondary font-bold"
+                    : ""
+                } px-2 font-semibold`}
+              >
+                Event & Media
+              </Link>
+            )}
 
             {role ? (
               <Button
