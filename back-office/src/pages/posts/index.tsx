@@ -136,7 +136,7 @@ export default function Posts(): JSX.Element {
                         .filter((posts) => posts.status === "4")
                         .map((post, index) => (
                           <tr
-                            className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                            className="bg-white text-md text-black  hover:bg-secondary hover:text-white h-max"
                             key={post.id}
                           >
                             <td className="text-left p-6">
@@ -216,7 +216,7 @@ export default function Posts(): JSX.Element {
                         .filter((posts) => posts.status === "2")
                         .map((post, index) => (
                           <tr
-                            className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                            className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
                             key={post.id}
                           >
                             <td className="text-left p-6">

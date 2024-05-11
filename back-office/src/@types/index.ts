@@ -5,6 +5,7 @@ export type Login = {
         name: string
         email: string
     }
+    email: string
     token: string
 }
 
@@ -35,6 +36,7 @@ export type Operator = {
     email: string
     cover: Cover
     status: string
+    user: Login
 }
 
 export type Therapist = {
@@ -56,6 +58,7 @@ export type Therapist = {
     employHistorys: Employment[]
     cover: Cover
     status: string
+    user: Login
 }
 
 export type Employment = {
@@ -93,7 +96,7 @@ export type Event = {
     name: string
     description: string
     start_date: string
-    end_date: number
+    end_date: string    
 }
 
 export type Tag = {
@@ -144,13 +147,6 @@ export type ValidationErrors = {
 export type LoginError = {
     status: boolean
     message: string
-}
-
-export type Customer = {
-    id: number
-    email: string
-    phone: string
-    service: string
 }
 
 export type Pagination = {

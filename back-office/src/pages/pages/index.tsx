@@ -95,7 +95,7 @@ export default function Pages(): JSX.Element {
                   </tr>
                   {pages?.data.map((page: Page, index: number) => (
                     <tr
-                      className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                      className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
                       key={page.id}
                     >
                       <td className="text-center p-6">{page.name}</td>

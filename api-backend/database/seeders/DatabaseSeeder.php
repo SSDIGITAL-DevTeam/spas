@@ -25,7 +25,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        Operator::factory(5)->create()->each(function ($operator) {
+        $operators = Operator::factory(6)->create();
+
+        foreach ($operators as $operator) {
             try {
                 $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
 
@@ -49,10 +51,21 @@ class DatabaseSeeder extends Seeder
             } catch (\Exception $e) {
                 Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
             }
-        });
 
-        // Create Therapist
-        Therapist::factory()->count(5)->create()->each(function ($therapist) {
+            // Create a user for the operator
+            $operator->user()->create([
+                'name' => $operator->company_name,
+                'email' => fake()->companyEmail(),
+                'password' => Hash::make('operator'),
+                'role' => 'operator',
+            ]);
+        }
+
+
+        // Create Therapists
+        $therapists = Therapist::factory(6)->create();
+
+        foreach ($therapists as $therapist) {
             try {
                 $response = Http::retry(3, 100)->get('https://source.unsplash.com/random/800x600/?spa');
 
@@ -76,7 +89,16 @@ class DatabaseSeeder extends Seeder
             } catch (\Exception $e) {
                 Log::error("An error occurred while fetching image from Unsplash: " . $e->getMessage());
             }
-        });
+
+            // Create a user for each therapist
+            $therapist->user()->create([
+                'name' => $therapist->name,
+                'email' => fake()->companyEmail(),
+                'password' => Hash::make('therapist'),
+                'role' => 'therapist',
+            ]);
+        }
+
 
         // Create 6 categories
         Category::factory()->count(5)->create();
@@ -85,7 +107,7 @@ class DatabaseSeeder extends Seeder
         Event::factory()->count(6)->create();
 
         // Create 6 Page
-        Page::factory()->count(4)->create();
+        Page::factory()->count(6)->create();
 
         // Create Post
         Post::factory()->count(10)->create()->each(function ($post) {

@@ -93,7 +93,7 @@ export default function DetailMember(): JSX.Element {
                       key={singleTherapist.id}
                       src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.cover?.url}`}
                       alt={singleTherapist.name}
-                      className="object-cover"
+                      className="object-cover w-80"
                     />
                   </div>
 
@@ -124,6 +124,16 @@ export default function DetailMember(): JSX.Element {
                       variant="bordered"
                       defaultValue={singleTherapist.passport_finno}
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="">Email</label>
+
+                    <div className="border-2 p-2">
+                      <span className="pl-2">
+                        {singleTherapist.user?.email}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -173,7 +183,7 @@ export default function DetailMember(): JSX.Element {
                 </div>
 
                 <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div>
+                  <div className="md:space-y-8">
                     <h2 className="md:text-lg lg:tex-xl font-bold mb-4 md:mb-8">
                       Professional Certificate
                     </h2>
@@ -186,7 +196,7 @@ export default function DetailMember(): JSX.Element {
                         key={singleTherapist.id}
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.professional_certs}`}
                         alt={singleTherapist.name}
-                        className="object-cover"
+                        className="object-cover w-80"
                       />
                     </div>
                   </div>

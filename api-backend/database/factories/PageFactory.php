@@ -18,7 +18,7 @@ class PageFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $name = fake()->randomElement(['Home', 'Membership', 'Therapist', 'Event & Media', 'About Us', 'Contact Us']),
+            'name' => $name = fake()->unique()->randomElement(['Home', 'Membership', 'Therapist', 'Event & Media', 'About Us', 'Contact Us']),
             'slug' => Str::slug($name),
         ];
     }

@@ -79,7 +79,7 @@ export default function DetailMember(): JSX.Element {
                       key={singleOperator.id}
                       src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover?.url}`}
                       alt={singleOperator.company_name}
-                      className="object-cover"
+                      className="object-cover w-80"
                     />
                   </div>
 
@@ -116,6 +116,14 @@ export default function DetailMember(): JSX.Element {
                       variant="bordered"
                       defaultValue={singleOperator.uen_no}
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="">Email</label>
+
+                    <div className="border-2 p-2">
+                      <span className="pl-2">{singleOperator.user?.email}</span>
+                    </div>
                   </div>
 
                   <div className="space-y-2">

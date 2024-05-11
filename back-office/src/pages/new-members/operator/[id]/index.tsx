@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FormEvent, JSX, useEffect, useState } from "react";
-import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft } from "react-icons/fa";
 import { Button, Image } from "@nextui-org/react";
 import OperatorModule from "@/modules/OperatorModule";
 import { Operator } from "@/@types";
@@ -124,7 +124,7 @@ export default function DetailMember(): JSX.Element {
               </h1>
 
               <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12">
-                <div className="md:w-1/2">
+                <div className="md:w-1/2 md:space-y-8">
                   <label htmlFor="">Logo</label>
 
                   <div>
@@ -133,11 +133,11 @@ export default function DetailMember(): JSX.Element {
                       key={singleOperator.id}
                       src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover?.url}`}
                       alt={singleOperator.company_name}
-                      className="object-cover"
+                      className="object-cover w-80"
                     />
                   </div>
                 </div>
-                <div className="md:w-1/2">
+                <div className="md:w-1/2 md:space-y-8">
                   <label htmlFor="">Payment Slip</label>
 
                   <div>
@@ -146,7 +146,7 @@ export default function DetailMember(): JSX.Element {
                       key={singleOperator.id}
                       src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.payment_slip}`}
                       alt={singleOperator.company_name}
-                      className="object-cover"
+                      className="object-cover w-80"
                     />
                   </div>
                 </div>
@@ -169,6 +169,14 @@ export default function DetailMember(): JSX.Element {
 
                     <div className="border-2 p-2">
                       <span className="pl-2">{singleOperator.uen_no}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="">Email</label>
+
+                    <div className="border-2 p-2">
+                      <span className="pl-2">{singleOperator.user?.email}</span>
                     </div>
                   </div>
 
