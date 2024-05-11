@@ -108,7 +108,7 @@ export default function EditEvent(): JSX.Element {
             <div className="font-montserrat flex flex-col gap-y-8">
               {/* title */}
               <div>
-                <label htmlFor="name">Name Events</label>
+                <label htmlFor="name">Events Name</label>
                 <input
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="name"
@@ -125,10 +125,9 @@ export default function EditEvent(): JSX.Element {
               </div>
               <div>
                 <label htmlFor="description">Description</label>
-                <input
+                <textarea
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="description"
-                  type="text"
                   placeholder="Description..."
                   defaultValue={singleEvent.description}
                 />
@@ -146,7 +145,11 @@ export default function EditEvent(): JSX.Element {
                   name="start_date"
                   type="date"
                   placeholder="Start Date..."
-                  defaultValue={singleEvent.start_date}
+                  value={
+                    singleEvent.start_date
+                      ? singleEvent.start_date.split(" ")[0]
+                      : ""
+                  }
                 />
 
                 {validationErrors.errors?.start_date && (
@@ -162,7 +165,11 @@ export default function EditEvent(): JSX.Element {
                   name="end_date"
                   type="date"
                   placeholder="Start Date..."
-                  defaultValue={singleEvent.end_date}
+                  value={
+                    singleEvent.end_date
+                      ? singleEvent.end_date.split(" ")[0]
+                      : ""
+                  }
                 />
 
                 {validationErrors.errors?.end_date && (

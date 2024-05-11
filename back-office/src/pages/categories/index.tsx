@@ -120,7 +120,7 @@ export default function Categories(): JSX.Element {
                   </tr>
                   {categories?.data.map((category: Category, index: number) => (
                     <tr
-                      className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                      className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
                       key={category.id}
                     >
                       <td className="text-center p-6">{category.name}</td>

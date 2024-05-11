@@ -112,7 +112,7 @@ export default function Events(): JSX.Element {
                       Name
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Descriptsion
+                      Description
                     </th>
                     <th scope="col" className=" px-6 py-3">
                       Start Date
@@ -131,13 +131,21 @@ export default function Events(): JSX.Element {
                   </tr>
                   {events?.data.map((event: Event, index: number) => (
                     <tr
-                      className="bg-white text-md text-black hover:bg-secondary hover:text-white dark:hover:bg-gray-300 h-max"
+                      className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
                       key={event.id}
                     >
                       <td className="text-center p-6">{event.name}</td>
-                      <td className="text-center p-6">{event.description}</td>
-                      <td className="text-center p-6">{event.start_date}</td>
-                      <td className="text-center p-6">{event.end_date}</td>
+                      <td className="text-center p-6 line-clamp-1">
+                        {event.description && event.description.length > 50
+                          ? `${event.description.slice(0, 30)}...`
+                          : event.description}
+                      </td>
+                      <td className="text-center p-6">
+                        {event.start_date.split(" ")[0]}
+                      </td>
+                      <td className="text-center p-6">
+                        {event.end_date.split(" ")[0]}
+                      </td>
                       <td>
                         <div className="flex gap-x-2 p-2 justify-center">
                           <Link href={`/events/edit/${event.id}`}>

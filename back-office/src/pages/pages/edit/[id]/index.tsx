@@ -105,7 +105,7 @@ export default function EditPage(): JSX.Element {
             <div className="font-montserrat flex flex-col gap-y-8">
               {/* title */}
               <div>
-                <label htmlFor="name">Name Pages</label>
+                <label htmlFor="name">Pages Name</label>
                 <input
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="name"

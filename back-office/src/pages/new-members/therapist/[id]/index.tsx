@@ -125,7 +125,7 @@ export default function DetailMember(): JSX.Element {
 
               <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12 md:gap-x-10">
                 <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div>
+                  <div className="md:space-y-8">
                     <h2 className="md:text-lg lg:tex-xl font-bold mb-4 md:mb-8">
                       Personal Information
                     </h2>
@@ -138,7 +138,7 @@ export default function DetailMember(): JSX.Element {
                         key={singleTherapist.id}
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.cover?.url}`}
                         alt={singleTherapist.name}
-                        className="object-cover"
+                        className="object-cover w-80"
                       />
                     </div>
                   </div>
@@ -157,6 +157,16 @@ export default function DetailMember(): JSX.Element {
                     <div className="border-2 p-2">
                       <span className="pl-2">
                         {singleTherapist.passport_finno}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="">Email</label>
+
+                    <div className="border-2 p-2">
+                      <span className="pl-2">
+                        {singleTherapist.user?.email}
                       </span>
                     </div>
                   </div>
@@ -199,7 +209,7 @@ export default function DetailMember(): JSX.Element {
                 </div>
 
                 <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div>
+                  <div className="md:space-y-8">
                     <h2 className="md:text-lg lg:tex-xl font-bold mb-4 md:mb-8">
                       Professional Certificate
                     </h2>
@@ -212,7 +222,7 @@ export default function DetailMember(): JSX.Element {
                         key={singleTherapist.id}
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.professional_certs}`}
                         alt={singleTherapist.name}
-                        className="object-cover"
+                        className="object-cover w-80"
                       />
                     </div>
                   </div>
