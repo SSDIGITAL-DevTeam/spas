@@ -136,7 +136,11 @@ export default function DetailMember(): JSX.Element {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         key={singleTherapist.id}
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.cover?.url}`}
+                        src={
+                          singleTherapist.cover
+                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.cover.url}`
+                            : "/no-image.png"
+                        }
                         alt={singleTherapist.name}
                         className="object-cover w-80"
                       />
@@ -220,7 +224,11 @@ export default function DetailMember(): JSX.Element {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         key={singleTherapist.id}
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.professional_certs}`}
+                        src={
+                          singleTherapist.professional_certs
+                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.professional_certs}`
+                            : "/no-image.png"
+                        }
                         alt={singleTherapist.name}
                         className="object-cover w-80"
                       />
