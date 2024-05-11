@@ -77,7 +77,11 @@ export default function DetailMember(): JSX.Element {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       key={singleOperator.id}
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover?.url}`}
+                      src={
+                        singleOperator.cover
+                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover.url}`
+                          : "/no-image.png"
+                      }
                       alt={singleOperator.company_name}
                       className="object-cover w-80"
                     />

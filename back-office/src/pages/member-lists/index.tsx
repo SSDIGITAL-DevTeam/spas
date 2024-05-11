@@ -82,7 +82,11 @@ export default function NewMembers(): JSX.Element {
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 key={operators.id}
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operators.cover?.url}`}
+                                src={
+                                  operators.cover
+                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operators.cover.url}`
+                                    : "no-image.png"
+                                }
                                 alt={operators.company_name}
                                 className="object-cover w-40"
                               />
@@ -148,7 +152,11 @@ export default function NewMembers(): JSX.Element {
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 key={therapists.id}
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapists.cover.url}`}
+                                src={
+                                  therapists.cover
+                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapists.cover.url}`
+                                    : "/no-image.png"
+                                }
                                 alt={therapists.name}
                                 className="object-cover w-40"
                               />

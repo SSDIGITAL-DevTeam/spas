@@ -72,7 +72,9 @@ export default function ViewPost(): JSX.Element {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className="aspect-video w-full rounded-xl object-cover"
-              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singlePost.cover?.url}`}
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${
+                singlePost.cover?.url ?? "/no-image.png"
+              }`}
               alt="Asset Cover"
             />
 
