@@ -70,7 +70,7 @@ export default function Footer(): JSX.Element {
                     </li>
                     <li>
                       <Link href={"/therapist"} rel="noopener noreferrer">
-                        Therapist
+                        Spa Therapist
                       </Link>
                     </li>
                   </ul>
@@ -80,8 +80,8 @@ export default function Footer(): JSX.Element {
               <div className="flex flex-col gap-y-4 md:max-w-sm">
                 <ul className="flex flex-col gap-y-2 text-secondary md:pt-10">
                   <li>
-                    <Link href={"/event-media"} rel="noopener noreferrer">
-                      Event & Media
+                    <Link href={"/spa-operators"} rel="noopener noreferrer">
+                      Spa Operator
                     </Link>
                   </li>
                   <li>

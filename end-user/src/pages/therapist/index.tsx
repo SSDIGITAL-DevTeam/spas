@@ -2,7 +2,6 @@
 import { JSX, useEffect, useState } from "react";
 import Head from "next/head";
 import HeroTherapist from "@/assets/therapist-assets/therapist-hero.webp";
-import ImgTherapist from "@/assets/therapist-assets/therapist-img.webp";
 import GroupImg1 from "@/assets/therapist-assets/group-1.svg";
 import GroupImg2 from "@/assets/therapist-assets/group-2.svg";
 import GroupImg3 from "@/assets/therapist-assets/group-3.svg";
@@ -16,7 +15,6 @@ import Img4 from "@/assets/therapist-assets/img4.webp";
 import Img5 from "@/assets/therapist-assets/img5.webp";
 import Img6 from "@/assets/therapist-assets/img6.webp";
 import Link from "next/link";
-import AssetProfile from "@/assets/dev/profile.png";
 
 import { Button, Image } from "@nextui-org/react";
 import axios from "axios";
@@ -129,11 +127,17 @@ export default function Therapists(): JSX.Element {
                 competencies, demonstrating their expertise and skills in
                 specific treatments and sectors of the Wellness Industry.
               </p>
-              <Link href={"/join-us"}>
-                <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                  JOIN SPAS
-                </span>
-              </Link>
+              {!role ? (
+                <div className="w-max mx-auto md:mx-0">
+                  <Link href={"/join-us/spa-therapist"}>
+                    <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                      JOIN SPAS
+                    </span>
+                  </Link>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
 
             <div className="mt-8 md:w-1/2">
@@ -272,7 +276,7 @@ export default function Therapists(): JSX.Element {
         </section>
 
         {/* YOU ARE WELCOME */}
-        <section className="pb-14 lg:pb-0 lg:pt-20 mb-10 md:mb-20">
+        <section className="pb-14 lg:pb-0 lg:pt-20 md:mb-20">
           <div className="container">
             <div className="flex flex-col">
               <header className="flex flex-col gap-y-6 text-center pb-10">
@@ -377,6 +381,23 @@ export default function Therapists(): JSX.Element {
           </div>
         </section>
 
+        {role !== "operator" && (
+          <section className="pb-14 lg:pb-0 mb-10 md:mb-20">
+            <div className="container p-4 md:p-8">
+              <h3 className="md:text-xl lg:text-2xl text-center mb-8">
+                Join as member to see all spa therapists
+              </h3>
+              <div className="w-max mx-auto">
+                <Link href={"/join-us/spa-operator"}>
+                  <span className="btn-1 block my-4  text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                    JOIN SPAS
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Mett Spa Operators */}
         {role == "operator" ? (
           <section className="mb-10">
@@ -411,14 +432,11 @@ export default function Therapists(): JSX.Element {
               </div>
 
               <div className="w-max mx-auto">
-                <Button
-                  as={Link}
-                  href="/spa-therapists"
-                  color="secondary"
-                  size="lg"
-                >
-                  View More
-                </Button>
+                <Link href="/spa-therapists">
+                  <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                    View More
+                  </span>
+                </Link>
               </div>
             </div>
           </section>

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FormEvent, JSX, useState } from "react";
+import { FormEvent, JSX, useEffect, useState } from "react";
 import Head from "next/head";
 import Hero from "@/assets/homepage-assets/hero-homepage.webp";
 import Ficon1 from "@/assets/homepage-assets/featured-icons.svg";
@@ -27,13 +27,35 @@ type ErrorResponseSubs = {
 };
 
 export default function Home(): JSX.Element {
-  const [isSubscribe, setIsSubscribe] = useState<boolean>(false);
   const { posts } = usePosts();
   const [email, setEmail] = useState<string>("");
   const [errMsgSubs, setErrMsgSubs] = useState<ErrorResponseSubs>(
     {} as ErrorResponseSubs
   );
-  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  const [role, setRole] = useState<string>("");
+
+  const me = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+            )}`,
+          },
+        }
+      );
+
+      setRole(response.data.data.role);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    me();
+  }, []);
 
   const submitFormSubscribe = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -134,11 +156,16 @@ export default function Home(): JSX.Element {
                 practitioners, stakeholders, and consumers of the Beauty, Spa
                 and Wellness Industry in Singapore.
               </p>
-              <Link href={"/join-us"}>
-                <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                  JOIN SPAS
-                </span>
-              </Link>
+              {role !== "operator" && (
+                <Link
+                  href={"/join-us/spa-operator"}
+                  className="mx-auto md:mx-0 w-max"
+                >
+                  <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                    JOIN SPAS
+                  </span>
+                </Link>
+              )}
             </div>
 
             <div className="mt-8 md:w-1/2">
@@ -283,11 +310,15 @@ export default function Home(): JSX.Element {
                       and Wellness industry to new heights.
                     </p>
                   </div>
-                  <Link href={"/join-us"}>
-                    <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                      JOIN SPAS
-                    </span>
-                  </Link>
+                  {role !== "operator" && (
+                    <div className="w-max mx-auto md:mx-0">
+                      <Link href={"/join-us/spa-operator"}>
+                        <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                          JOIN SPAS
+                        </span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -446,11 +477,19 @@ export default function Home(): JSX.Element {
               </div>
 
               <div className="flex flex-col lg:flex-row justify-center lg:mt-10">
-                <Link href={"/event-media"}>
-                  <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                    Read more
-                  </span>
-                </Link>
+                {role !== "operator" ? (
+                  <Link href={"/join-us/spa-operator"}>
+                    <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                      Join to see all events
+                    </span>
+                  </Link>
+                ) : (
+                  <Link href={"/event-media"}>
+                    <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                      Read more
+                    </span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

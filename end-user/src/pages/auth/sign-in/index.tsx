@@ -157,12 +157,33 @@ export default function SpaOperators() {
                     </Button>
                   </div>
 
-                  <Link
+                  <div className="flex flex-col items-center gap-y-2">
+                    <h3> Don&apos;t have an account?</h3>
+                    <h3>Register as: </h3>
+                    <div className="flex flex-col items-center">
+                      <div>
+                        <Link
+                          href={"/join-us/spa-operator"}
+                          className="text-secondary font-bold "
+                        >
+                          Spa Operator{" "}
+                        </Link>
+                        <span>or </span>
+                        <Link
+                          href={"/join-us/spa-therapist"}
+                          className="text-secondary font-bold "
+                        >
+                          Spa Therapist
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <Link
                     href="/join-us"
                     className="font-semibold text-secondary"
                   >
                     Don&apos;t have an account?
-                  </Link>
+                  </Link> */}
                 </div>
               </form>
 
