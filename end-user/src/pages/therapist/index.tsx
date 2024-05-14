@@ -19,6 +19,7 @@ import Link from "next/link";
 import { Button, Image } from "@nextui-org/react";
 import axios from "axios";
 import { Therapist } from "@/@types";
+import { FaUser } from "react-icons/fa6";
 
 export default function Therapists(): JSX.Element {
   const [role, setRole] = useState<string>("");
@@ -409,12 +410,18 @@ export default function Therapists(): JSX.Element {
                 {therapists.map((therapist: Therapist, index: number) => (
                   <div key={index} className="shadow-md border p-4 md:p-8">
                     <div className="flex flex-col items-center gap-4 md:gap-8">
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
-                        radius="none"
-                        alt="Spa Operators"
-                        className="object-cover md:w-40 md:h-40 aspect-square"
-                      />
+                      {!therapist?.cover?.url ? (
+                        <FaUser className="text-gray-400 w-40 h-40" />
+                      ) : (
+                        <Image
+                          // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
+                          src={therapist?.cover?.url}
+                          radius="none"
+                          alt="Spa Operators"
+                          className="object-cover md:w-40 md:h-40 aspect-square"
+                        />
+                      )}
+
                       <div className="flex flex-col items-center">
                         <h3 className="text-lg md:text-2xl text-black font-semibold">
                           {therapist.name}

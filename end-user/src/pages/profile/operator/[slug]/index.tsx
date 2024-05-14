@@ -162,6 +162,8 @@ export default function OperatorProfile() {
     }
   };
 
+  console.log(profile);
+
   return (
     <>
       {" "}
@@ -212,7 +214,8 @@ export default function OperatorProfile() {
                   <FaUser className="text-gray-400 md:w-40 md:h-40" />
                 ) : (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                    // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                    src={profile?.cover?.url}
                     alt="Operators"
                     className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
                     removeWrapper

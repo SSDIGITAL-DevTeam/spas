@@ -73,6 +73,11 @@ export default function Footer(): JSX.Element {
                         Spa Therapist
                       </Link>
                     </li>
+                    <li>
+                      <Link href={"/event-media"} rel="noopener noreferrer">
+                        Event & Media
+                      </Link>
+                    </li>
                   </ul>
                 </nav>
               </div>
@@ -92,6 +97,11 @@ export default function Footer(): JSX.Element {
                   <li>
                     <Link href={"/contact-us"} rel="noopener noreferrer">
                       Contact Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/value-partners"} rel="noopener noreferrer">
+                      Value Partners
                     </Link>
                   </li>
                 </ul>

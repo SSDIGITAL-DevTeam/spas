@@ -17,14 +17,6 @@ type NavLink = {
 
 const navLinks: NavLink[] = [
   {
-    name: "Home",
-    path: "/",
-  },
-  {
-    name: "Membership",
-    path: "/membership",
-  },
-  {
     name: "Spa Therapist",
     path: "/therapist",
   },
@@ -32,7 +24,12 @@ const navLinks: NavLink[] = [
     name: "Spa Operator",
     path: "/spa-operators",
   },
-
+  {
+    name: "Membership",
+    path: "/membership",
+  },
+  { name: "Event & Media", path: "/event-media" },
+  { name: "Value Partners", path: "/value-partners" },
   {
     name: "About",
     path: "/about-us",
@@ -50,8 +47,7 @@ export default function Navbar(): JSX.Element {
   const [role, setRole] = useState<string>("");
   const [slugTherapist, setSlugTherapist] = useState<string>("");
   const [slugOperator, setSlugOperator] = useState<string>("");
-  const [coverTherapist, setCoverTherapist] = useState<string>("");
-  const [coverOperator, setCoverOperator] = useState<string>("");
+
   const [cover, setCover] = useState<string>("");
   const [id, setId] = useState<string>("");
 
@@ -83,8 +79,6 @@ export default function Navbar(): JSX.Element {
       );
       // console.log(response.data.data);
       setId(response.data.data.id);
-      setCoverOperator(response.data.data?.operator?.cover?.url);
-      setCoverTherapist(response.data.data?.therapist?.cover?.url);
       setCover(response.data.data?.covers?.url);
       setSlugTherapist(response.data.data?.therapist?.slug);
       setSlugOperator(response.data.data?.operator?.slug);
@@ -179,13 +173,21 @@ export default function Navbar(): JSX.Element {
               Profile
             </Button>
           ) : (
-            <Button
-              as={Link}
-              href="/auth/sign-in"
-              className="bg-secondary text-white"
+            <Link
+              href={"/auth/sign-in"}
+              className="mx-auto md:mx-0 w-max text-base"
             >
-              Sign In
-            </Button>
+              <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                Sign In
+              </span>
+            </Link>
+            // <Button
+            //   as={Link}
+            //   href="/auth/sign-in"
+            //   className="bg-secondary text-white"
+            // >
+            //   Sign In
+            // </Button>
           )}
         </ul>
       </div>
@@ -223,7 +225,7 @@ export default function Navbar(): JSX.Element {
                 >
                   Spa Operator
                 </Link> */}
-            {role == "operator" && (
+            {/* {role == "operator" && (
               <Link
                 href={"/event-media"}
                 className={`${
@@ -234,7 +236,7 @@ export default function Navbar(): JSX.Element {
               >
                 Event & Media
               </Link>
-            )}
+            )} */}
 
             {role ? (
               <Button
@@ -250,7 +252,8 @@ export default function Navbar(): JSX.Element {
                   <FaUser className="text-gray-400 w-10 h-10" />
                 ) : (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
+                    // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
+                    src={cover[0]}
                     removeWrapper
                     isBlurred
                     className="object-cover aspect-square"
