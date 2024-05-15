@@ -110,6 +110,7 @@ export type Cover = {
 }
 
 export type DataWithPagination<T> = {
+    [x: string]: any
     data: T[]
     links: {
         first: string

@@ -1,6 +1,5 @@
 import { JSX, useEffect } from "react";
 import { Tabs, Tab, Button, Image } from "@nextui-org/react";
-import AssetLogo from "@/assets/dev/company-logo.png";
 import Link from "next/link";
 import Head from "next/head";
 import { useOperator } from "@/hooks/useOperator";

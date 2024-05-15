@@ -27,7 +27,7 @@ export const navLinks: NavLink[] = [
     icon: AssetDashboard,
   },
   // {
-  //   name: "Member Request",
+  //   name: "Request Update",
   //   url: "/member-request",
   //   icon: AssetDashboard,
   // },
