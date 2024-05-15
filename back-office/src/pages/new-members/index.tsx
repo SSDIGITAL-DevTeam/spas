@@ -76,7 +76,7 @@ export default function NewMembers(): JSX.Element {
                         .map((operators, index) => (
                           <tr
                             key={operators.id}
-                            className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
+                            className="bg-white text-md text-black hover:bg-slate-50 h-max"
                           >
                             <td className="flex justify-center p-4">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -88,7 +88,7 @@ export default function NewMembers(): JSX.Element {
                                     : "/no-image.png"
                                 }
                                 alt={operators.company_name}
-                                className="object-cover w-40"
+                                className="object-cover w-40 h-40 aspect-square"
                               />
                             </td>
                             <td className="text-center">
@@ -146,7 +146,7 @@ export default function NewMembers(): JSX.Element {
                         .map((therapists, index) => (
                           <tr
                             key={therapists.id}
-                            className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
+                            className="bg-white text-md text-black hover:bg-slate-50 h-max"
                           >
                             <td className="flex justify-center p-4">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
