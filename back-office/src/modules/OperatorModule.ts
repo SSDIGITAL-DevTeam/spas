@@ -40,4 +40,21 @@ export default class OperatorModule {
             throw err satisfies ApiError
         }
     }
+
+    public async update(
+        formData: FormData,
+        id: number,
+    ): Promise<{ data: Operator }> {
+        try {
+            return await ApiModule.makeRequestTo<{ data: Operator }>(
+                `${this.url}/${id}?_method=PUT`,
+            ).with({
+                method: 'POST',
+                headers: this.defaultHeaders,
+                body: formData,
+            })
+        } catch (err: any) {
+            throw err satisfies ApiError
+        }
+    }
 }

@@ -136,28 +136,31 @@ class AuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if ($user !== null) {
+        if (
+            $user !== null
+        ) {
             // Load 'cover' relationships
-            $user->load(['operator', 'therapist']);
+            $user->load(['operator.cover', 'therapist.cover']);
 
             // Initialize covers array to safely handle cases where cover might be null
+            $covers = ['operator' => [], 'therapist' => []];
 
             // Collect cover URLs for operators
             if ($user->operator instanceof Illuminate\Database\Eloquent\Collection) {
-                $covers['url'] = $user->operator->map(function ($op) {
+                $covers['operator'] = $user->operator->map(function ($op) {
                     return $op->cover ? $op->cover->url : null;
                 })->filter()->values()->toArray();
             } elseif ($user->operator && $user->operator->cover) {
-                $covers['url'] = [$user->operator->cover->url];
+                $covers['operator'][] = $user->operator->cover->url;
             }
 
             // Collect cover URLs for therapists
             if ($user->therapist instanceof Illuminate\Database\Eloquent\Collection) {
-                $covers['url'] = $user->therapist->map(function ($th) {
+                $covers['therapist'] = $user->therapist->map(function ($th) {
                     return $th->cover ? $th->cover->url : null;
                 })->filter()->values()->toArray();
             } elseif ($user->therapist && $user->therapist->cover) {
-                $covers['url'] = [$user->therapist->cover->url];
+                $covers['therapist'][] = $user->therapist->cover->url;
             }
 
             // Add covers directly to the user object

@@ -27,12 +27,27 @@ class TherapistController extends Controller
 
     public function update(UpdateTherapistRequest $request, Therapist $therapist)
     {
-        $therapist->update($request->validated());
+        $validatedData = $request->validated();
 
-        $newFile = $request->file('url');
+        if ($request->hasFile('professional_certs')) {
+            $certFilePath = $request->file('professional_certs')->store('therapist-certs');
+            $validatedData['professional_certs'] = $certFilePath;
+        }
+        $therapist->update($validatedData);
 
-        if ($newFile) {
-            $therapist->cover()->update(['url' => $newFile->store('therapist-picture')]);
+        if ($request->hasFile('url')) {
+            $newFile = $request->file('url');
+
+            // Simpan file baru
+            $filePath = $newFile->store('therapist-picture');
+
+            if ($filePath) {
+                if ($therapist->cover) {
+                    $therapist->cover()->update(['url' => $filePath]);
+                } else {
+                    $therapist->cover()->create(['url' => $filePath]);
+                }
+            }
         }
 
         return new TherapistResource($therapist->load('user', 'cover'));

@@ -40,4 +40,21 @@ export default class TherapistModule {
             throw err satisfies ApiError
         }
     }
+
+    public async update(
+        formData: FormData,
+        id: number,
+    ): Promise<{ data: Therapist }> {
+        try {
+            return await ApiModule.makeRequestTo<{ data: Therapist }>(
+                `${this.url}/${id}?_method=PUT`,
+            ).with({
+                method: 'POST',
+                headers: this.defaultHeaders,
+                body: formData,
+            })
+        } catch (err: any) {
+            throw err satisfies ApiError
+        }
+    }
 }
