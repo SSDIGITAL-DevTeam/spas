@@ -52,7 +52,7 @@ export default function Sidebar({
 					</p> */}
         </div>
 
-        <ul className="flex flex-col gap-y-4">
+        <ul className="flex flex-col gap-y-2">
           {navLinks.map((navLink: NavLink, index: number) => (
             <li onClick={() => setIsMenuOpen(false)} key={`navlink-${index}`}>
               <Link

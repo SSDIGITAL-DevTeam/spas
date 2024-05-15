@@ -123,6 +123,7 @@ export default function EditEvent(): JSX.Element {
                   </p>
                 )}
               </div>
+
               <div>
                 <label htmlFor="description">Description</label>
                 <textarea
@@ -138,6 +139,7 @@ export default function EditEvent(): JSX.Element {
                   </p>
                 )}
               </div>
+
               <div>
                 <label htmlFor="start_date">Start Date</label>
                 <input
@@ -145,11 +147,12 @@ export default function EditEvent(): JSX.Element {
                   name="start_date"
                   type="date"
                   placeholder="Start Date..."
-                  value={
-                    singleEvent.start_date
-                      ? singleEvent.start_date.split(" ")[0]
-                      : ""
-                  }
+                  defaultValue={singleEvent?.start_date?.split(" ")[0]}
+                  // value={
+                  //   singleEvent.start_date
+                  //     ? singleEvent.start_date.split(" ")[0]
+                  //     : ""
+                  // }
                 />
 
                 {validationErrors.errors?.start_date && (
@@ -165,11 +168,12 @@ export default function EditEvent(): JSX.Element {
                   name="end_date"
                   type="date"
                   placeholder="Start Date..."
-                  value={
-                    singleEvent.end_date
-                      ? singleEvent.end_date.split(" ")[0]
-                      : ""
-                  }
+                  defaultValue={singleEvent?.end_date?.split(" ")[0]}
+                  // value={
+                  //   singleEvent.end_date
+                  //     ? singleEvent.end_date.split(" ")[0]
+                  //     : ""
+                  // }
                 />
 
                 {validationErrors.errors?.end_date && (
