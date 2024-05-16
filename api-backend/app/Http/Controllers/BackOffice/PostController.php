@@ -18,11 +18,11 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-
         return PostResource::collection(
             Post::with('cover', 'categories', 'tags', 'metas')
+                ->filterPost(request()->only('search'))
+                ->filterByCategory(request()->only('category'))
                 ->latest()
-                ->filterByCategory($request->input('search'))
                 ->paginate(10)
         );
     }

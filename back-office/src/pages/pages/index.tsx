@@ -55,12 +55,12 @@ export default function Pages(): JSX.Element {
             <p>You can add and update page here</p>
           </div>
 
-          <Link
+          {/* <Link
             href={`/pages/create`}
             className="bg-secondary hover:bg-primary rounded-lg text-white p-3.5"
           >
             Add New
-          </Link>
+          </Link> */}
         </header>
 
         {/* TODO */}

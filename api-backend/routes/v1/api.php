@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\BackOffice;
 use App\Http\Controllers\EndUser;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // PUBLIC ROUTES
@@ -39,6 +38,8 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
         Route::apiResource('metas', BackOffice\MetaController::class)->parameters(['metas' => 'meta']);
         Route::apiResource('operators', BackOffice\OperatorController::class);
         Route::apiResource('therapists', BackOffice\TherapistController::class);
+        Route::apiResource('value-partners', BackOffice\ValuePartnerController::class);
+        Route::apiResource('category-partners', BackOffice\CategoryPartnerController::class);
 
         // this route for email send detail login member
         Route::patch('send-mail-operator/{user}', [BackOffice\SendMailPasswordController::class, 'updatePasswordOperator'])->name('send-mail-operator');
@@ -63,9 +64,13 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
             Route::prefix('operator')->group(function () {
                 Route::apiResource('therapists', EndUser\TherapistController::class)->only('index', 'show');
                 Route::apiResource('operators', EndUser\OperatorController::class)->only('update', 'index', 'show');
+
+                Route::apiResource('partners', EndUser\CategoryPartnerController::class)->only('index', 'show');
+
+                Route::apiResource('value-partners', EndUser\ValurPartnerController::class)->only('index', 'show');
             });
         });
-        
+
         // For Therapists
         Route::middleware('role:therapist')->group(function () {
             Route::prefix('therapist')->group(function () {
