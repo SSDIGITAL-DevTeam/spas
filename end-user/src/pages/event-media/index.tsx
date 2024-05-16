@@ -116,10 +116,85 @@ export default function EventMedia(): JSX.Element {
       </Head>
       {!role ? (
         <main>
-          <section className="pb-18 lg:pb-0 pt-32">
+          <section className="pt-24">
             <div className="container p-4 md:p-8">
-              <div className="md:w-3/4 mx-auto md:py-36 py-10 mb-8">
-                <div className=" flex flex-col items-center">
+              <div className="flex flex-col gap-y-8">
+                {posts.data?.length === 0 && (
+                  <div className="text-center w-full flex flex-col items-center justify-center gap-y-2">
+                    <p className="text-4xl font-semibold">Opps..</p>
+                    <p>No Event & Media currently found</p>
+                  </div>
+                )}
+                <div className="flex flex-col lg:flex-row text-center">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+                    {posts.data
+                      ?.slice(0, 3)
+                      .filter((post) => post.status === "4")
+                      .map(
+                        (post: Post, index: number): JSX.Element => (
+                          <div
+                            className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10"
+                            key={post.id}
+                          >
+                            <Link href={`/event-media/${post.slug}`}>
+                              <div className="grid justify-center w-full h-[17rem] aspect-square">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+                                  src={post.cover.url}
+                                  alt={post.title}
+                                  className=" rounded-xl object-cover"
+                                />
+                              </div>
+                              <div className="mt-5 space-y-3 text-left h-[130px]">
+                                <h2 className="font-semibold text-[#3E3232]">
+                                  {post.title}
+                                </h2>
+                                <p className="text-secondary text-black/80 line-clamp-3">
+                                  {post.content.replace(/<[^>]+>/g, "")}
+                                </p>
+                              </div>
+                            </Link>
+                            <div className="bg-[#F5F5F5] p-5 mt-5 rounded-lg">
+                              <div className="flex flex-wrap gap-4">
+                                {post.categories
+                                  ?.slice(0, 3)
+                                  .map((category: Category, index: number) => (
+                                    <p
+                                      className="bg-[#dee9f9] w-max text-sm p-2 rounded-full flex-grow"
+                                      key={category.id}
+                                    >
+                                      {category.name}
+                                    </p>
+                                  ))}
+                              </div>
+                              <div className="text-sm text-secondary text-left p-2">
+                                <p>
+                                  Last update : <br />
+                                  <label
+                                    className="text-primary"
+                                    htmlFor="{moment(post.published_at).format('ddd, MMMM Do YYYY')}"
+                                  >
+                                    {moment(post.published_at).format(
+                                      "ddd, MMMM Do YYYY"
+                                    )}
+                                  </label>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="pb-18 lg:pb-0">
+            <div className="container p-4 md:p-8">
+              <div className="md:w-3/4 mx-auto py-10 mb-8">
+                <div className="flex flex-col items-center">
                   <h2 className="md:text-lg text-center">
                     Looking to stay ahead of the curve with the latest news
                     updates and exclusive event access? Join our community today
@@ -144,14 +219,14 @@ export default function EventMedia(): JSX.Element {
           {/* BLOG TOP */}
           <section className="pb-18 lg:pb-0 pt-32">
             <div className="container p-4 md:p-8">
+              {posts.data?.length === 0 && (
+                <div className="text-center w-full flex flex-col items-center justify-center">
+                  <p className="text-4xl font-semibold">Opps..</p>
+                  <p>No Event & Media currently found</p>
+                </div>
+              )}
               <div className="flex flex-col md:flex-row gap-5">
-                <div className="grid grid-cols-1 gap-8 w-full lg:w-3/4">
-                  {posts.data?.length === 0 && (
-                    <div className="text-center">
-                      <p className="text-4xl font-semibold">Opps..</p>
-                      <p>Blog not found</p>
-                    </div>
-                  )}
+                <div className="grid grid-cols-1 gap-8 w-full ">
                   <div className="relative w-full">
                     <Link href="/details">
                       <Swiper
@@ -268,16 +343,16 @@ export default function EventMedia(): JSX.Element {
 
           {/* BLOG BOTTOM */}
           <section className="pb-14 lg:pb-24 pt-12">
-            <div className="container">
+            <div className="container p-4 md:p-8">
+              {posts.data?.length === 0 && (
+                <div className="text-center w-full flex flex-col items-center justify-center">
+                  <p className="text-4xl font-semibold">Opps..</p>
+                  <p>No Event & Media currently found</p>
+                </div>
+              )}
               <div className="flex flex-col gap-y-8">
                 <div className="flex flex-col lg:flex-row text-center">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {posts.data?.length === 0 && (
-                      <div className="text-center">
-                        <p className="text-4xl font-semibold">Opps..</p>
-                        <p>Blog not found</p>
-                      </div>
-                    )}
                     {posts.data
                       ?.slice(0, postsPerPage)
                       .filter((categoryPost) =>
@@ -289,7 +364,7 @@ export default function EventMedia(): JSX.Element {
                       )
                       .filter((post) => post.status === "4")
                       .map(
-                        (post: Post, index: number): JSX.Element => (
+                        (post: Post): JSX.Element => (
                           <div
                             className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10"
                             key={post.id}
@@ -360,7 +435,7 @@ export default function EventMedia(): JSX.Element {
           {/* CALENDER */}
           <section className="pb-14 lg:pb-0 lg:pt-0">
             <div className="bg-[url('/event-media-assets/blur.webp')] bg-cover">
-              <div className="container">
+              <div className="container p-4 md:p-8">
                 <div className="md:py-10 py-10">
                   <div className="md:p-10 p-5 bg-white rounded-lg text-sm fc-prev-button fc-next-button fc-today-button fc-toolbar fc-day">
                     <header className="flex flex-col gap-y-4 text-center">

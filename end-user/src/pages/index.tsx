@@ -326,7 +326,7 @@ export default function Home(): JSX.Element {
         </section>
 
         {/* MEMBERSHIP BENEFITS */}
-        <section className="pb-14 lg:pb-0 lg:py-0">
+        <section className="pb-12 lg:pb-0 lg:py-0">
           <div className="container">
             <div className="flex flex-col gap-y-8">
               <header className="flex flex-col gap-y-4 text-center">
@@ -405,13 +405,13 @@ export default function Home(): JSX.Element {
         </section>
 
         {/* BLOG */}
-        <section className="pb-14 lg:pb-24 pt-12">
-          <div className="container">
+        <section className="pb-12 lg:pb-24 pt-12 lg:pt-24">
+          <div className="container p-4 md:p-8">
             <div className="flex flex-col gap-y-8">
               {posts.data?.length === 0 && (
-                <div className="text-center w-full">
+                <div className="text-center w-full flex flex-col items-center justify-center gap-y-2">
                   <p className="text-4xl font-semibold">Opps..</p>
-                  <p>Blog not found</p>
+                  <p>No Event & Media currently found</p>
                 </div>
               )}
               <div className="flex flex-col lg:flex-row text-center">
@@ -426,7 +426,7 @@ export default function Home(): JSX.Element {
                           key={post.id}
                         >
                           <Link href={`/event-media/${post.slug}`}>
-                            <div className="grid justify-center">
+                            <div className="grid justify-center w-full h-[17rem] aspect-square">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 className="aspect-video w-full rounded-xl object-cover"

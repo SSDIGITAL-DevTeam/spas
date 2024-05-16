@@ -162,8 +162,6 @@ export default function OperatorProfile() {
     }
   };
 
-  console.log(profile);
-
   return (
     <>
       {" "}
