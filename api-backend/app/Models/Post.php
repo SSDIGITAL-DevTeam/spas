@@ -39,6 +39,13 @@ class Post extends Model
         return $this->morphMany(Meta::class, 'metaable');
     }
 
+    public function scopeFilterPost(Builder $query, $filters)
+    {
+        if ($filters['search'] ?? false) {
+            $query->where('title', 'like', '%' . $filters['search'] . '%');
+        }
+    }
+
     public function scopeFilterByCategory($query, $search)
     {
         return $query->whereHas('categories', function ($query) use ($search) {

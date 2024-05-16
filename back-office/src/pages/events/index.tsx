@@ -87,7 +87,7 @@ export default function Events(): JSX.Element {
 
           <Link
             href={`/events/create`}
-            className="bg-secondary hover:bg-primary rounded-lg text-white p-3.5"
+            className="bg-secondary hover:bg-primary rounded-lg text-white p-2"
           >
             Add New
           </Link>

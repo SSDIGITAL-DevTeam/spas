@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { FormEvent, JSX, useEffect, useState } from "react";
 import { FaCheckCircle, FaChevronLeft, FaInfoCircle } from "react-icons/fa";
-import AssetLogo from "@/assets/dev/company-logo.png";
 import { Button, Image, Input } from "@nextui-org/react";
 import Head from "next/head";
 import { Operator } from "@/@types";

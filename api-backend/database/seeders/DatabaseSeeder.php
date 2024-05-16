@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Category;
+use App\Models\CategoryPartner;
 use App\Models\Event;
 use App\Models\Operator;
 use App\Models\Page;
@@ -13,9 +14,7 @@ use App\Models\Therapist;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -76,6 +75,9 @@ class DatabaseSeeder extends Seeder
 
         // Create 6 Page
         Page::factory()->count(6)->create();
+
+        // Create 3 CategoryPartner
+        CategoryPartner::factory()->count(3)->create();
 
         // Create Post
         Post::factory(10)->create()->each(function ($post) {
