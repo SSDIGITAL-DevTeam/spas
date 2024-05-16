@@ -129,52 +129,69 @@ export default function EventMedia(): JSX.Element {
         </main>
       ) : (
         <main>
-          <section className="pb-18 lg:pb-0 pt-32 mb-16 md:mb-20">
+          <section
+            className={`pb-18 lg:pb-0  mb-16 md:mb-20 ${
+              partners.length === 0 ? "pt-0" : "pt-32"
+            }`}
+          >
             <div className="container p-4 md:p-8">
-              <div className="mb-8 lg:mb-24">
-                <div className="flex justify-between gap-x-8 whitespace-nowrap overflow-scroll md:overflow-auto mb-4 p-5 bg-[#F5F5F5] rounded-lg shadow-xl">
-                  {partners.map((partner: Partner) => (
-                    <button
-                      key={partner.id}
-                      className={`p-3  font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out
+              {partners.length === 0 ? (
+                <div className="min-h-screen w-full flex flex-col items-center justify-center">
+                  <div className="text-center w-full flex flex-col items-center justify-center gap-y-2">
+                    <p className="text-4xl font-semibold">Opps..</p>
+                    <p>No Partners currently found</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-8 lg:mb-24">
+                    <div className="flex justify-between gap-x-8 whitespace-nowrap overflow-scroll md:overflow-auto mb-4 p-5 bg-[#F5F5F5] rounded-lg shadow-xl">
+                      {partners.map((partner: Partner) => (
+                        <button
+                          key={partner.id}
+                          className={`p-3  font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out
                     ${
                       partner.id == selectedCategoryId
                         ? "bg-primary text-white"
                         : ""
                     }`}
-                      onClick={() => setSelectedCategoryId(partner.id)}
-                    >
-                      {partner.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                          onClick={() => setSelectedCategoryId(partner.id)}
+                        >
+                          {partner.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              <div className="grid md:grid-cols-4 gap-x-10 gap-y-4 md:gap-y-10">
-                {partners
-                  .filter(
-                    (partner: Partner) => partner.id == selectedCategoryId
-                  )
-                  .map((partner: Partner) =>
-                    partner.value_partner.map((valuePartner: ValuePartner) => (
-                      <Card key={valuePartner.id}>
-                        <CardBody className=" aspect-square w-full ">
-                          <Image
-                            src={AssetDaikin.src}
-                            isBlurred
-                            removeWrapper
-                            className="object-cover "
-                          />
-                        </CardBody>
-                        <CardFooter className="text-lg md:text-xl flex items-center justify-center">
-                          <h2 className="text-center">
-                            {valuePartner.brand_name}
-                          </h2>
-                        </CardFooter>
-                      </Card>
-                    ))
-                  )}
-              </div>
+                  <div className="grid md:grid-cols-4 gap-x-10 gap-y-4 md:gap-y-10">
+                    {partners
+                      .filter(
+                        (partner: Partner) => partner.id == selectedCategoryId
+                      )
+                      .map((partner: Partner) =>
+                        partner.value_partner.map(
+                          (valuePartner: ValuePartner) => (
+                            <Card key={valuePartner.id}>
+                              <CardBody className=" aspect-square w-full ">
+                                <Image
+                                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${valuePartner.logo}`}
+                                  isBlurred
+                                  removeWrapper
+                                  className="object-cover w-40 h-40 aspect-square mx-auto"
+                                />
+                              </CardBody>
+                              <CardFooter className="text-lg md:text-xl flex items-center justify-center">
+                                <h2 className="text-center">
+                                  {valuePartner.brand_name}
+                                </h2>
+                              </CardFooter>
+                            </Card>
+                          )
+                        )
+                      )}
+                  </div>
+                </>
+              )}
             </div>
           </section>
         </main>
