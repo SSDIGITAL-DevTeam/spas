@@ -131,7 +131,7 @@ export default function EventMedia(): JSX.Element {
                       ?.slice(0, 3)
                       .filter((post) => post.status === "4")
                       .map(
-                        (post: Post, index: number): JSX.Element => (
+                        (post: Post): JSX.Element => (
                           <div
                             className="p-3 bg-white border-1 shadow-lg rounded-lg transition duration-200 hover:bg-black/10"
                             key={post.id}
@@ -244,7 +244,7 @@ export default function EventMedia(): JSX.Element {
                         {posts.data
                           ?.filter((post) => post.status === "4")
                           .map(
-                            (post: Post, index: number): JSX.Element => (
+                            (post: Post): JSX.Element => (
                               <SwiperSlide key={post.id}>
                                 <Link href={`/event-media/${post.slug}`}>
                                   <div className="relative rounded-md h-max">
@@ -300,11 +300,13 @@ export default function EventMedia(): JSX.Element {
                                 alt="PostImg2"
                                 className="aspect-video w-full rounded-xl object-cover"
                               />
-                              <div className="bg-white/80 absolute bottom-5 mx-3 space-y-4 p-2 rounded-md">
+                              {/* Important Note: To Check later */}
+
+                              {/* <div className="bg-white/80 absolute bottom-5 mx-3 space-y-4 p-2 rounded-md">
                                 <span className="text-black font-bold">
                                   {post.title}
                                 </span>
-                              </div>
+                              </div> */}
                             </div>
                           </Link>
                         )
