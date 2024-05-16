@@ -2,13 +2,14 @@ import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import AssetBlank from "@/assets/images/blank-therapist.png";
 import Link from "next/link";
-import { Image, Pagination } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
 import axios from "axios";
 import AssetProfile from "@/assets/dev/profile.png";
-import { Therapist } from "@/@types";
+import { DataWithPagination, Therapist } from "@/@types";
+
 export default function SpaOperators() {
   const [role, setRole] = useState<string>("");
-  const [therapists, setTherapists] = useState<[]>([]);
+  const [therapists, setTherapists] = useState<DataWithPagination<Therapist>>();
 
   const me = async () => {
     try {
@@ -45,7 +46,7 @@ export default function SpaOperators() {
           },
         }
       );
-      setTherapists(response.data.data);
+      setTherapists(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -54,6 +55,11 @@ export default function SpaOperators() {
   useEffect(() => {
     getTherapists();
   }, []);
+
+  const handlePage = async (url: any) => {
+    const response = await axios.get(url);
+    setTherapists(response.data);
+  };
   return (
     <>
       <Head>
@@ -113,12 +119,12 @@ export default function SpaOperators() {
         <section className="mb-10">
           <div className="container p-4 md:p-8">
             <div className="grid md:grid-cols-3 gap-4 md:gap-10 mb-10">
-              {therapists.map((therapist: Therapist, index: number) => (
+              {therapists?.data?.map((therapist: Therapist, index: number) => (
                 <div key={index} className="shadow-md border p-4 md:p-8">
                   <div className="flex flex-col items-center gap-4 md:gap-8">
                     <Image
                       // src={AssetProfile.src}
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist.cover.url}`}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
                       radius="none"
                       alt="Spa Operators"
                       className="object-cover lg:w-40 lg:h-40 aspect-square rounded-md"
@@ -141,6 +147,53 @@ export default function SpaOperators() {
             {/* <div className="w-max mx-auto">
               <Pagination showControls total={6} initialPage={1} />
             </div> */}
+            {/* pagination */}
+            <div className="md:flex justify-center gap-x-4 hidden">
+              {therapists?.meta?.links?.map((page: any, index: number) => (
+                <button
+                  key={index}
+                  aria-current="page"
+                  onClick={() => handlePage(page.url)}
+                  disabled={!page.url}
+                  className={`relative z-10 inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+                    page.active
+                      ? "bg-primary text-white"
+                      : "bg-tertiary text-white"
+                  } ${
+                    page.url == null && page.label != "..."
+                      ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                      : ""
+                  }`}
+                  dangerouslySetInnerHTML={{
+                    __html: page.label,
+                  }}
+                ></button>
+              ))}
+            </div>
+            <div className="flex flex-1 justify-between sm:hidden pt-12">
+              <button
+                onClick={() => handlePage(therapists?.links?.prev)}
+                disabled={!therapists?.links?.prev}
+                className={`relative inline-flex items-center rounded-md bg-white x-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 ${
+                  therapists?.links?.prev == null
+                    ? "bg-gray-300 text-white"
+                    : ""
+                }`}
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => handlePage(therapists?.links?.next)}
+                disabled={!therapists?.links?.next}
+                className={`relative inline-flex items-center rounded-md bg-tertiary px-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 ${
+                  therapists?.links?.next == null
+                    ? "bg-gray-300 text-white"
+                    : ""
+                }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </section>
       </main>

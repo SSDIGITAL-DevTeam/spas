@@ -106,41 +106,43 @@ export default function SpaOperators() {
                   </Link>
 
                   <div className="md:w-3/4">
-                    <Input
-                      type="email"
-                      name="email"
-                      placeholder="Enter your email"
-                      variant="underlined"
-                      label="Email"
-                      color="secondary"
-                      size="lg"
-                      endContent={<LuUser2 className="w-6 h-6" />}
-                    />
-                  </div>
+                    <div>
+                      <Input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        variant="underlined"
+                        label="Email"
+                        color="secondary"
+                        size="lg"
+                        endContent={<LuUser2 className="w-6 h-6" />}
+                      />
+                    </div>
 
-                  <div className="md:w-3/4">
-                    <Input
-                      name="password"
-                      label="Password"
-                      variant="underlined"
-                      color="secondary"
-                      placeholder="Enter your password"
-                      size="lg"
-                      endContent={
-                        <button
-                          className="focus:outline-none"
-                          type="button"
-                          onClick={toggleVisibility}
-                        >
-                          {isVisible ? (
-                            <FaRegEyeSlash className="text-2xl  pointer-events-none w-6 h-6" />
-                          ) : (
-                            <FaRegEye className="text-2xl  pointer-events-none w-6 h-6" />
-                          )}
-                        </button>
-                      }
-                      type={isVisible ? "text" : "password"}
-                    />
+                    <div>
+                      <Input
+                        name="password"
+                        label="Password"
+                        variant="underlined"
+                        color="secondary"
+                        placeholder="Enter your password"
+                        size="lg"
+                        endContent={
+                          <button
+                            className="focus:outline-none"
+                            type="button"
+                            onClick={toggleVisibility}
+                          >
+                            {isVisible ? (
+                              <FaRegEyeSlash className="text-2xl  pointer-events-none w-6 h-6" />
+                            ) : (
+                              <FaRegEye className="text-2xl  pointer-events-none w-6 h-6" />
+                            )}
+                          </button>
+                        }
+                        type={isVisible ? "text" : "password"}
+                      />
+                    </div>
                   </div>
 
                   <div className="w-full  md:w-3/4 mx-auto">

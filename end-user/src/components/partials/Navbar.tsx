@@ -77,9 +77,9 @@ export default function Navbar(): JSX.Element {
           },
         }
       );
-      // console.log(response.data.data);
+      // console.log(response.data.data?.covers?.operator[0]);
       setId(response.data.data.id);
-      setCover(response.data.data?.covers?.url);
+      setCover(response.data.data?.covers?.operator[0]);
       setSlugTherapist(response.data.data?.therapist?.slug);
       setSlugOperator(response.data.data?.operator?.slug);
       setRole(response.data.data.role);
@@ -253,7 +253,7 @@ export default function Navbar(): JSX.Element {
                 ) : (
                   <Image
                     // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
-                    src={cover[0]}
+                    src={cover}
                     removeWrapper
                     isBlurred
                     className="object-cover aspect-square"

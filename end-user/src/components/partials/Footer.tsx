@@ -61,7 +61,7 @@ export default function Footer(): JSX.Element {
                 <nav>
                   <ul className="flex flex-col gap-y-2 text-secondary">
                     <li>
-                      <Link href="https://dev.spas.com.sg/">Home</Link>
+                      <Link href="/">Home</Link>
                     </li>
                     <li>
                       <Link href={"/membership"} rel="noopener noreferrer">
