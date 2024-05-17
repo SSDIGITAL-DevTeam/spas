@@ -21,8 +21,11 @@ import { Operator } from "@/@types";
 import { useRouter } from "next/router";
 import { IoLogOut } from "react-icons/io5";
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import Lottie from "react-lottie-player";
 
 import "react-toastify/dist/ReactToastify.css";
+import { IoIosTimer, IoMdTime } from "react-icons/io";
+import AssetWaitingAnimation from "@/assets/animation/waiting.json";
 
 type ErrorResponse = {
   errors: {
@@ -41,6 +44,7 @@ type ErrorResponse = {
 export default function OperatorProfile() {
   // states
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpenModalMessage, setIsOpenModalMessage] = useState<boolean>(false);
   const [profile, setProfile] = useState<Operator>();
   const [id, setId] = useState<string>("");
   const [errMessage, setErrorMessage] = useState<ErrorResponse>(
@@ -101,7 +105,7 @@ export default function OperatorProfile() {
   }, [slug]);
 
   // function edit data form
-  const handleEditData = async (e: FormEvent<HTMLFormElement>) => {
+  const handleRequestEditData = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form: HTMLFormElement = e.currentTarget;
@@ -109,7 +113,7 @@ export default function OperatorProfile() {
 
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/operators/${id}?_method=PUT`,
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/request-operators`,
         formData,
         {
           headers: {
@@ -120,19 +124,23 @@ export default function OperatorProfile() {
         }
       );
 
-      toast.success("Profile updated", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      getProfile();
-      router.replace(`/profile/operator/${res.data.data.slug}`);
+      setIsOpenModalMessage(true);
+      // toast.success(
+      //   "Request submitted, please wait until request approved by admin",
+      //   {
+      //     position: "bottom-right",
+      //     autoClose: 5000,
+      //     hideProgressBar: false,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     transition: Bounce,
+      //   }
+      // );
+      // getProfile();
+      // router.replace(`/profile/operator/${res.data.data.slug}`);
     } catch (error) {
       console.log(error);
       const errMessage = error as AxiosError;
@@ -235,7 +243,7 @@ export default function OperatorProfile() {
                 <Button
                   onClick={handleLogout}
                   startContent={<IoLogOut />}
-                  className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white w-full rounded-md"
+                  className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white w-max lg:w-full rounded-md"
                   radius="none"
                   size="lg"
                 >
@@ -322,7 +330,7 @@ export default function OperatorProfile() {
         >
           <ModalContent>
             {(onClose) => (
-              <form onSubmit={handleEditData}>
+              <form onSubmit={handleRequestEditData}>
                 <ModalHeader className="flex flex-col gap-1">
                   Edit Profile
                 </ModalHeader>
@@ -433,10 +441,48 @@ export default function OperatorProfile() {
                     Close
                   </Button>
                   <Button color="primary" type="submit" onPress={onClose}>
-                    Update
+                    Request
                   </Button>
                 </ModalFooter>
               </form>
+            )}
+          </ModalContent>
+        </Modal>
+
+        <Modal
+          isOpen={isOpenModalMessage}
+          onOpenChange={setIsOpenModalMessage}
+          size="md"
+          hideCloseButton
+        >
+          <ModalContent>
+            {(onClose) => (
+              <div>
+                <ModalHeader className="w-max mx-auto">
+                  <Lottie
+                    loop
+                    animationData={AssetWaitingAnimation}
+                    play
+                    style={{ width: 150, height: 150 }}
+                  />
+                </ModalHeader>
+                <ModalBody>
+                  <div>
+                    <h2 className="text-lg  text-center md:w-3/4 mx-auto">
+                      Request submitted, please wait until approved by admin
+                    </h2>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onClick={() => setIsOpenModalMessage(false)}
+                    radius="none"
+                    className="border-2 border-secondary rounded-md bg-white w-max mx-auto hover:bg-secondary hover:text-white"
+                  >
+                    Close
+                  </Button>
+                </ModalFooter>
+              </div>
             )}
           </ModalContent>
         </Modal>

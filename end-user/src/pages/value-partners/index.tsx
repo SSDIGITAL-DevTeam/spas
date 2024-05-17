@@ -23,7 +23,7 @@ type ValuePartner = {
 export default function EventMedia(): JSX.Element {
   const [role, setRole] = useState<string>("");
   const [partners, setPartners] = useState<[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(4);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 
   const me = async () => {
     try {
@@ -174,10 +174,12 @@ export default function EventMedia(): JSX.Element {
                             <Card key={valuePartner.id}>
                               <CardBody className=" aspect-square w-full ">
                                 <Image
-                                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${valuePartner.logo}`}
+                                  // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${valuePartner.logo}`}
+                                  src={`${valuePartner.logo}`}
                                   isBlurred
+                                  radius="sm"
                                   removeWrapper
-                                  className="object-cover w-40 h-40 aspect-square mx-auto"
+                                  className="object-cover w-full h-full aspect-square mx-auto "
                                 />
                               </CardBody>
                               <CardFooter className="text-lg md:text-xl flex items-center justify-center">
