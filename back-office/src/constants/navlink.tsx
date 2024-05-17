@@ -32,6 +32,11 @@ export const navLinks: NavLink[] = [
   //   icon: AssetDashboard,
   // },
   {
+    name: "Value Partners",
+    url: "/value-partners",
+    icon: AssetDashboard,
+  },
+  {
     name: "Posts",
     url: "/posts?status=4",
     icon: AssetPosts,
