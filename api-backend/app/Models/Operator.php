@@ -17,6 +17,11 @@ class Operator extends Model
         return $this->hasOne(Cover::class);
     }
 
+    public function requestUpdate(): HasOne
+    {
+        return $this->hasOne(RequestUpdate::class);
+    }
+
     public function user(): HasOne
     {
         return $this->hasOne(User::class);

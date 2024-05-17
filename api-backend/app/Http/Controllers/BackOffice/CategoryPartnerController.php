@@ -7,7 +7,6 @@ use App\Http\Requests\CategoryPartner\StoreCategoryPartnerRequest;
 use App\Http\Requests\CategoryPartner\UpdateCategoryPartnerRequest;
 use App\Http\Resources\CategoryPartner\CategoryPartnerCollection;
 use App\Http\Resources\CategoryPartner\CategoryPartnerResource;
-use App\Http\Resources\CategoryResource;
 use App\Models\CategoryPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -32,9 +31,9 @@ class CategoryPartnerController extends Controller
         return new CategoryPartnerResource($categoryPartner);
     }
 
-    public function show(CategoryPartner $category_partner): CategoryResource
+    public function show(CategoryPartner $category_partner): CategoryPartnerResource
     {
-        return new CategoryResource($category_partner);
+        return new CategoryPartnerResource($category_partner->load('valuePartners'));
     }
 
     public function update(UpdateCategoryPartnerRequest $request, CategoryPartner $category_partner): CategoryPartnerResource

@@ -26,4 +26,9 @@ class Cover extends Model
     {
         return $this->belongsTo(Therapist::class);
     }
+
+    public function requestUpdate(): BelongsTo
+    {
+        return $this->belongsTo(RequestUpdate::class);
+    }
 }

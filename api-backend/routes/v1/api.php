@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
         Route::apiResource('therapists', BackOffice\TherapistController::class);
         Route::apiResource('value-partners', BackOffice\ValuePartnerController::class);
         Route::apiResource('category-partners', BackOffice\CategoryPartnerController::class);
+        Route::apiResource('request-updates', BackOffice\RequestUpdateController::class);
 
         // this route for email send detail login member
         Route::patch('send-mail-operator/{user}', [BackOffice\SendMailPasswordController::class, 'updatePasswordOperator'])->name('send-mail-operator');
@@ -57,6 +58,7 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
     Route::apiResource('operators', EndUser\OperatorController::class)->only('store', 'index', 'show');
     Route::apiResource('therapists', EndUser\TherapistController::class)->only('store');
 
+
     // IF LOGIN WITH ROLE OPERATOR OR THERAPIST
     Route::middleware(['auth:sanctum'])->group(function (): void {
         // For Operators
@@ -68,6 +70,8 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
                 Route::apiResource('partners', EndUser\CategoryPartnerController::class)->only('index', 'show');
 
                 Route::apiResource('value-partners', EndUser\ValurPartnerController::class)->only('index', 'show');
+
+                Route::post('request-operators', [EndUser\RequestUpdateController::class, 'requestOperator']);
             });
         });
 
@@ -78,6 +82,8 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
                 Route::apiResource('operators', EndUser\OperatorController::class)->only('index', 'show');
 
                 Route::apiResource('carrers', EndUser\EmploymentHistoryController::class);
+
+                Route::post('request-therapists', [EndUser\RequestUpdateController::class, 'requestTherapist']);
             });
         });
 

@@ -37,7 +37,7 @@ class ValuePartnerController extends Controller
     }
 
     public function show(ValuePartner $value_partner): ValuePartnerResource
-    {
+{
         return ValuePartnerResource::make($value_partner->load('categoryPartner'));
     }
 
