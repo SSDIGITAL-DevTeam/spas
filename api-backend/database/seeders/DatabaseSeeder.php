@@ -12,6 +12,7 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Therapist;
 use App\Models\User;
+use App\Models\ValuePartner;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -78,6 +79,14 @@ class DatabaseSeeder extends Seeder
 
         // Create 3 CategoryPartner
         CategoryPartner::factory()->count(3)->create();
+
+        $categoryPartnerIds = CategoryPartner::all()->pluck('id');
+
+        foreach ($categoryPartnerIds as $categoryPartnerId) {
+            ValuePartner::factory()->count(5)->create([
+                'category_partner_id' => $categoryPartnerId,
+            ]);
+        }
 
         // Create Post
         Post::factory(10)->create()->each(function ($post) {
