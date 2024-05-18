@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,11 +17,16 @@ class Category extends Model
         'name'
     ];
 
-    /**
-     * Get all of the posts that are assigned this tag.
-     */
     public function post(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'post_categories');
+    }
+
+
+    public function scopeFilterCategory(Builder $query, $filters)
+    {
+        if ($search = $filters['search'] ?? false) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
     }
 }

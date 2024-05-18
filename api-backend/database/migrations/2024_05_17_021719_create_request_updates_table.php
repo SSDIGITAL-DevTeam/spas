@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('request_updates', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Operator::class)->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Therapist::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Operator::class)->nullable()->constrained();
+            $table->foreignIdFor(Therapist::class)->nullable()->constrained();
             $table->string('company_name')->nullable()->default(null);
             $table->string('uen_no')->nullable()->default(null);
             $table->string('brand_name')->nullable()->default(null);
@@ -27,12 +27,12 @@ return new class extends Migration
             $table->string('url_logo_operator')->nullable()->default(null);
 
             $table->string('name')->nullable()->default(null);
-            $table->string('passport_finno')->nullable()->default(null);
+            $table->string('passport_finno')->nullable()->default(null);    
             $table->string('date_of_birth')->nullable()->default(null);
             $table->enum('sex', ['Male', 'Female'])->nullable();
             $table->string('contact_no_therapist')->nullable()->default(null);
             $table->string('nationality')->nullable()->default(null);
-            $table->string('address_thrapist')->nullable()->default(null);
+            $table->string('address_therapist')->nullable()->default(null);
             $table->string('address_nearest_mrt')->nullable()->default(null);
             $table->string('professional_certs')->nullable()->default(null);
             $table->string('name_cert')->nullable()->default(null);

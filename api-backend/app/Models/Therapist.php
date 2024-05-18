@@ -20,7 +20,7 @@ class Therapist extends Model
 
     public function requestUpdate(): HasOne
     {
-        return $this->hasOne(Cover::class);
+        return $this->hasOne(RequestUpdate::class);
     }
 
     public function user(): HasOne

@@ -17,7 +17,10 @@ class ValuePartnerController extends Controller
     public function index(): ValuePartnerCollection
     {
         return ValuePartnerCollection::make(
-            ValuePartner::with('categoryPartner')->latest()->paginate(10)
+            ValuePartner::with('categoryPartner')
+                ->filterPartner(request(['search']))
+                ->latest()
+                ->paginate(10)
         );
     }
 
@@ -37,7 +40,7 @@ class ValuePartnerController extends Controller
     }
 
     public function show(ValuePartner $value_partner): ValuePartnerResource
-{
+    {
         return ValuePartnerResource::make($value_partner->load('categoryPartner'));
     }
 

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\EndUser;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RequestUpdate\StoreRequestUpdateRequest;
-use App\Http\Resources\RequestUpdate\RequestUpdateCollection;
 use App\Http\Resources\RequestUpdate\RequestUpdateResource;
+use App\Models\Operator;
 use App\Models\RequestUpdate;
 use App\Models\Therapist;
 use Illuminate\Http\Request;
@@ -16,13 +16,17 @@ class RequestUpdateController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $id_opreator = $user->operator_id;
+
+        $operator = Operator::find($id_opreator);
+
+        if (!$operator) {
+            return response()->json(['error' => 'Operator not found'], 404);
         }
 
         $data = $request->validated();
 
-        $data['operator_id'] = $user->id;
+        $data['operator_id'] = $id_opreator;
 
         if ($request->hasFile('url_logo_operator')) {
             $data['url_logo_operator'] = $request->file('url_logo_operator')->store('operator-logo');
@@ -37,7 +41,11 @@ class RequestUpdateController extends Controller
     {
         $user = auth()->user();
 
-        if (Therapist::where('id', $user->id)->first()) {
+        $id_therapist = $user->therapist_id;
+
+        $therapist = Therapist::find($id_therapist);
+
+        if (!$therapist) {
             return response()->json(['error' => 'Therapist not found'], 404);
         }
 
@@ -51,13 +59,9 @@ class RequestUpdateController extends Controller
             $data['url_logo_therapist'] = $request->file('url_logo_therapist')->store('therapist-logos');
         }
 
-        $data['therapist_id'] = $user->id;
+        $data['therapist_id'] = $id_therapist;
 
-        try {
-            $requestUpdate = RequestUpdate::create($data);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        $requestUpdate = RequestUpdate::create($data);
 
         return RequestUpdateResource::make($requestUpdate);
     }
