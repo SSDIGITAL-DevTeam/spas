@@ -24,49 +24,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
-        $operators = Operator::factory(6)->create();
-
-        foreach ($operators as $operator) {
-            try {
-                $operator->cover()->create([
-                    'url' => 'https://source.unsplash.com/random/800x600/?spa', // Ganti dengan URL default gambar
-                ]);
-            } catch (\Exception $e) {
-                Log::error("An error occurred while saving operator cover: " . $e->getMessage());
-            }
-
-            // Create a user for the operator
-            $operator->user()->create([
-                'name' => $operator->company_name,
-                'email' => fake()->companyEmail(),
-                'password' => Hash::make('operator'),
-                'role' => 'operator',
-            ]);
-        }
-
-
-        // Create Therapists
-        $therapists = Therapist::factory(6)->create();
-
-        foreach ($therapists as $therapist) {
-            try {
-                $operator->cover()->create([
-                    'url' => 'https://source.unsplash.com/random/800x600/?spa', // Ganti dengan URL default gambar
-                ]);
-            } catch (\Exception $e) {
-                Log::error("An error occurred while saving operator cover: " . $e->getMessage());
-            }
-
-            // Create a user for each therapist
-            $therapist->user()->create([
-                'name' => $therapist->name,
-                'email' => fake()->companyEmail(),
-                'password' => Hash::make('therapist'),
-                'role' => 'therapist',
-            ]);
-        }
-
+        $this->call([
+            TherapistSeeder::class,
+            OperatorSeeder::class,
+        ]);
 
         // Create 6 categories
         Category::factory()->count(5)->create();
@@ -92,7 +53,7 @@ class DatabaseSeeder extends Seeder
         Post::factory(10)->create()->each(function ($post) {
             try {
                 $post->cover()->create([
-                    'url' => 'https://source.unsplash.com/random/800x600/?spa', // URL gambar acak dari Unsplash
+                    'url' => '', // URL gambar acak dari Unsplash
                 ]);
             } catch (\Exception $e) {
                 Log::error("An error occurred while saving post cover: " . $e->getMessage());
