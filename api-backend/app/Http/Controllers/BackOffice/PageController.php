@@ -15,6 +15,7 @@ class PageController extends Controller
         return PageResource::collection(
             Page::with('metas')
                 ->latest()
+                ->filterPage(request(['search']))
                 ->paginate(10)
         );
     }

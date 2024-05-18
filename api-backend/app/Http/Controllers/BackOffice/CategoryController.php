@@ -8,14 +8,15 @@ use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         return CategoryResource::collection(
-            Category::latest()->paginate(10)
+            Category::latest()
+                ->filterCategory(request(['search']))
+                ->paginate(10)
         );
     }
 

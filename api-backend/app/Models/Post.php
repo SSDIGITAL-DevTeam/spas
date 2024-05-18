@@ -41,18 +41,9 @@ class Post extends Model
 
     public function scopeFilterPost(Builder $query, $filters)
     {
-        if ($filters['search'] ?? false) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%');
+        if ($search = $filters['search'] ?? false) {
+            $query->where('title', 'like', '%' . $search . '%');
         }
-    }
-
-    public function scopeFilterByCategory($query, $search)
-    {
-        return $query->whereHas('categories', function ($query) use ($search) {
-            if ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            }
-        });
     }
 
     public static function boot()
