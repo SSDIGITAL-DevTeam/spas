@@ -23,7 +23,7 @@ import { FaRegAddressCard, FaUser } from "react-icons/fa6";
 import { CgCalendarDates } from "react-icons/cg";
 import AssetGender from "@/assets/therapist-assets/gender.svg";
 import { PiGlobeHemisphereEastBold } from "react-icons/pi";
-
+import AssetWaitingAnimation from "@/assets/animation/waiting.json";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import { EmployeHistory, Therapist } from "@/@types";
@@ -35,6 +35,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDelete, MdEdit } from "react-icons/md";
 import DetailOperator from "@/pages/spa-operators/[slug]";
+import Lottie from "react-lottie-player";
 
 type ErrorResponse = {
   errors: {
@@ -52,6 +53,7 @@ export default function TherapistProfile(): JSX.Element {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isOpenModalEdit, setIsOpenModalEdit] = useState<boolean>(false);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState<boolean>(false);
+  const [isOpenModalMessage, setIsOpenModalMessage] = useState<boolean>(false);
   const [profile, setProfile] = useState<Therapist>();
   const [employeHistory, setEmployeHistory] = useState<[]>([]);
   const [id, setId] = useState<string>("");
@@ -183,7 +185,7 @@ export default function TherapistProfile(): JSX.Element {
       formData.append("address_nearest_mrt", addressNearerstMRT);
 
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/therapists/${id}?_method=PUT`,
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/request-therapists`,
         formData,
         {
           headers: {
@@ -193,20 +195,18 @@ export default function TherapistProfile(): JSX.Element {
           },
         }
       );
-
-      toast.success("Profile updated", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      getProfile();
-      router.replace(`/profile/therapist/${res.data.data.slug}`);
+      setIsOpenModalMessage(true);
+      // toast.success("Profile updated", {
+      //   position: "bottom-right",
+      //   autoClose: 3000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   transition: Bounce,
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -397,6 +397,7 @@ export default function TherapistProfile(): JSX.Element {
     }, 500);
   };
 
+  console.log(profile);
   return (
     <>
       <Head>
@@ -444,12 +445,12 @@ export default function TherapistProfile(): JSX.Element {
             <div className=" space-y-8">
               <div className="relative md:w-max mx-auto mb-8 space-y-2">
                 <div className="space-y-4 flex flex-col items-center">
-                  {profile?.cover?.url == undefined ? (
-                    <FaUser className="text-gray-400 md:w-40 md:h-40" />
+                  {!profile?.cover?.url.length ? (
+                    <FaUser className="text-gray-400 w-20 h-20 md:w-40 md:h-40" />
                   ) : (
                     <Image
-                      // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
-                      src={profile?.cover?.url}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                      // src={profile?.cover?.url}
                       alt="Operators"
                       className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
                       removeWrapper
@@ -1261,18 +1262,44 @@ export default function TherapistProfile(): JSX.Element {
           </ModalContent>
         </Modal>
 
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
+        {/* Modal Request Update Message */}
+        <Modal
+          isOpen={isOpenModalMessage}
+          onOpenChange={setIsOpenModalMessage}
+          size="md"
+          hideCloseButton
+        >
+          <ModalContent className="pb-10">
+            {(onClose) => (
+              <div>
+                <ModalHeader className="w-max mx-auto">
+                  <Lottie
+                    loop
+                    animationData={AssetWaitingAnimation}
+                    play
+                    style={{ width: 150, height: 150 }}
+                  />
+                </ModalHeader>
+                <ModalBody className="">
+                  <div>
+                    <h2 className="text-lg  text-center md:w-3/4 mx-auto">
+                      Request submitted, please wait until approved by admin
+                    </h2>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onClick={() => setIsOpenModalMessage(false)}
+                    radius="none"
+                    className="border-2 border-secondary rounded-md bg-white w-max mx-auto hover:bg-secondary hover:text-white"
+                  >
+                    Close
+                  </Button>
+                </ModalFooter>
+              </div>
+            )}
+          </ModalContent>
+        </Modal>
       </main>
     </>
   );

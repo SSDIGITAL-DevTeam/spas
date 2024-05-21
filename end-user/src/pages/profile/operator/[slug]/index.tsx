@@ -308,7 +308,6 @@ export default function OperatorProfile() {
             </div>
           </div>
         </section>
-
         <ToastContainer
           position="bottom-right"
           autoClose={5000}
@@ -321,7 +320,6 @@ export default function OperatorProfile() {
           pauseOnHover
           theme="light"
         />
-
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
@@ -449,13 +447,14 @@ export default function OperatorProfile() {
           </ModalContent>
         </Modal>
 
+        {/* Modal Request Update Message */}
         <Modal
           isOpen={isOpenModalMessage}
           onOpenChange={setIsOpenModalMessage}
           size="md"
           hideCloseButton
         >
-          <ModalContent>
+          <ModalContent className="pb-10">
             {(onClose) => (
               <div>
                 <ModalHeader className="w-max mx-auto">
