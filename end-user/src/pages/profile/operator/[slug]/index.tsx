@@ -24,7 +24,7 @@ import { Bounce, ToastContainer, toast } from "react-toastify";
 import Lottie from "react-lottie-player";
 
 import "react-toastify/dist/ReactToastify.css";
-import { IoIosTimer, IoMdTime } from "react-icons/io";
+import { IoIosTimer, IoMdAdd, IoMdAddCircle, IoMdTime } from "react-icons/io";
 import AssetWaitingAnimation from "@/assets/animation/waiting.json";
 
 type ErrorResponse = {
@@ -45,6 +45,8 @@ export default function OperatorProfile() {
   // states
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isOpenModalMessage, setIsOpenModalMessage] = useState<boolean>(false);
+  const [isOpenModalAddBranch, setIsOpenModalAddBranch] =
+    useState<boolean>(false);
   const [profile, setProfile] = useState<Operator>();
   const [id, setId] = useState<string>("");
   const [errMessage, setErrorMessage] = useState<ErrorResponse>(
@@ -170,6 +172,8 @@ export default function OperatorProfile() {
     }
   };
 
+  console.log(profile);
+
   return (
     <>
       {" "}
@@ -242,7 +246,7 @@ export default function OperatorProfile() {
 
                 <Button
                   onClick={handleLogout}
-                  startContent={<IoLogOut />}
+                  startContent={<IoLogOut className="w-6 h-6" />}
                   className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white w-max lg:w-full rounded-md"
                   radius="none"
                   size="lg"
@@ -251,46 +255,71 @@ export default function OperatorProfile() {
                 </Button>
               </div>
 
-              <div className="flex-1">
-                <h2 className="font-bold md:text-2xl mb-8 text-center md:text-start">
-                  {profile?.company_name}
-                </h2>
+              <div className="flex-1 space-y-8">
+                {/* <h1 className="font-bold md:text-2xl mb-8 text-center md:text-start">
+                  Branches
+                </h1> */}
+                <div className="border-2 p-4 md:p-8 md:w-3/4 rounded-md">
+                  <h2 className="font-bold text-lg md:text-2xl mb-8 text-center md:text-start">
+                    {profile?.company_name}
+                  </h2>
 
-                <div className="space-y-14">
-                  <div className="flex flex-col gap-y-4 items-center md:items-start">
-                    <div className="flex items-center gap-x-4">
-                      <div>
-                        <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                  <div className="space-y-8 md:space-y-14">
+                    <div className="flex flex-col gap-y-4 md:items-start">
+                      <div className="flex items-center gap-x-4">
+                        <div>
+                          <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                        </div>
+                        <span className="text-lg w-3/4">
+                          {profile?.address}
+                        </span>
                       </div>
-                      <span className="text-lg">{profile?.address}</span>
+
+                      <div className="flex items-center gap-x-4">
+                        <div>
+                          <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                        </div>
+                        <span className="text-lg">{profile?.contact_no}</span>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-x-4">
-                      <div>
-                        <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                    <div className="flex flex-col gap-y-4 md:items-start">
+                      <h3 className="font-bold text-lg md:text-xl text-center md:text-start">
+                        Person In Charge
+                      </h3>
+                      <div className="flex items-center gap-x-4">
+                        <div>
+                          <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                        </div>
+                        <span className="text-lg">
+                          {profile?.contact_person}
+                        </span>
                       </div>
-                      <span className="text-lg">{profile?.contact_no}</span>
+
+                      <div className="flex items-center gap-x-4">
+                        <div>
+                          <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                        </div>
+                        <span className="text-lg">
+                          {profile?.contact_person_no}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex flex-col gap-y-4 items-center md:items-start">
-                    <h3 className="font-bold md:text-xl">Person In Charge</h3>
-                    <div className="flex items-center gap-x-4">
-                      <div>
-                        <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                      </div>
-                      <span className="text-lg">{profile?.contact_person}</span>
-                    </div>
-
-                    <div className="flex items-center gap-x-4">
-                      <div>
-                        <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                      </div>
-                      <span className="text-lg">
-                        {profile?.contact_person_no}
-                      </span>
-                    </div>
-                  </div>
+                {/* Add Branches */}
+                <div className="w-max mx-auto md:mx-0">
+                  <Button
+                    type="button"
+                    onClick={() => setIsOpenModalAddBranch(true)}
+                    startContent={<IoMdAddCircle className="w-6 h-6" />}
+                    className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white  rounded-md"
+                    radius="none"
+                    size="lg"
+                  >
+                    Add Branch
+                  </Button>
                 </div>
               </div>
 
@@ -322,6 +351,7 @@ export default function OperatorProfile() {
           theme="light"
         />
 
+        {/* Modal Edit */}
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
@@ -437,10 +467,22 @@ export default function OperatorProfile() {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={onClose}
+                    radius="none"
+                    className="rounded-md"
+                  >
                     Close
                   </Button>
-                  <Button color="primary" type="submit" onPress={onClose}>
+                  <Button
+                    color="primary"
+                    type="submit"
+                    onPress={onClose}
+                    radius="none"
+                    className="rounded-md"
+                  >
                     Request
                   </Button>
                 </ModalFooter>
@@ -449,13 +491,143 @@ export default function OperatorProfile() {
           </ModalContent>
         </Modal>
 
+        {/* Modal Add Branch */}
+        <Modal
+          isOpen={isOpenModalAddBranch}
+          onOpenChange={setIsOpenModalAddBranch}
+          size="2xl"
+          hideCloseButton
+        >
+          <ModalContent>
+            {(onClose) => (
+              <form>
+                <ModalHeader className="flex flex-col gap-1">
+                  Add Branch
+                </ModalHeader>
+                <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1">
+                  <div className="md:space-y-2">
+                    <input className="" type="file" name="url" />
+                    <div className="flex items-center gap-x-4">
+                      <FaInfoCircle className="text-[#8D98AA]" />
+                      <p className="text-xs">Image file size max 2 MB</p>
+                    </div>
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="" className="md:text-base text-sm">
+                      Company Name
+                    </label>
+                    <Input
+                      name="company_name"
+                      variant={"bordered"}
+                      color="secondary"
+                      size="md"
+                      radius="sm"
+                    />
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="" className="md:text-base text-sm">
+                      UEN NO
+                    </label>
+                    <Input
+                      variant={"bordered"}
+                      color="secondary"
+                      size="md"
+                      radius="sm"
+                    />
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="" className="md:text-base text-sm">
+                      Brand Name
+                    </label>
+                    <Input
+                      variant={"bordered"}
+                      color="secondary"
+                      size="md"
+                      radius="sm"
+                      name="brand_name"
+                    />
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="">Address</label>
+                    <Input
+                      variant={"bordered"}
+                      color="secondary"
+                      size="md"
+                      radius="sm"
+                      name="address"
+                    />
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="">Contact No.</label>
+                    <PhoneInput
+                      inputProps={{ style: inputStyle }}
+                      className="border-2 border-[#E4E4E7] rounded-md"
+                      defaultCountry="sg"
+                      name="contact_no"
+                    />
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="">Contact Person Name</label>
+                    <Input
+                      variant={"bordered"}
+                      color="secondary"
+                      size="md"
+                      radius="sm"
+                      name="contact_person"
+                    />
+                  </div>
+
+                  <div className="md:space-y-2">
+                    <label htmlFor="">Contact Person No.</label>
+                    <PhoneInput
+                      inputProps={{ style: inputStyle }}
+                      style={{}}
+                      className="border-2 border-[#E4E4E7] rounded-md"
+                      defaultCountry="sg"
+                      name="contact_person_no"
+                    />
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={onClose}
+                    radius="none"
+                    className="rounded-md"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => alert("Branch added")}
+                    color="primary"
+                    type="submit"
+                    radius="none"
+                    className="rounded-md"
+                    onPress={onClose}
+                  >
+                    Add Branch
+                  </Button>
+                </ModalFooter>
+              </form>
+            )}
+          </ModalContent>
+        </Modal>
+
+        {/* Modal Request Update Message */}
         <Modal
           isOpen={isOpenModalMessage}
           onOpenChange={setIsOpenModalMessage}
           size="md"
           hideCloseButton
         >
-          <ModalContent>
+          <ModalContent className="pb-10">
             {(onClose) => (
               <div>
                 <ModalHeader className="w-max mx-auto">

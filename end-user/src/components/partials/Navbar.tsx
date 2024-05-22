@@ -77,6 +77,7 @@ export default function Navbar(): JSX.Element {
           },
         }
       );
+      // console.log(response.data.data);
       // console.log(response.data.data?.covers?.operator[0]);
       setId(response.data.data.id);
       setCover(response.data.data?.covers?.operator[0]);
