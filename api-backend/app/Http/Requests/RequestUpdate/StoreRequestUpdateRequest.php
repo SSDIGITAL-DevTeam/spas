@@ -48,6 +48,8 @@ class StoreRequestUpdateRequest extends FormRequest
             'date_of_issue' => ['nullable', 'date'],
             'expired_date' => ['nullable', 'date'],
             'credential_id' => ['nullable', 'numeric'],
+
+            'role' => ['in:operator,therapist'],
         ];
     }
 }

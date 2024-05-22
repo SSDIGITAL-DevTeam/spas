@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('url_logo_operator')->nullable()->default(null);
 
             $table->string('name')->nullable()->default(null);
-            $table->string('passport_finno')->nullable()->default(null);    
+            $table->string('passport_finno')->nullable()->default(null);
             $table->string('date_of_birth')->nullable()->default(null);
             $table->enum('sex', ['Male', 'Female'])->nullable();
             $table->string('contact_no_therapist')->nullable()->default(null);
@@ -42,6 +42,8 @@ return new class extends Migration
             $table->integer('credential_id')->nullable();
             $table->enum('status', ['pending', 'approve'])->default('pending');
             $table->string('url_logo_therapist')->nullable()->default(null);
+
+            $table->enum('role', ['operator', 'therapist']);
             $table->timestamps();
         });
     }

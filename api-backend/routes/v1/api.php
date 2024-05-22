@@ -40,7 +40,10 @@ Route::group(['middleware' => ['auth:sanctum']], function (): void {
         Route::apiResource('therapists', BackOffice\TherapistController::class);
         Route::apiResource('value-partners', BackOffice\ValuePartnerController::class);
         Route::apiResource('category-partners', BackOffice\CategoryPartnerController::class);
-        Route::apiResource('request-updates', BackOffice\RequestUpdateController::class);
+        Route::apiResource('request-updates', BackOffice\RequestUpdateController::class)->only('index', 'show');
+        Route::put('request-updates/approve-operator/{request_update}', [BackOffice\RequestUpdateController::class, 'updateOperator']);
+        Route::put('request-updates/approve-therapist/{request_update}', [BackOffice\RequestUpdateController::class, 'updateTherapist']);
+
 
         // this route for email send detail login member
         Route::patch('send-mail-operator/{user}', [BackOffice\SendMailPasswordController::class, 'updatePasswordOperator'])->name('send-mail-operator');
@@ -72,6 +75,8 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
                 Route::apiResource('value-partners', EndUser\ValurPartnerController::class)->only('index', 'show');
 
                 Route::post('request-operators', [EndUser\RequestUpdateController::class, 'requestOperator']);
+
+                Route::apiResource('branch-offices', EndUser\BranchOfficeController::class);
             });
         });
 

@@ -27,6 +27,7 @@ class RequestUpdateController extends Controller
         $data = $request->validated();
 
         $data['operator_id'] = $id_opreator;
+        $data['role'] = 'operator';
 
         if ($request->hasFile('url_logo_operator')) {
             $data['url_logo_operator'] = $request->file('url_logo_operator')->store('operator-logo');
@@ -60,6 +61,7 @@ class RequestUpdateController extends Controller
         }
 
         $data['therapist_id'] = $id_therapist;
+        $data['role'] = 'therapist';
 
         $requestUpdate = RequestUpdate::create($data);
 

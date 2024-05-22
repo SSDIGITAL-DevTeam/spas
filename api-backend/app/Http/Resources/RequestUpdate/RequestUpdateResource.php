@@ -15,6 +15,7 @@ class RequestUpdateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->whenHas('id'),
             'company_name' => $this->whenHas('company_name'),
             'uen_no' => $this->whenHas('uen_no'),
             'brand_name' => $this->whenHas('brand_name'),
@@ -39,6 +40,9 @@ class RequestUpdateResource extends JsonResource
             'expired_date' => $this->whenHas('expired_date'),
             'credential_id' => $this->whenHas('credential_id'),
             'url_logo_therapist' => $this->whenHas('url_logo_therapist'),
+
+            'status' => $this->whenHas('status'),
+            'role' => $this->whenHas('role'),
         ];
     }
 }

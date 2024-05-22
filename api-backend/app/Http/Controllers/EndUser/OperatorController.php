@@ -22,7 +22,7 @@ class OperatorController extends Controller
     public function index(): OperatorCollection
     {
         return OperatorCollection::make(
-            Operator::with('user', 'cover')
+            Operator::with('user', 'cover', 'branchOffices')
                 ->latest()
                 ->paginate(10)
         );
@@ -78,7 +78,7 @@ class OperatorController extends Controller
             return response()->json(['error' => 'Operator not found'], 404);
         }
 
-        return new OperatorResource($operator->load('user', 'cover'));
+        return new OperatorResource($operator->load('user', 'cover', 'branchOffices'));
     }
 
     /**

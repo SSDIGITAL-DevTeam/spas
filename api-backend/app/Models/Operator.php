@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Operator extends Model
@@ -20,6 +21,11 @@ class Operator extends Model
     public function requestUpdate(): HasOne
     {
         return $this->hasOne(RequestUpdate::class);
+    }
+
+    public function branchOffices(): HasMany
+    {
+        return $this->hasMany(BranchOffice::class);
     }
 
     public function user(): HasOne
