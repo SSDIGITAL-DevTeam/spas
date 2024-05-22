@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\EndUser\BranchOffice;
+namespace App\Http\Resources\BranchOffice;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
