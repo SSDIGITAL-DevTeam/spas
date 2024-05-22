@@ -5,6 +5,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { useEvent } from "@/hooks/useEvent";
 import { usePage } from "@/hooks/usePage";
 import Loading from "@/components/partials/Loading";
+import { Input } from "@nextui-org/react";
 
 export default function Dashboard() {
   // fetch posts
@@ -40,6 +41,12 @@ export default function Dashboard() {
           <p className="text-base">Admin</p>
         </div>
       </header>
+
+      <form>
+        <div className="w-60 pb-5">
+          <Input name="search" placeholder="Search..." variant="bordered" />
+        </div>
+      </form>
 
       <main>
         <section className="overflow-x-auto pt-8">

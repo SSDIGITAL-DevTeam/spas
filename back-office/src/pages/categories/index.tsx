@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { Category, Pagination } from "@/@types";
 import CategoryModule from "@/modules/CategoryModule";
 import { useCategory } from "@/hooks/useCategory";
+import { Input } from "@nextui-org/react";
 
 export default function Categories(): JSX.Element {
   // states
@@ -90,6 +91,12 @@ export default function Categories(): JSX.Element {
             Add New
           </Link>
         </header>
+
+        <form>
+          <div className="w-60 pb-5">
+            <Input name="search" placeholder="Search..." variant="bordered" />
+          </div>
+        </form>
 
         {/* TODO */}
         <section>

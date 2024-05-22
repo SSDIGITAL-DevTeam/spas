@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useEvent } from "@/hooks/useEvent";
 import { DataWithPagination, Event, Pagination } from "@/@types";
 import EventModule from "@/modules/EventModule";
+import { Input } from "@nextui-org/react";
 
 export default function Events(): JSX.Element {
   // states
@@ -92,6 +93,12 @@ export default function Events(): JSX.Element {
             Add New
           </Link>
         </header>
+
+        <form>
+          <div className="w-60 pb-5">
+            <Input name="search" placeholder="Search..." variant="bordered" />
+          </div>
+        </form>
 
         {/* TODO */}
         <section>

@@ -17,16 +17,22 @@ export default class PostModule {
 
     public async all(
         page: string = '1', 
-        status: PostStatusEnum = PostStatusEnum.PUBLISHED
+        status: PostStatusEnum = PostStatusEnum.PUBLISHED,
+        searchQuery: string = ''
     ): Promise<DataWithPagination<Post>> {
         try {
+            let url = `${this.url}?page=${page}&status=${status.toString()}`;
+            if (searchQuery) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+
             return await ApiModule.makeRequestTo<DataWithPagination<Post>>(
-                `${this.url}?page=${page}&status=${status.toString()}`,
+                url
             ).with({
                 headers: this.defaultHeaders,
-            })
+            });
         } catch (err: any) {
-            throw err satisfies ApiError
+            throw err satisfies ApiError;
         }
     }
 
