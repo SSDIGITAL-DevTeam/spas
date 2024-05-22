@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Operator;
 
 use App\Http\Resources\Cover\CoverResource;
+use App\Http\Resources\EndUser\BranchOffice\BranchOfficeCollection;
+use App\Http\Resources\EndUser\BranchOffice\BranchOfficeResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,6 +32,7 @@ class OperatorResource extends JsonResource
             'payment_slip' => $this->whenHas('payment_slip'),
             'cover' => CoverResource::make($this->whenLoaded('cover')),
             'user' => UserResource::make($this->whenLoaded('user')),
+            'branchOffice' => BranchOfficeCollection::make($this->whenLoaded('branchOffices')),
         ];
     }
 }
