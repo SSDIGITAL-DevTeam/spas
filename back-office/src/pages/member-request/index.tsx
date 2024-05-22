@@ -6,14 +6,16 @@ import Head from "next/head";
 import { useOperator } from "@/hooks/useOperator";
 import { useTherapist } from "@/hooks/useTherapist";
 import Loading from "@/components/partials/Loading";
+import { useRequestUpdate } from "@/hooks/useRequestUpdate";
 
 export default function MemberRequest(): JSX.Element {
-  const { operator, isOperatorLoading, fetchOperator } = useOperator();
+  const { requestUpdate, isRequestUpdateLoading, fetchRequestUpdate } =
+    useRequestUpdate();
 
   const { therapist, isTherapistLoading, fetchTherapist } = useTherapist();
 
   useEffect(() => {
-    fetchOperator();
+    fetchRequestUpdate();
     fetchTherapist();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -69,39 +71,40 @@ export default function MemberRequest(): JSX.Element {
 
                     <tbody>
                       <tr>
-                        <td colSpan={5}>{isOperatorLoading && <Loading />}</td>
+                        <td colSpan={5}>
+                          {isRequestUpdateLoading && <Loading />}
+                        </td>
                       </tr>
-                      {operator?.data
-                        .filter((operator) => operator.status === "approve")
-                        .map((operators) => (
+                      {requestUpdate?.data
+                        .filter((operator) => operator.role === "operator")
+                        .map((operator) => (
                           <tr
-                            key={operators.id}
+                            key={operator.brand_name}
                             className="bg-white text-md text-black hover:bg-slate-50 h-max"
                           >
                             <td className="flex justify-center p-4">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
-                                key={operators.id}
+                                key={operator.brand_name}
                                 src={
-                                  operators.cover
-                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operators.cover.url}`
+                                  operator.url_logo_operator
+                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.url_logo_operator}`
                                     : "no-image.png"
                                 }
-                                alt={operators.company_name}
-                                className="object-cover w-40 h-40 aspect-square"
+                                alt={operator.company_name}
+                                className="object-cover md:w-20 md:h-20  aspect-square"
                               />
                             </td>
                             <td className="text-center">
-                              {operators.company_name}
+                              {operator.company_name}
                             </td>
                             <td className="text-center">
-                              {operators.contact_no}
+                              {operator.contact_no}
                             </td>
                             <td className="">
                               <div className="w-max mx-auto">
                                 <Button
                                   as={Link}
-                                  href={`/member-lists/operator/${operators.id}`}
+                                  href={`/member-request/operator/${operator.id}`}
                                   radius="sm"
                                   color="secondary"
                                   className=""
@@ -141,8 +144,8 @@ export default function MemberRequest(): JSX.Element {
                       <tr>
                         <td colSpan={5}>{isTherapistLoading && <Loading />}</td>
                       </tr>
-                      {therapist?.data
-                        .filter((therapist) => therapist.status === "approve")
+                      {requestUpdate?.data
+                        .filter((therapist) => therapist.role === "therapist")
                         .map((therapists) => (
                           <tr
                             key={therapists.id}
@@ -153,12 +156,12 @@ export default function MemberRequest(): JSX.Element {
                               <img
                                 key={therapists.id}
                                 src={
-                                  therapists.cover
-                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapists.cover.url}`
+                                  therapists.url_logo_therapist
+                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapists.url_logo_therapist}`
                                     : "/no-image.png"
                                 }
                                 alt={therapists.name}
-                                className="object-cover w-40 h-40 aspect-square "
+                                className="object-cover md:w-20 md:h-20 aspect-square "
                               />
                             </td>
                             <td className="text-center">{therapists.name}</td>
@@ -169,7 +172,7 @@ export default function MemberRequest(): JSX.Element {
                               <div className="w-max mx-auto">
                                 <Button
                                   as={Link}
-                                  href={`/member-lists/therapist/${therapists.id}`}
+                                  href={`/member-request/therapist/${therapists.id}`}
                                   radius="sm"
                                   color="secondary"
                                   className=""

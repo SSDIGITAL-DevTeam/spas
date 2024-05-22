@@ -50,7 +50,7 @@ export default function EditCategory(): JSX.Element {
   }, [router]);
 
   // handle update category
-  const handleCreateBlog = async (
+  const handleUpdateCategory = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     setIsProcessing(true);
@@ -111,7 +111,7 @@ export default function EditCategory(): JSX.Element {
         </header>
 
         <section className="mx-auto max-w-3xl">
-          <form onSubmit={(e) => handleCreateBlog(e)}>
+          <form onSubmit={(e) => handleUpdateCategory(e)}>
             <div className="font-montserrat flex flex-col gap-y-8">
               {/* title */}
               <div>

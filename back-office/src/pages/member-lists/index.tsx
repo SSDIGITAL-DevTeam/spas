@@ -87,7 +87,7 @@ export default function NewMembers(): JSX.Element {
                                     : "no-image.png"
                                 }
                                 alt={operators.company_name}
-                                className="object-cover w-40 h-40 aspect-square"
+                                className="object-cover md:w-20 md:h-20 aspect-square"
                               />
                             </td>
                             <td className="text-center">
@@ -157,7 +157,7 @@ export default function NewMembers(): JSX.Element {
                                     : "/no-image.png"
                                 }
                                 alt={therapists.name}
-                                className="object-cover w-40 h-40 aspect-square "
+                                className="object-cover md:w-20 md:h-20 aspect-square "
                               />
                             </td>
                             <td className="text-center">{therapists.name}</td>

@@ -26,11 +26,11 @@ export const navLinks: NavLink[] = [
     url: "/member-lists",
     icon: AssetDashboard,
   },
-  // {
-  //   name: "Request Update",
-  //   url: "/member-request",
-  //   icon: AssetDashboard,
-  // },
+  {
+    name: "Request Update",
+    url: "/member-request",
+    icon: AssetDashboard,
+  },
   {
     name: "Value Partners",
     url: "/value-partners",
@@ -51,9 +51,9 @@ export const navLinks: NavLink[] = [
     url: "/events",
     icon: AssetSources,
   },
-  {
-    name: "Pages",
-    url: "/pages",
-    icon: AssetPages,
-  },
+  // {
+  //   name: "Pages",
+  //   url: "/pages",
+  //   icon: AssetPages,
+  // },
 ];
