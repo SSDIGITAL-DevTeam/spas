@@ -83,6 +83,32 @@ export type CategoryPartner = {
   value_partner: ValuePartner[];
 };
 
+export type RequestUpdate = {
+  id: number;
+  address: string;
+  address_nearest_mrt: string;
+  brand_name: string;
+  company_name: string;
+  contact_no: string;
+  contact_person: string;
+  contact_person_no: string;
+  credential_id: string;
+  date_of_birth: string;
+  date_of_issue: string;
+  expired_date: string;
+  issuing_organization: string;
+  name: string;
+  name_cert: string;
+  nationality: string;
+  passport_finno: string;
+  professional_certs: string;
+  role: string;
+  sex: string;
+  uen_no: string;
+  url_logo_operator: string;
+  url_logo_therapist: string;
+};
+
 export type ValuePartner = {
   id: number;
   brand_name: string;
