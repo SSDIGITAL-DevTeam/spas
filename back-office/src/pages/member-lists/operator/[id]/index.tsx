@@ -172,7 +172,7 @@ export default function DetailMember(): JSX.Element {
 
                 <div className="flex justify-between flex-col md:flex-row md:gap-x-20">
                   <div className="md:w-1/2 space-y-4 md:space-y-8">
-                    <div className="space-y-2">
+                    <div className="space-y-2"> 
                       <label htmlFor="">Company Name</label>
 
                       <Input

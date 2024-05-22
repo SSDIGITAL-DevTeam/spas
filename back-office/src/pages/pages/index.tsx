@@ -8,6 +8,7 @@ import AssetEdit from "@/assets/svg/asset-edit.svg";
 import { useRouter } from "next/router";
 import { usePage } from "@/hooks/usePage";
 import { DataWithPagination, Page, Pagination } from "@/@types";
+import { Input } from "@nextui-org/react";
 
 export default function Pages(): JSX.Element {
   // states
@@ -62,6 +63,12 @@ export default function Pages(): JSX.Element {
             Add New
           </Link> */}
         </header>
+
+        <form>
+          <div className="w-60 pb-5">
+            <Input name="search" placeholder="Search..." variant="bordered" />
+          </div>
+        </form>
 
         {/* TODO */}
         <section>

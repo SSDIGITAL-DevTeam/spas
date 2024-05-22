@@ -10,12 +10,12 @@ export function usePosts() {
     const [isPostsLoading, setIsPostsLoading] = useState<boolean>(false)
     const [postsErrors, setPostsErrors] = useState<ApiError>({} as ApiError)
 
-    const fetchPosts = async (page?: string, status?: PostStatusEnum): Promise<void> => {
+    const fetchPosts = async (page?: string, status?: PostStatusEnum, searchQuery?: string): Promise<void> => {
         setIsPostsLoading(true);
 
         try {
             const postModule = new PostModule();
-            const res = await postModule.all(page, status);
+            const res = await postModule.all(page, status, searchQuery);
             setPosts(res);
         } catch (error) {
             setPostsErrors(error as ApiError);

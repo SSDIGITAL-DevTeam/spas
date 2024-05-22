@@ -1,5 +1,5 @@
-import { JSX, useEffect, useReducer, useState } from "react";
-import { Tabs, Tab, Button } from "@nextui-org/react";
+import { JSX, SetStateAction, useEffect, useReducer, useState } from "react";
+import { Tabs, Tab, Input } from "@nextui-org/react";
 import Image from "next/image";
 import Head from "next/head";
 import { Cover, DataWithPagination, Post, Pagination } from "@/@types";
@@ -21,6 +21,18 @@ export default function Posts(): JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    await fetchPosts(searchQuery);
+  };
 
   // router
   const router = useRouter();
@@ -96,7 +108,18 @@ export default function Posts(): JSX.Element {
           </Link>
         </header>
 
-        {/* TODO */}
+        <form onSubmit={handleSearchSubmit}>
+          <div className="w-60 pb-5">
+            <Input
+              name="search"
+              placeholder="Search..."
+              variant="bordered"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+        </form>
+
         <section>
           {!posts?.data}
 
