@@ -8,6 +8,16 @@ export type Login = {
   token: string;
 };
 
+export type Branch = {
+  id: number;
+  branch_name: string;
+  address: string;
+  contact_number: string;
+  email: string;
+  person_contact: string;
+  person_name: string;
+};
+
 export type Operator = {
   id: number;
   company_name: string;
@@ -22,6 +32,7 @@ export type Operator = {
   payment_slip: string;
   user: { id: number; name: string; email: string; role: string };
   slug: string;
+  branch_office: Branch[];
 };
 
 export type Therapist = {

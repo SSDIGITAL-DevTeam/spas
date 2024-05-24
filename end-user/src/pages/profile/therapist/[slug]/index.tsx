@@ -397,7 +397,6 @@ export default function TherapistProfile(): JSX.Element {
     }, 500);
   };
 
-  console.log(profile);
   return (
     <>
       <Head>
@@ -1283,7 +1282,7 @@ export default function TherapistProfile(): JSX.Element {
                 <ModalBody className="">
                   <div>
                     <h2 className="text-lg  text-center md:w-3/4 mx-auto">
-                      Request submitted, please wait until approved by admin
+                      Please wait. Your data will be reviewed by our admin
                     </h2>
                   </div>
                 </ModalBody>
