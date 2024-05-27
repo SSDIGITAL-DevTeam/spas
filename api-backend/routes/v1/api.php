@@ -88,6 +88,8 @@ Route::prefix('end-user')->as('end-user.')->group(function (): void {
 
                 Route::apiResource('carrers', EndUser\EmploymentHistoryController::class);
 
+                Route::apiResource('social-media', EndUser\SocialMediaController::class);
+
                 Route::post('request-therapists', [EndUser\RequestUpdateController::class, 'requestTherapist']);
             });
         });

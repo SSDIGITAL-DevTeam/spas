@@ -5,8 +5,10 @@ namespace App\Http\Resources\Therapist;
 use App\Http\Resources\Cover\CoverResource;
 use App\Http\Resources\EmploysHistory\EmploymentHistoryCollection;
 use App\Http\Resources\EmploysHistory\EmploymentHistoryResource;
+use App\Http\Resources\SocialMedia\SocialMediaCollection;
 use App\Http\Resources\User\UserResource;
 use App\Models\EmploymentHistory;
+use App\Models\SocialMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -40,6 +42,7 @@ class TherapistResource extends JsonResource
             'cover' => CoverResource::make($this->whenLoaded('cover')),
             'user' => UserResource::make($this->whenLoaded('user')),
             'employHistorys' => EmploymentHistoryCollection::make($this->whenLoaded('employHistorys')),
+            'social_media' => SocialMediaCollection::make($this->whenLoaded('socialMedia')),
         ];
     }
 }
