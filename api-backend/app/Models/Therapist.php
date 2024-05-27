@@ -32,4 +32,9 @@ class Therapist extends Model
     {
         return $this->hasMany(EmploymentHistory::class);
     }
+
+    public function socialMedia(): HasMany
+    {
+        return $this->hasMany(SocialMedia::class);
+    }
 }

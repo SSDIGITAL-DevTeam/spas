@@ -20,7 +20,7 @@ class TherapistController extends Controller
     public function index()
     {
         return TherapistCollection::make(
-            Therapist::with(['user', 'cover', 'employHistorys'])
+            Therapist::with(['user', 'cover', 'employHistorys', 'socialMedia'])
                 ->latest()
                 ->paginate(10)
         );
@@ -75,7 +75,7 @@ class TherapistController extends Controller
             return response()->json(['error' => 'Therapist not found'], 404);
         }
 
-        return new TherapistResource($therapist->load('user', 'cover', 'employHistorys'));
+        return new TherapistResource($therapist->load('user', 'cover', 'employHistorys', 'socialMedia'));
     }
 
     public function update(UpdateTherapistRequest $request, Therapist $therapist)

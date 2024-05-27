@@ -17,10 +17,16 @@ class EmploymentHistoryController extends Controller
      */
     public function index(): EmploymentHistoryCollection
     {
-        return EmploymentHistoryCollection::make([
-            EmploymentHistory::with('therapist')->latest()->paginate(10)
-        ]);
+        $user = auth()->user();
+
+        $employmentHistories = EmploymentHistory::with('therapist')
+            ->where('therapist_id', $user->therapist_id)
+            ->latest()
+            ->paginate(10);
+
+        return EmploymentHistoryCollection::make($employmentHistories);
     }
+
 
     public function store(StoreEmploymentHistoryRequest $request): EmploymentHistoryResource
     {
