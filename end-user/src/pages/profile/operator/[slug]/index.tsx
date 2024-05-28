@@ -262,8 +262,6 @@ export default function OperatorProfile() {
     setIsOpenModalEditBranch(true);
   };
 
-  console.log(profile);
-  console.log(branchId);
   return (
     <>
       <Head>
@@ -309,12 +307,12 @@ export default function OperatorProfile() {
           <div className="container p-4 md:p-8">
             <div className="flex flex-col gap-y-8 md:flex-row gap-x-20">
               <div className="space-y-4 flex flex-col items-center md:items-start md:max-w-64">
-                {profile?.cover?.url == undefined ? (
-                  <FaUser className="text-gray-400 md:w-40 md:h-40" />
+                {!profile?.cover?.url.length ? (
+                  <FaUser className="text-gray-400 w-20 h-20 md:w-40 md:h-40" />
                 ) : (
                   <Image
-                    // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
-                    src={profile?.cover?.url}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                    // src={profile?.cover?.url}
                     alt="Operators"
                     className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
                     removeWrapper
@@ -332,16 +330,6 @@ export default function OperatorProfile() {
                   <span>SINGAPORE</span>
                   <span>SPAS Community</span>
                 </div>
-
-                <Button
-                  onClick={handleLogout}
-                  startContent={<IoLogOut className="w-6 h-6" />}
-                  className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white w-max lg:w-full rounded-md"
-                  radius="none"
-                  size="lg"
-                >
-                  Logout
-                </Button>
               </div>
 
               <div className="flex-1 space-y-8">
@@ -551,7 +539,7 @@ export default function OperatorProfile() {
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          size="2xl"
+          size="xl"
           hideCloseButton
         >
           <ModalContent>
@@ -560,9 +548,9 @@ export default function OperatorProfile() {
                 <ModalHeader className="flex flex-col gap-1">
                   Edit Profile
                 </ModalHeader>
-                <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1">
+                <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1 overflow-y-auto max-h-[23rem]">
                   <div className="md:space-y-2">
-                    <input className="" type="file" name="url" />
+                    <input className="w-full" type="file" name="url" />
                     <div className="flex items-center gap-x-4">
                       <FaInfoCircle className="text-[#8D98AA]" />
                       <p className="text-xs">Image file size max 2 MB</p>

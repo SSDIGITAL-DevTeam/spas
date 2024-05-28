@@ -114,15 +114,17 @@ export default function EventMedia(): JSX.Element {
           content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
-      {!role ? (
+      {role !== "operator" ? (
         <main>
           <section className="pt-24">
             <div className="container p-4 md:p-8">
               <div className="flex flex-col gap-y-8">
                 {posts.data?.length === 0 && (
-                  <div className="text-center w-full flex flex-col items-center justify-center gap-y-2">
-                    <p className="text-4xl font-semibold">Opps..</p>
-                    <p>No Event & Media currently found</p>
+                  <div className="md:w-3/4 mx-auto min-h-screen flex flex-col items-center justify-center">
+                    <div className="text-center w-full flex flex-col items-center justify-center gap-y-2">
+                      <p className="text-4xl font-semibold">Opps..</p>
+                      <p>No Event & Media currently found</p>
+                    </div>
                   </div>
                 )}
                 <div className="flex flex-col lg:flex-row text-center">

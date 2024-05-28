@@ -19,6 +19,7 @@ import {
   Input,
   Select,
   SelectItem,
+  Spinner,
 } from "@nextui-org/react";
 import { LuMapPin, LuPhone, LuUser2 } from "react-icons/lu";
 import { FaRegAddressCard, FaUser } from "react-icons/fa6";
@@ -86,6 +87,7 @@ export default function TherapistProfile(): JSX.Element {
   const [errMessage, setErrMessage] = useState<ErrorResponse>(
     {} as ErrorResponse
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // states of input data
   const [address, setAddress] = useState<string>("");
@@ -108,28 +110,6 @@ export default function TherapistProfile(): JSX.Element {
   const options = useMemo(() => countryList().getData(), []);
   const inputStyle = {
     width: "100%",
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-out`,
-        undefined,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
-            )}`,
-          },
-        }
-      );
-
-      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`);
-
-      router.push("/auth/sign-in");
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const getProfile = async () => {
@@ -206,7 +186,7 @@ export default function TherapistProfile(): JSX.Element {
       formData.append("sex", sex);
       formData.append("address_nearest_mrt", addressNearerstMRT);
 
-      const res = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/request-therapists`,
         formData,
         {
@@ -265,6 +245,7 @@ export default function TherapistProfile(): JSX.Element {
 
   const handleAddEmployeHistory = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     const form: HTMLFormElement = e.currentTarget;
     const formReset = e.target as HTMLFormElement;
     try {
@@ -297,6 +278,8 @@ export default function TherapistProfile(): JSX.Element {
       console.log(error);
       const errorMessage = error as AxiosError;
       setErrMessage(errorMessage.response?.data as ErrorResponse);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -459,6 +442,7 @@ export default function TherapistProfile(): JSX.Element {
 
   const handleAddSocmed = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     const form: HTMLFormElement = e.currentTarget;
     const formReset = e.target as HTMLFormElement;
 
@@ -492,6 +476,8 @@ export default function TherapistProfile(): JSX.Element {
       console.log(error);
       const errorMessage = error as AxiosError;
       // setErrMessage(errorMessage.response?.data as ErrorResponse);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -736,9 +722,7 @@ export default function TherapistProfile(): JSX.Element {
                       </h3>
                       <div className="grid gap-y-4 md:gap-y-8 ">
                         {socmeds.length == 0 ? (
-                          <p className="text-center md:text-xl">
-                            No social media found
-                          </p>
+                          <p className="text-center">No social media found</p>
                         ) : (
                           <div className="grid md:grid-cols-2 gap-4 md:gap-12 mb-4 md:mb-8">
                             {socmeds.map((socmed: SocialMedia) => (
@@ -767,7 +751,7 @@ export default function TherapistProfile(): JSX.Element {
                                     openModalDeleteSocmed(socmed.id.toString())
                                   }
                                 >
-                                  <MdOutlineDelete className="w-6 h-6 text-secondary hover:text-danger" />
+                                  <MdDelete className="w-6 h-6 text-secondary hover:text-danger" />
                                 </div>
                               </div>
                             ))}
@@ -848,7 +832,11 @@ export default function TherapistProfile(): JSX.Element {
                                 type="submit"
                                 className="bg-secondary text-white rounded-md"
                               >
-                                Submit
+                                {isLoading ? (
+                                  <Spinner color="white" size="sm" />
+                                ) : (
+                                  <span>Submit</span>
+                                )}
                               </Button>
                             </div>
                           </form>
@@ -1042,7 +1030,11 @@ export default function TherapistProfile(): JSX.Element {
                                 type="submit"
                                 className="bg-secondary text-white rounded-md"
                               >
-                                Submit
+                                {isLoading ? (
+                                  <Spinner color="white" size="sm" />
+                                ) : (
+                                  <span>Submit</span>
+                                )}
                               </Button>
                             </div>
                           </form>
@@ -1084,7 +1076,7 @@ export default function TherapistProfile(): JSX.Element {
                 </Tab>
               </Tabs>
 
-              <div className="w-max mx-auto">
+              {/* <div className="w-max mx-auto">
                 <Button
                   onClick={handleLogout}
                   className="bg-white text-secondary border-2 border-secondary rounded-md hover:bg-secondary hover:text-white w-full"
@@ -1093,7 +1085,7 @@ export default function TherapistProfile(): JSX.Element {
                 >
                   Log Out
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
@@ -1123,7 +1115,7 @@ export default function TherapistProfile(): JSX.Element {
                         className=""
                       >
                         <Card className="lg:h-[23rem]">
-                          <CardBody className="">
+                          <CardBody className="overflow-y-auto max-h-[23rem]">
                             <div className="grid md:grid-cols-2 md:gap-x-4 gap-y-2 md:gap-y-4">
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">
@@ -1248,7 +1240,7 @@ export default function TherapistProfile(): JSX.Element {
 
                       <Tab key="certificate" title="Certificate Information">
                         <Card className="lg:min-h-[23rem]">
-                          <CardBody>
+                          <CardBody className="overflow-y-auto max-h-[23rem]">
                             <div className="grid md:grid-cols-2 md:gap-x-4 gap-y-4">
                               <div className="md:space-y-2">
                                 <label className="md:text-base text-sm">

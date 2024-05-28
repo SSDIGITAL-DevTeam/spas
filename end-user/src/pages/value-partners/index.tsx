@@ -2,8 +2,7 @@ import { JSX, useEffect, useState } from "react";
 import { Card, CardBody, Image, CardFooter } from "@nextui-org/react";
 import axios from "axios";
 import Head from "next/head";
-import AssetDaikin from "@/assets/dev/daikin.png";
-
+import { CiImageOn } from "react-icons/ci";
 import Link from "next/link";
 
 type Partner = {
@@ -71,7 +70,7 @@ export default function EventMedia(): JSX.Element {
   return (
     <>
       <Head>
-        <title>SPAS | Event & Media</title>
+        <title>SPAS | Value Partner</title>
         <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
 
@@ -102,12 +101,12 @@ export default function EventMedia(): JSX.Element {
           content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
-      {!role ? (
+      {role !== "operator" ? (
         <main>
           <section className="pb-18 lg:pb-0 ">
             <div className="container p-4 md:p-8">
               <div className="md:w-3/4 mx-auto min-h-screen flex flex-col items-center justify-center">
-                <div className=" flex flex-col items-center">
+                <div className="flex flex-col items-center">
                   <h2 className="md:text-lg text-center">
                     Are you ready to explore numerous opportunities with our
                     partners? You'll get the best quality at the best price for
@@ -172,15 +171,18 @@ export default function EventMedia(): JSX.Element {
                         partner.value_partner.map(
                           (valuePartner: ValuePartner) => (
                             <Card key={valuePartner.id}>
-                              <CardBody className=" aspect-square w-full ">
-                                <Image
-                                  // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${valuePartner.logo}`}
-                                  src={`${valuePartner.logo}`}
-                                  isBlurred
-                                  radius="sm"
-                                  removeWrapper
-                                  className="object-cover w-full h-full aspect-square mx-auto "
-                                />
+                              <CardBody className=" aspect-square w-full">
+                                {!valuePartner.logo.length ? (
+                                  <CiImageOn className="md:w-60 md:h-64" />
+                                ) : (
+                                  <Image
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${valuePartner.logo}`}
+                                    isBlurred
+                                    radius="sm"
+                                    removeWrapper
+                                    className="object-cover w-full h-full aspect-square mx-auto "
+                                  />
+                                )}
                               </CardBody>
                               <CardFooter className="text-lg md:text-xl flex items-center justify-center">
                                 <h2 className="text-center">

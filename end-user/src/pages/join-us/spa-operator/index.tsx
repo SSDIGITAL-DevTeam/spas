@@ -1,4 +1,4 @@
-import { JSX, useState, useMemo, FormEvent } from "react";
+import { JSX, useState, useMemo, FormEvent, useEffect } from "react";
 import {
   Tabs,
   Tab,
@@ -29,6 +29,7 @@ import Link from "next/link";
 
 import AssetBank from "@/assets/logo/UOB.webp";
 import { IoCopyOutline, IoCopySharp } from "react-icons/io5";
+import { useRouter } from "next/router";
 
 type OperatorErrorResponse = {
   errors: {
@@ -66,22 +67,13 @@ type TherapistErrorResponse = {
 };
 
 export default function JoinUs(): JSX.Element {
-  const [expiredDate, setExpiredDate] = useState(new Date());
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
-  const [issueDate, setIssueDate] = useState(new Date());
   const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [value, setValue] = useState("");
   const options = useMemo(() => countryList().getData(), []);
   const [errMsgOperator, setErrMsgOperator] = useState<OperatorErrorResponse>(
     {} as OperatorErrorResponse
   );
 
-  const [errMsgTherapist, setErrMsgTherapist] =
-    useState<TherapistErrorResponse>({} as TherapistErrorResponse);
-
-  const changeHandler = (value: any) => {
-    setValue(value);
-  };
+  const router = useRouter();
 
   const inputStyle = {
     width: "100%",
@@ -119,38 +111,6 @@ export default function JoinUs(): JSX.Element {
     }
   };
 
-  const registerTherapist = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const formReset = e.target as HTMLFormElement;
-
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapists`,
-        formData
-      );
-
-      toast.success("Register success, please check your email", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-
-      formReset.reset();
-    } catch (error) {
-      console.log(error);
-      const errorMessage = error as AxiosError;
-      setErrMsgTherapist(errorMessage.response?.data as TherapistErrorResponse);
-    }
-  };
-
   const copyClipboard = () => {
     navigator.clipboard?.writeText("339-317540-9");
     setIsCopied(true);
@@ -159,6 +119,16 @@ export default function JoinUs(): JSX.Element {
       setIsCopied(false);
     }, 1500);
   };
+
+  // push to sign in when not logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem(
+      process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+    );
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <>
