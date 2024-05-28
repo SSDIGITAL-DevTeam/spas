@@ -17,9 +17,13 @@ import {
   Card,
   CardBody,
   Input,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { LuMapPin, LuPhone, LuUser2 } from "react-icons/lu";
 import { FaRegAddressCard, FaUser } from "react-icons/fa6";
+import { FiFacebook, FiInstagram, FiTwitter } from "react-icons/fi";
+import { PiTiktokLogo } from "react-icons/pi";
 import { CgCalendarDates } from "react-icons/cg";
 import AssetGender from "@/assets/therapist-assets/gender.svg";
 import { PiGlobeHemisphereEastBold } from "react-icons/pi";
@@ -33,7 +37,7 @@ import AssetProfile from "@/assets/dev/profile.png";
 import countryList from "react-select-country-list";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { MdDelete, MdEdit } from "react-icons/md";
+import { MdDelete, MdEdit, MdOutlineDelete } from "react-icons/md";
 import DetailOperator from "@/pages/spa-operators/[slug]";
 import Lottie from "react-lottie-player";
 
@@ -48,18 +52,36 @@ type ErrorResponse = {
   };
 };
 
+type SocialMedia = {
+  id: number;
+  name: string;
+  url: string;
+};
+
+const social_medias = [
+  { id: 1, label: "Instagram", value: "instagram" },
+  { id: 2, label: "Tiktok", value: "instagram" },
+  { id: 3, label: "Facebook", value: "facebook" },
+  { id: 4, label: "Twitter", value: "twitter" },
+];
+
 export default function TherapistProfile(): JSX.Element {
   // state
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isOpenModalEdit, setIsOpenModalEdit] = useState<boolean>(false);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState<boolean>(false);
   const [isOpenModalMessage, setIsOpenModalMessage] = useState<boolean>(false);
+  const [isOpenModalDeleteSocmed, setIsOpenModalDeleteSocmed] =
+    useState<boolean>(false);
   const [profile, setProfile] = useState<Therapist>();
   const [employeHistory, setEmployeHistory] = useState<[]>([]);
+  const [socmeds, setSocmeds] = useState<[]>([]);
   const [id, setId] = useState<string>("");
   const [isAddEmployeHistory, setIsAddEmployeHistory] =
     useState<boolean>(false);
 
+  const [isAddSocialMedia, setIsAddSocialMedia] = useState<boolean>(false);
+  const [socmedId, setSocmedId] = useState<string>("");
   const [startDate, setStartDate] = useState(new Date());
   const [errMessage, setErrMessage] = useState<ErrorResponse>(
     {} as ErrorResponse
@@ -196,17 +218,6 @@ export default function TherapistProfile(): JSX.Element {
         }
       );
       setIsOpenModalMessage(true);
-      // toast.success("Profile updated", {
-      //   position: "bottom-right",
-      //   autoClose: 3000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   transition: Bounce,
-      // });
     } catch (error) {
       console.log(error);
     }
@@ -247,7 +258,6 @@ export default function TherapistProfile(): JSX.Element {
       });
 
       getProfile();
-      // router.replace(`/profile/therapist/${res.data.data.slug}`);
     } catch (error) {
       console.log(error);
     }
@@ -397,6 +407,125 @@ export default function TherapistProfile(): JSX.Element {
     }, 500);
   };
 
+  const openModalDeleteSocmed = (id: string) => {
+    setSocmedId(id);
+    setTimeout(() => {
+      setIsOpenModalDeleteSocmed(true);
+    }, 500);
+  };
+
+  // Social media icons
+  const socmedIcon = (label: string) => {
+    switch (true) {
+      case label == "Instagram":
+        return <FiInstagram className="text-secondary w-6 h-6 md:w-8 md:h-8" />;
+
+      case label == "Tiktok":
+        return (
+          <PiTiktokLogo className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+        );
+
+      case label == "Facebook":
+        return <FiFacebook className="text-secondary w-6 h-6 md:w-8 md:h-8" />;
+
+      case label == "Twitter":
+        return <FiTwitter className="text-secondary w-6 h-6 md:w-8 md:h-8" />;
+
+      default:
+        return;
+    }
+  };
+
+  useEffect(() => {
+    getSocialMedia();
+  }, []);
+  const getSocialMedia = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/social-media`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      setSocmeds(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddSocmed = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form: HTMLFormElement = e.currentTarget;
+    const formReset = e.target as HTMLFormElement;
+
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/social-media`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      toast.success("Social Media Added", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      getSocialMedia();
+      setIsAddSocialMedia(false);
+      formReset.reset();
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error as AxiosError;
+      // setErrMessage(errorMessage.response?.data as ErrorResponse);
+    }
+  };
+
+  const handleDeleteSocmed = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/end-user/therapist/social-media/${socmedId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+      toast.success("Social Media Deleted", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      getSocialMedia();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -480,123 +609,251 @@ export default function TherapistProfile(): JSX.Element {
 
               <Tabs className="flex items-center justify-center">
                 <Tab title="Personal Information" key="personal" className="">
-                  <div className="md:w-3/4 mx-auto border p-4 md:p-8">
-                    <div className="grid md:grid-cols-2 md:gap-x-40 space-y-4">
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                  <div className="space-y-4 md:space-y-8">
+                    <div className="md:w-3/4 mx-auto border p-4 md:p-8">
+                      <div className="grid md:grid-cols-2 md:gap-x-40 space-y-4">
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Name
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.name}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Name
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.name}
-                          </span>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <FaRegAddressCard className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Passport / Fin No.
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.passport_finno}
+                            </span>
+                          </div>
                         </div>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <CgCalendarDates className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Date of Birth
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.date_of_birth}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <Image
+                              src={AssetGender.src}
+                              className="text-secondary w-6 h-6 md:w-8 md:h-8"
+                              removeWrapper
+                            />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Sex
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.sex}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Contact No
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.contact_no}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <PiGlobeHemisphereEastBold className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Nationality
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.nationality}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Address
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.address}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-x-4">
+                          <div>
+                            <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                          </div>
+                          <div className="flex flex-col gap-y-1">
+                            <span className="text-[#A3A3A3] text-sm md:text-base">
+                              Address nearest MRT
+                            </span>
+                            <span className="text-secondary text-lg md:text-xl">
+                              {profile?.address_nearest_mrt}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border p-4 md:p-8 md:w-3/4 mx-auto space-y-4 md:space-y-8">
+                      <h3 className="text-[#A3A3A3] md:text-lg font-bold">
+                        Social Media
+                      </h3>
+                      <div className="grid gap-y-4 md:gap-y-8 ">
+                        {socmeds.length == 0 ? (
+                          <p className="text-center md:text-xl">
+                            No social media found
+                          </p>
+                        ) : (
+                          <div className="grid md:grid-cols-2 gap-4 md:gap-12 mb-4 md:mb-8">
+                            {socmeds.map((socmed: SocialMedia) => (
+                              <div
+                                key={socmed.id}
+                                className="flex items-center justify-between"
+                              >
+                                <div className="flex items-center gap-x-4">
+                                  <div>{socmedIcon(socmed.name)}</div>
+                                  <a
+                                    href={socmed.url}
+                                    target="_blank"
+                                    className="flex flex-col gap-y-1"
+                                  >
+                                    <span className="text-[#A3A3A3] text-sm md:text-base">
+                                      {socmed.name}
+                                    </span>
+                                    <span className="text-secondary text-lg md:text-xl">
+                                      {socmed.url}
+                                    </span>
+                                  </a>
+                                </div>
+                                <div
+                                  className="cursor-pointer"
+                                  onClick={() =>
+                                    openModalDeleteSocmed(socmed.id.toString())
+                                  }
+                                >
+                                  <MdOutlineDelete className="w-6 h-6 text-secondary hover:text-danger" />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mx-auto w-max">
+                        <Button
+                          onClick={() => setIsAddSocialMedia(!isAddSocialMedia)}
+                          radius="none"
+                          className="bg-secondary text-white rounded-md"
+                        >
+                          Add Social Media
+                        </Button>
                       </div>
 
-                      <div className="flex items-center gap-x-4">
+                      {isAddSocialMedia && (
                         <div>
-                          <FaRegAddressCard className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Passport / Fin No.
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.passport_finno}
-                          </span>
-                        </div>
-                      </div>
+                          <form action="" onSubmit={handleAddSocmed}>
+                            <div className="grid md:grid-cols-2 lg:gap-x-8 gap-y-4 gap-x-4 mb-4 md:mb-8 items-center">
+                              <div className="flex flex-col gap-y-2">
+                                <label className="md:text-base text-sm">
+                                  Social Media
+                                </label>
+                                {/* <select name="socials[0][name]">
+                                  {social_medias.map((media) => (
+                                    <option key={media.id} value={media.value}>
+                                      {media.label}
+                                    </option>
+                                  ))}
+                                </select> */}
+                                <Select
+                                  label="Select an social media"
+                                  className="max-w-xs "
+                                  size="sm"
+                                  name="name"
+                                >
+                                  {social_medias.map((media) => (
+                                    <SelectItem
+                                      key={media.label}
+                                      value={media.label}
+                                    >
+                                      {media.label}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                                {/* {errMessage?.errors?.job_title && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.job_title[0]}
+                                    </p>
+                                  )} */}
+                              </div>
 
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <CgCalendarDates className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Date of Birth
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.date_of_birth}
-                          </span>
-                        </div>
-                      </div>
+                              <div className="md:space-y-2">
+                                <label className="md:text-base text-sm">
+                                  Url
+                                </label>
+                                <div className="flex flex-col gap-y-2">
+                                  <Input
+                                    variant={"bordered"}
+                                    color="secondary"
+                                    size="md"
+                                    radius="sm"
+                                    name="url"
+                                  />
+                                  {errMessage?.errors?.company_name && (
+                                    <p className="text-xs text-red-500">
+                                      {errMessage.errors.company_name[0]}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
 
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <Image
-                            src={AssetGender.src}
-                            className="text-secondary w-6 h-6 md:w-8 md:h-8"
-                            removeWrapper
-                          />
+                            <div className="mx-auto w-max">
+                              <Button
+                                radius="none"
+                                type="submit"
+                                className="bg-secondary text-white rounded-md"
+                              >
+                                Submit
+                              </Button>
+                            </div>
+                          </form>
                         </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Sex
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.sex}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Contact No
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.contact_no}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <PiGlobeHemisphereEastBold className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Nationality
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.nationality}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Address
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.address}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                        </div>
-                        <div className="flex flex-col gap-y-1">
-                          <span className="text-[#A3A3A3] text-sm md:text-base">
-                            Address nearest MRT
-                          </span>
-                          <span className="text-secondary text-lg md:text-xl">
-                            {profile?.address_nearest_mrt}
-                          </span>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </Tab>
@@ -827,7 +1084,7 @@ export default function TherapistProfile(): JSX.Element {
                 </Tab>
               </Tabs>
 
-              <div className="md:w-1/4 mx-auto">
+              <div className="w-max mx-auto">
                 <Button
                   onClick={handleLogout}
                   className="bg-white text-secondary border-2 border-secondary rounded-md hover:bg-secondary hover:text-white w-full"
@@ -1296,6 +1553,41 @@ export default function TherapistProfile(): JSX.Element {
                   </Button>
                 </ModalFooter>
               </div>
+            )}
+          </ModalContent>
+        </Modal>
+
+        {/* Modal delete socmed */}
+        <Modal
+          isOpen={isOpenModalDeleteSocmed}
+          onOpenChange={setIsOpenModalDeleteSocmed}
+          size="md"
+          hideCloseButton
+          className="md:h-11/12"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <form onSubmit={handleDeleteSocmed}>
+                <ModalHeader className="flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                    <h3>Delete Social Media</h3>
+                  </div>
+                </ModalHeader>
+                <ModalBody>
+                  <h3>Are you sure?</h3>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button color="danger" type="submit" onPress={onClose}>
+                    Delete
+                  </Button>
+                  {/* <Button color="primary" onPress={onClose}>
+                    Next
+                  </Button> */}
+                </ModalFooter>
+              </form>
             )}
           </ModalContent>
         </Modal>
