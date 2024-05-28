@@ -6,6 +6,7 @@ import { Image } from "@nextui-org/react";
 import axios from "axios";
 import AssetProfile from "@/assets/dev/profile.png";
 import { DataWithPagination, Therapist } from "@/@types";
+import { FaUser } from "react-icons/fa6";
 
 export default function SpaOperators() {
   const [role, setRole] = useState<string>("");
@@ -122,20 +123,24 @@ export default function SpaOperators() {
               {therapists?.data?.map((therapist: Therapist, index: number) => (
                 <div key={index} className="shadow-md border p-4 md:p-8">
                   <div className="flex flex-col items-center gap-4 md:gap-8">
-                    <Image
-                      // src={AssetProfile.src}
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
-                      radius="none"
-                      alt="Spa Operators"
-                      className="object-cover lg:w-40 lg:h-40 aspect-square rounded-md"
-                    />
+                    {!therapist?.cover?.url.length ? (
+                      <FaUser className="text-gray-400 w-20 h-20 md:w-40 md:h-40" />
+                    ) : (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
+                        radius="none"
+                        alt="Spa Operators"
+                        className="object-cover lg:w-40 lg:h-40 aspect-square rounded-md"
+                      />
+                    )}
+
                     <div className="flex flex-col items-center">
                       <h3 className="text-lg md:text-2xl text-black font-semibold">
                         {therapist.name}
                       </h3>
                       <Link
                         href={`/spa-therapists/${therapist.slug}`}
-                        className="text-primary"
+                        className="text-primary text-lg"
                       >
                         See Details
                       </Link>

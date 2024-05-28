@@ -184,10 +184,10 @@ export default function Contact(): JSX.Element {
                   <button
                     key={topic.id}
                     onClick={() => setSelectedTopic(topic.name)}
-                    className={`p-3 border-2 rounded-lg md:w-max w-full border-secondary font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white ${
+                    className={`p-3 border-2 rounded-lg md:w-max w-full font-semibold text-secondary hover:bg-[#1975FF] hover:border-[#1975FF] hover:text-white ${
                       topic.name == selectedTopic
                         ? "bg-[#1975FF] border-[#1975FF] text-white"
-                        : ""
+                        : "border-secondary"
                     }`}
                   >
                     {topic.name}

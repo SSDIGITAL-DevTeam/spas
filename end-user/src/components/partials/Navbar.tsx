@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import NavLink from "@/components/utils/NavLink";
 import Logo from "@/components/utils/Logo";
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 import axios from "axios";
 import AssetProfile from "@/assets/dev/profile.png";
 import { Image } from "@nextui-org/react";
@@ -77,10 +83,9 @@ export default function Navbar(): JSX.Element {
           },
         }
       );
-      console.log(response.data.data);
-      // console.log(response.data.data?.covers?.operator[0]);
+      // console.log(response.data.data);
       setId(response.data.data.id);
-      setCover(response.data.data?.covers?.operator[0]);
+      setCover(response.data.data?.cover);
       setSlugTherapist(response.data.data?.therapist?.slug);
       setSlugOperator(response.data.data?.operator?.slug);
       setRole(response.data.data.role);
@@ -92,7 +97,29 @@ export default function Navbar(): JSX.Element {
   useEffect(() => {
     me();
   }, []);
-  console.log(role);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-out`,
+        undefined,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+            )}`,
+          },
+        }
+      );
+
+      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`);
+
+      router.push("/auth/sign-in");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <nav
       className={`${
@@ -146,7 +173,7 @@ export default function Navbar(): JSX.Element {
         <ul
           ref={menuRef}
           onClick={() => setIsMenuOpen(false)}
-          className="mt-32 flex flex-col items-center gap-y-2 text-xl font-medium text-white"
+          className="mt-28 flex flex-col items-center gap-y-2 text-lg font-medium text-white"
         >
           {navLinks.map((navLink: NavLink, index: number) => (
             <li
@@ -160,19 +187,29 @@ export default function Navbar(): JSX.Element {
           ))}
 
           {role ? (
-            <Button
-              className="bg-secondary text-white text-xl rounded-md w-max"
-              radius="none"
-              as={Link}
-              onClick={() => setIsMenuOpen(false)}
-              href={`${
-                role == "operator"
-                  ? `/profile/operator/${slugOperator}`
-                  : `/profile/therapist/${slugTherapist}`
-              }`}
-            >
-              Profile
-            </Button>
+            <div className="flex flex-col gap-y-4">
+              <Button
+                className="bg-secondary text-white text-lg rounded-md w-max"
+                radius="none"
+                as={Link}
+                onClick={() => setIsMenuOpen(false)}
+                href={`${
+                  role == "operator"
+                    ? `/profile/operator/${slugOperator}`
+                    : `/profile/therapist/${slugTherapist}`
+                }`}
+              >
+                Profile
+              </Button>
+
+              <Button
+                className="bg-slate-800 text-white text-lg rounded-md w-max"
+                radius="none"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
           ) : (
             <Link
               href={"/auth/sign-in"}
@@ -240,29 +277,75 @@ export default function Navbar(): JSX.Element {
             )} */}
 
             {role ? (
-              <Button
-                as={Link}
-                href={`${
-                  role == "operator"
-                    ? `/profile/operator/${slugOperator}`
-                    : `/profile/therapist/${slugTherapist}`
-                }`}
-                className=" text-white lg:w-20 lg:h-20 aspect-square bg-transparent"
-              >
-                {cover == undefined ? (
-                  <FaUser className="text-gray-400 w-10 h-10" />
-                ) : (
-                  <Image
-                    // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
-                    src={cover}
-                    removeWrapper
-                    isBlurred
-                    className="object-cover aspect-square"
-                    radius="full"
-                  />
-                )}
-              </Button>
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button className="bg-transparent px-0">
+                    {!cover.length ? (
+                      <FaUser className="text-gray-400 w-10 h-10" />
+                    ) : (
+                      <Image
+                        // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
+                        src={cover}
+                        removeWrapper
+                        isBlurred
+                        className="object-cover aspect-square"
+                        radius="full"
+                      />
+                    )}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Static Actions"
+                  className="text-center"
+                  variant="flat"
+                >
+                  <DropdownItem
+                    as={Link}
+                    href={`${
+                      role == "operator"
+                        ? `/profile/operator/${slugOperator}`
+                        : `/profile/therapist/${slugTherapist}`
+                    }`}
+                    key="profile"
+                    color="secondary"
+                    className="text-secondary"
+                  >
+                    Profile
+                  </DropdownItem>
+
+                  <DropdownItem
+                    onClick={handleLogout}
+                    key="logout"
+                    // className="text-danger"
+                    color="default"
+                  >
+                    Logout
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             ) : (
+              // <Button
+              //   as={Link}
+              //   href={`${
+              //     role == "operator"
+              //       ? `/profile/operator/${slugOperator}`
+              //       : `/profile/therapist/${slugTherapist}`
+              //   }`}
+              //   className=" text-white lg:w-20 lg:h-20 aspect-square bg-transparent"
+              // >
+              //   {cover == undefined ? (
+              //     <FaUser className="text-gray-400 w-10 h-10" />
+              //   ) : (
+              //     <Image
+              //       // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${cover[0]}`}
+              //       src={cover}
+              //       removeWrapper
+              //       isBlurred
+              //       className="object-cover aspect-square"
+              //       radius="full"
+              //     />
+              //   )}
+              // </Button>
               <Button
                 as={Link}
                 href="/auth/sign-in"

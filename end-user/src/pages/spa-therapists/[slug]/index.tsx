@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { EmployeHistory, SocialMedia, Therapist } from "@/@types";
 import axios from "axios";
 import moment from "moment";
+import { FaUser } from "react-icons/fa6";
 
 const social_medias = [
   {
@@ -89,7 +90,6 @@ export default function DetailTherapist() {
     }
   };
 
-  console.log(profile);
   return (
     <>
       <Head>
@@ -150,12 +150,17 @@ export default function DetailTherapist() {
             <div className="">
               <div className="relative md:w-max mx-auto mb-8 space-y-2">
                 <div className="space-y-4 flex flex-col items-center">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
-                    alt="Operators"
-                    className="w-max lg:w-40 lg:h-40 mx-auto object-cover rounded-full"
-                    radius="none"
-                  />
+                  {!profile?.cover.url.length ? (
+                    <FaUser className="text-gray-400 w-20 h-20 md:w-40 md:h-40" />
+                  ) : (
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                      alt="Operators"
+                      className="w-max lg:w-40 lg:h-40 mx-auto object-cover rounded-full"
+                      radius="none"
+                    />
+                  )}
+
                   <div className="text-center">
                     <h2 className="font-bold text-lg md:text-2xl ">
                       {profile?.name}

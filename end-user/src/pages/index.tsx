@@ -156,7 +156,7 @@ export default function Home(): JSX.Element {
                 practitioners, stakeholders, and consumers of the Beauty, Spa
                 and Wellness Industry in Singapore.
               </p>
-              {role !== "operator" && (
+              {!role ? (
                 <Link
                   href={"/join-us/spa-operator"}
                   className="mx-auto md:mx-0 w-max"
@@ -165,6 +165,8 @@ export default function Home(): JSX.Element {
                     JOIN SPAS
                   </span>
                 </Link>
+              ) : (
+                ""
               )}
             </div>
 
@@ -310,14 +312,17 @@ export default function Home(): JSX.Element {
                       and Wellness industry to new heights.
                     </p>
                   </div>
-                  {role !== "operator" && (
-                    <div className="w-max mx-auto md:mx-0">
-                      <Link href={"/join-us/spa-operator"}>
-                        <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                          JOIN SPAS
-                        </span>
-                      </Link>
-                    </div>
+                  {!role ? (
+                    <Link
+                      href={"/join-us/spa-operator"}
+                      className="mx-auto md:mx-0 w-max"
+                    >
+                      <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
+                        JOIN SPAS
+                      </span>
+                    </Link>
+                  ) : (
+                    ""
                   )}
                 </div>
               </div>

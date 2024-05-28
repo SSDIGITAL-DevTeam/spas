@@ -1,14 +1,10 @@
-import { JSX, useState, useMemo, FormEvent } from "react";
+import { JSX, useState, useMemo, FormEvent, useEffect } from "react";
 import {
-  Tabs,
-  Tab,
   Card,
   CardBody,
   CardHeader,
   CardFooter,
-  Input,
   Button,
-  Image,
 } from "@nextui-org/react";
 import Head from "next/head";
 import { FaInfoCircle } from "react-icons/fa";
@@ -22,28 +18,10 @@ import "react-international-phone/style.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import Select from "react-select";
 import countryList from "react-select-country-list";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
-
-import AssetBank from "@/assets/logo/UOB.webp";
-import { IoCopyOutline, IoCopySharp } from "react-icons/io5";
-
-type OperatorErrorResponse = {
-  errors: {
-    company_name: string[];
-    uen_no: string[];
-    brand_name: string[];
-    address: string[];
-    contact_no: string[];
-    contact_person: string[];
-    contact_person_no: string[];
-    url: string[];
-    payment_slip: string[];
-    email: string[];
-  };
-};
+import { useRouter } from "next/router";
 
 type TherapistErrorResponse = {
   errors: {
@@ -69,54 +47,16 @@ export default function JoinUs(): JSX.Element {
   const [expiredDate, setExpiredDate] = useState(new Date());
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [issueDate, setIssueDate] = useState(new Date());
-  const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [value, setValue] = useState("");
   const options = useMemo(() => countryList().getData(), []);
-  const [errMsgOperator, setErrMsgOperator] = useState<OperatorErrorResponse>(
-    {} as OperatorErrorResponse
-  );
 
   const [errMsgTherapist, setErrMsgTherapist] =
     useState<TherapistErrorResponse>({} as TherapistErrorResponse);
 
-  const changeHandler = (value: any) => {
-    setValue(value);
-  };
+  const router = useRouter();
 
   const inputStyle = {
     width: "100%",
     fontSize: "16px",
-  };
-
-  const registerOperator = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const formReset = e.target as HTMLFormElement;
-
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operators`,
-
-        formData
-      );
-      toast.success("Register success, please check your email", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      formReset.reset();
-    } catch (error) {
-      console.log(error);
-      const errorMessage = error as AxiosError;
-      setErrMsgOperator(errorMessage.response?.data as OperatorErrorResponse);
-    }
   };
 
   const registerTherapist = async (e: FormEvent<HTMLFormElement>) => {
@@ -151,14 +91,15 @@ export default function JoinUs(): JSX.Element {
     }
   };
 
-  const copyClipboard = () => {
-    navigator.clipboard?.writeText("339-317540-9");
-    setIsCopied(true);
-
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 1500);
-  };
+  // push to sign in when not logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem(
+      process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+    );
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <>
