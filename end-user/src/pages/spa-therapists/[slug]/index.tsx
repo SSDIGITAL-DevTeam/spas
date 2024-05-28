@@ -12,9 +12,32 @@ import { PiGlobeHemisphereEastBold, PiTiktokLogo } from "react-icons/pi";
 import { IoReload } from "react-icons/io5";
 import AssetProfile from "@/assets/dev/profile.png";
 import { useRouter } from "next/router";
-import { EmployeHistory, Therapist } from "@/@types";
+import { EmployeHistory, SocialMedia, Therapist } from "@/@types";
 import axios from "axios";
 import moment from "moment";
+
+const social_medias = [
+  {
+    id: 1,
+    label: "Instagram",
+    url: "https://www.instagram.com",
+  },
+  {
+    id: 2,
+    label: "Facebook",
+    url: "https://www.facebook.com",
+  },
+  {
+    id: 3,
+    label: "Tiktok",
+    url: "https://www.tiktok.com",
+  },
+  {
+    id: 4,
+    label: "Twitter",
+    url: "https://www.twitter.com",
+  },
+];
 
 export default function DetailTherapist() {
   const [profile, setProfile] = useState<Therapist>();
@@ -45,6 +68,28 @@ export default function DetailTherapist() {
     getProfile();
   }, [slug]);
 
+  const socmedIcon = (label: string) => {
+    switch (true) {
+      case label == "Instagram":
+        return <FiInstagram className="text-secondary w-6 h-6 md:w-8 md:h-8" />;
+
+      case label == "Tiktok":
+        return (
+          <PiTiktokLogo className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+        );
+
+      case label == "Facebook":
+        return <FiFacebook className="text-secondary w-6 h-6 md:w-8 md:h-8" />;
+
+      case label == "Twitter":
+        return <FiTwitter className="text-secondary w-6 h-6 md:w-8 md:h-8" />;
+
+      default:
+        return;
+    }
+  };
+
+  console.log(profile);
   return (
     <>
       <Head>
@@ -198,7 +243,7 @@ export default function DetailTherapist() {
                               Nationality
                             </span>
                             <span className="text-secondary text-lg md:text-xl">
-                              Singapore
+                              {profile?.nationality}
                             </span>
                           </div>
                         </div>
@@ -212,7 +257,7 @@ export default function DetailTherapist() {
                               Address nearest MRT
                             </span>
                             <span className="text-secondary text-lg md:text-xl">
-                              Canberra MRT
+                              {profile?.address_nearest_mrt}
                             </span>
                           </div>
                         </div>
@@ -220,79 +265,37 @@ export default function DetailTherapist() {
                     </div>
 
                     <div className="lg:w-3/4 mx-auto border p-4 md:p-8">
-                      <div className="md:columns-2 md:gap-x-40 space-y-4">
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <FiFacebook className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                          </div>
-                          <a
-                            href="https://facebook.com"
-                            target="_blank"
-                            className="flex flex-col gap-y-1"
-                          >
-                            <span className="text-[#A3A3A3] text-sm md:text-base">
-                              Facebook
-                            </span>
-                            <span className="text-secondary text-lg md:text-xl">
-                              www.faceboo.com
-                            </span>
-                          </a>
+                      <h3 className="text-[#A3A3A3] md:text-lg font-bold mb-4 md:mb-8">
+                        Social Media
+                      </h3>
+                      {profile?.social_media.length == 0 ? (
+                        <p className="text-center md:text-lg">
+                          No social media found
+                        </p>
+                      ) : (
+                        <div className="md:columns-2 md:gap-x-40 space-y-4">
+                          {profile?.social_media.map((media: SocialMedia) => (
+                            <div
+                              key={media.id}
+                              className="flex items-center gap-x-4"
+                            >
+                              <div>{socmedIcon(media.name)}</div>
+                              <a
+                                href={media.url}
+                                target="_blank"
+                                className="flex flex-col gap-y-1"
+                              >
+                                <span className="text-[#A3A3A3] text-sm md:text-base">
+                                  {media.name}
+                                </span>
+                                <span className="text-secondary text-lg md:text-xl">
+                                  {media.url}
+                                </span>
+                              </a>
+                            </div>
+                          ))}
                         </div>
-
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <FiInstagram className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                          </div>
-                          <a
-                            href="https://instagram.com"
-                            target="_blank"
-                            className="flex flex-col gap-y-1"
-                          >
-                            <span className="text-[#A3A3A3] text-sm md:text-base">
-                              Instagram
-                            </span>
-                            <span className="text-secondary text-lg md:text-xl">
-                              @instagram
-                            </span>
-                          </a>
-                        </div>
-
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <FiTwitter className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                          </div>
-                          <a
-                            href="https://twitter.com"
-                            target="_blank"
-                            className="flex flex-col gap-y-1"
-                          >
-                            <span className="text-[#A3A3A3] text-sm md:text-base">
-                              Twitter
-                            </span>
-                            <span className="text-secondary text-lg md:text-xl">
-                              @twitter
-                            </span>
-                          </a>
-                        </div>
-
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <PiTiktokLogo className="text-secondary w-6 h-6 md:w-8 md:h-8" />
-                          </div>
-                          <a
-                            href="https://tiktok.com"
-                            target="_blank"
-                            className="flex flex-col gap-y-1"
-                          >
-                            <span className="text-[#A3A3A3] text-sm md:text-base">
-                              Tiktok
-                            </span>
-                            <span className="text-secondary text-lg md:text-xl">
-                              @tiktok
-                            </span>
-                          </a>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </Tab>
@@ -304,7 +307,9 @@ export default function DetailTherapist() {
                         Employment History
                       </h3>
                       {employeHistory.length == 0 ? (
-                        <p>No history found</p>
+                        <p className="text-center md:text-lg">
+                          No history found
+                        </p>
                       ) : (
                         employeHistory.map((history: EmployeHistory) => (
                           <div

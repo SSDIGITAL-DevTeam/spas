@@ -56,6 +56,13 @@ export type Therapist = {
   status: string;
   user: { id: number; email: string; role: string };
   employeHistorys: EmployeHistory[];
+  social_media: SocialMedia[];
+};
+
+export type SocialMedia = {
+  id: number;
+  name: string;
+  url: string;
 };
 
 export type EmployeHistory = {
