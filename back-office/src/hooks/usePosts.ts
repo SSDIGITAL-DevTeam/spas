@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DataWithPagination, Post } from '@/@types'
 import ApiError from '@/errors/ApiError'
 import PostModule from '@/modules/PostModule'
@@ -10,7 +10,11 @@ export function usePosts() {
     const [isPostsLoading, setIsPostsLoading] = useState<boolean>(false)
     const [postsErrors, setPostsErrors] = useState<ApiError>({} as ApiError)
 
-    const fetchPosts = async (page?: string, status?: PostStatusEnum, searchQuery?: string): Promise<void> => {
+    const fetchPosts = async (
+        page: string = '1', 
+        status: PostStatusEnum = PostStatusEnum.PUBLISHED, 
+        searchQuery: string = ''
+    ): Promise<void> => {
         setIsPostsLoading(true);
 
         try {

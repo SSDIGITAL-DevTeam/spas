@@ -14,7 +14,10 @@ class TherapistController extends Controller
     public function index()
     {
         return TherapistCollection::make(
-            Therapist::with('user', 'cover')
+            Therapist::with('user', 'cover')    
+                ->filterTherapist(
+                    request(['search'])
+                )
                 ->latest()
                 ->paginate(10)
         );

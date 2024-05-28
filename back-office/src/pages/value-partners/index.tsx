@@ -12,12 +12,30 @@ import { useRouter } from "next/router";
 import { CategoryPartner } from "@/@types";
 import CategoryPartnerModule from "@/modules/CategoryPartner";
 import { useCategoryPartner } from "@/hooks/useCategoryPartner";
+import { Input } from "@nextui-org/react";
 
 export default function ValuePartners(): JSX.Element {
   // states
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [categoryPartnerId, setCategoryPartnerId] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    await fetchCategoryPartner("1", query);
+  };
+
+  const handleSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    await fetchCategoryPartner("1", searchQuery);
+  };
 
   // router
   const router = useRouter();
@@ -78,7 +96,17 @@ export default function ValuePartners(): JSX.Element {
           </Link>
         </header>
 
-        {/* TODO */}
+        <form>
+          <div className="w-60 pb-5">
+            <Input
+              name="search"
+              placeholder="Search..."
+              variant="bordered"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+        </form>
 
         <section>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

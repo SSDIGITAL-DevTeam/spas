@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
 
 class Operator extends Model
 {
@@ -31,5 +32,12 @@ class Operator extends Model
     public function user(): HasOne
     {
         return $this->hasOne(User::class);
+    }
+
+    public function scopeFilterOperator(Builder $query, $filters)
+    {
+        if ($search = $filters['search'] ?? false) {
+            $query->where('company_name', 'like', '%' . $search . '%');
+        }
     }
 }

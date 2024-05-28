@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DataWithPagination, Event } from "@/@types";
 import ApiError from "@/errors/ApiError";
 import EventModule from "@/modules/EventModule";
@@ -10,12 +10,16 @@ export function useEvent() {
     const [isEventLoading, setIsEventLoading] = useState<boolean>(false)
     const [EventError, setEventErrors] = useState<ApiError>({} as ApiError)
 
-    const fetchEvent = async(page?: string): Promise<void> => {
+    const fetchEvent = async(
+        page: string = '1', 
+        searchQuery: string = ''
+    ): Promise<void> => {
       setIsEventLoading(true)
       
       try {
-          const res = await new EventModule().all(page)
-          setEvents(res)
+        const eventModule = new EventModule();
+        const res = await eventModule.all(page, searchQuery);
+        setEvents(res)
       } catch (error) {
           setEventErrors(error as ApiError)
       } finally {

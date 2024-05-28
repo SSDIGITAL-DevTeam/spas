@@ -14,15 +14,32 @@ export default class EventModule {
         }
     }
 
-    public async all(page: string = '1'): Promise<DataWithPagination<Event>> {
+    public async all(
+        page: string = '1',
+        searchQuery: string = ''
+    ): Promise<DataWithPagination<Event>> {
+         // Validasi parameter
+        if (!/^\d+$/.test(page)) {
+            throw new Error('Invalid page number');
+        }
+
         try {
-            return await ApiModule.makeRequestTo<DataWithPagination<Event>>(
-                `${this.url}?page=${page}`,
-            ).with({
+            let url = `${this.url}?page=${page}`;
+            if (searchQuery) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+
+            // Logging URL request
+            // console.log(`Request URL: ${url}`);
+
+            return await ApiModule.makeRequestTo<DataWithPagination<Event>>(url).with({
                 headers: this.defaultHeaders,
-            })
+            });
         } catch (err: any) {
-            throw err satisfies ApiError
+            // Logging error
+            console.error('Error fetching data:', err);
+
+            throw new Error(`Failed to fetch data: ${err.message}`);
         }
     }
 

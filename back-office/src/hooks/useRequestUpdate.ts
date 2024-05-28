@@ -13,11 +13,15 @@ export function useRequestUpdate() {
     {} as ApiError
   );
 
-  const fetchRequestUpdate = async (page?: string): Promise<void> => {
+  const fetchRequestUpdate = async (
+    page: string = '1', 
+    searchQuery: string = ''
+  ): Promise<void> => {
     setIsRequestUpdateLoading(true);
 
     try {
-      const res = await new RequestUpdateModule().all(page);
+      const requestUpdateModule = new RequestUpdateModule();
+      const res = await requestUpdateModule.all(page, searchQuery);
       setRequestUpdate(res);
     } catch (error) {
       setRequestUpdateError(error as ApiError);

@@ -1,21 +1,11 @@
-import { Category, CategoryPartner, ValuePartner } from "@/@types";
+import { CategoryPartner, ValuePartner } from "@/@types";
 import Loading from "@/components/partials/Loading";
 import ApiError from "@/errors/ApiError";
-import CategoryModule from "@/modules/CategoryModule";
-import ValuePartnerModule from "@/modules/ValuePartnerModule";
 import CategoryPartnerModule from "@/modules/CategoryPartner";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  ChangeEvent,
-  FormEvent,
-  JSX,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { FormEvent, JSX, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@nextui-org/react";
 

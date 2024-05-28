@@ -19,6 +19,9 @@ class OperatorController extends Controller
     {
         return OperatorCollection::make(
             Operator::with('user', 'cover')
+                ->filterOperator(
+                    request(['search'])
+                )
                 ->latest()
                 ->paginate(10)
         );

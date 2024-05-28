@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DataWithPagination, Operator } from "@/@types";
 import ApiError from "@/errors/ApiError";
 import OperatorModule from "@/modules/OperatorModule";
@@ -10,18 +10,22 @@ export function useOperator() {
     const [isOperatorLoading, setIsOperatorLoading] = useState<boolean>(false)
     const [operatorError, setOperatorErrors] = useState<ApiError>({} as ApiError)
 
-      const fetchOperator = async(operator1?: string): Promise<void> => {
+      const fetchOperator = async(
+        page: string = '1', 
+        searchQuery: string = ''
+      ): Promise<void> => {
         setIsOperatorLoading(true)
         
        try {
-            const res = await new OperatorModule().all(operator1)
-            setOperator(res)
+          const operatorModule = new OperatorModule();
+          const res = await operatorModule.all(page, searchQuery);
+          setOperator(res)
         } catch (error) {
-            setOperatorErrors(error as ApiError)
+          setOperatorErrors(error as ApiError)
         } finally {
             setIsOperatorLoading(false)
         }
       }
 
-    return { operator, isOperatorLoading, setOperatorErrors, fetchOperator }
+    return { operator, isOperatorLoading, operatorError, fetchOperator }
 }

@@ -16,16 +16,30 @@ export default class TherapistModule {
 
     public async all(
         page: string = '1', 
-        status: 'therapist' = 'therapist'
+        searchQuery: string = ''
     ): Promise<DataWithPagination<Therapist>> {
+         // Validasi parameter
+        if (!/^\d+$/.test(page)) {
+            throw new Error('Invalid page number');
+        }
+
         try {
-            return await ApiModule.makeRequestTo<DataWithPagination<Therapist>>(
-                `${this.url}?page=${page}&status=${status.toString()}`,
-            ).with({
+            let url = `${this.url}?page=${page}`;
+            if (searchQuery) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+
+            // Logging URL request
+            // console.log(`Request URL: ${url}`);
+
+            return await ApiModule.makeRequestTo<DataWithPagination<Therapist>>(url).with({
                 headers: this.defaultHeaders,
-            })
+            });
         } catch (err: any) {
-            throw err satisfies ApiError
+            // Logging error
+            console.error('Error fetching data:', err);
+
+            throw new Error(`Failed to fetch data: ${err.message}`);
         }
     }
 
