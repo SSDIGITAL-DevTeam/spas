@@ -1,14 +1,31 @@
-import { JSX, useEffect } from "react";
+import { JSX, useEffect, useState } from "react";
 import { Tabs, Tab, Button, Image } from "@nextui-org/react";
-import AssetLogo from "@/assets/dev/company-logo.png";
 import Link from "next/link";
 import Head from "next/head";
 import { useOperator } from "@/hooks/useOperator";
 import { useTherapist } from "@/hooks/useTherapist";
 import Loading from "@/components/partials/Loading";
+import { Input } from "@nextui-org/react";
 import { useRequestUpdate } from "@/hooks/useRequestUpdate";
 
 export default function MemberRequest(): JSX.Element {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    await fetchRequestUpdate("1", query);
+  };
+
+  const handleSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    await fetchRequestUpdate("1", searchQuery);
+  };
+
   const { requestUpdate, isRequestUpdateLoading, fetchRequestUpdate } =
     useRequestUpdate();
 
@@ -47,6 +64,18 @@ export default function MemberRequest(): JSX.Element {
             Member Request Update
           </h1>
 
+          <form>
+            <div className="w-60 pb-5">
+              <Input
+                name="search"
+                placeholder="Search..."
+                variant="bordered"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </form>
+
           <div className="flex w-full flex-col space-y-4 md:space-y-8">
             <Tabs aria-label="Options" color="secondary" className="mx-auto">
               <Tab key="operators" title="Spa Operators" className="relative">
@@ -83,6 +112,7 @@ export default function MemberRequest(): JSX.Element {
                             className="bg-white text-md text-black hover:bg-slate-50 h-max"
                           >
                             <td className="flex justify-center p-4">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 key={operator.brand_name}
                                 src={

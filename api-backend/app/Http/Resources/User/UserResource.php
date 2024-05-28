@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
-            'covers' => $this->covers ?? [],
+            'cover' => $this->cover_url,
         ];
 
         // Conditionally add operator data if present

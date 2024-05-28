@@ -10,11 +10,15 @@ export function useTherapist() {
     const [isTherapistLoading, setIsTherapistLoading] = useState<boolean>(false)
     const [therapistError, setTherapistErrors] = useState<ApiError>({} as ApiError)
 
-      const fetchTherapist = async(therapist1?: string): Promise<void> => {
+      const fetchTherapist = async(
+        page: string = '1', 
+        searchQuery: string = ''
+      ): Promise<void> => {
         setIsTherapistLoading(true)
         
        try {
-            const res = await new TherapistModule().all(therapist1)
+          const therapistModule = new TherapistModule();
+          const res = await therapistModule.all(page, searchQuery);
             setTherapist(res)
         } catch (error) {
             setTherapistErrors(error as ApiError)
@@ -23,5 +27,5 @@ export function useTherapist() {
         }
       }
 
-    return { therapist, isTherapistLoading, setTherapistErrors, fetchTherapist }
+    return { therapist, isTherapistLoading, therapistError, fetchTherapist }
 }

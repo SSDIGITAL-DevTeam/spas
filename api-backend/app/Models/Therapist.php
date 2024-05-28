@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
 
 class Therapist extends Model
 {
@@ -36,5 +37,12 @@ class Therapist extends Model
     public function socialMedia(): HasMany
     {
         return $this->hasMany(SocialMedia::class);
+    }
+
+    public function scopeFilterTherapist(Builder $query, $filters)
+    {
+        if ($search = $filters['search'] ?? false) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
     }
 }

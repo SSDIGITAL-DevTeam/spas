@@ -20,6 +20,23 @@ export default function Categories(): JSX.Element {
   const [categorytId, setCategorytId] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const query = event.target.value;
+      setSearchQuery(query);
+      await fetchCategory("1", query);
+  };
+
+  const handleSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    await fetchCategory("1", searchQuery);
+  };
+
   // router
   const router = useRouter();
 
@@ -92,9 +109,15 @@ export default function Categories(): JSX.Element {
           </Link>
         </header>
 
-        <form>
+        <form onSubmit={handleSearchSubmit}>
           <div className="w-60 pb-5">
-            <Input name="search" placeholder="Search..." variant="bordered" />
+            <Input
+              name="search"
+              placeholder="Search..."
+              variant="bordered"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
           </div>
         </form>
 

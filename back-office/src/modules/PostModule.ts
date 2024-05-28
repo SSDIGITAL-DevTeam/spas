@@ -20,19 +20,31 @@ export default class PostModule {
         status: PostStatusEnum = PostStatusEnum.PUBLISHED,
         searchQuery: string = ''
     ): Promise<DataWithPagination<Post>> {
+        // Validasi parameter
+        if (!/^\d+$/.test(page)) {
+            throw new Error('Invalid page number');
+        }
+        if (!Object.values(PostStatusEnum).includes(status)) {
+            throw new Error('Invalid status value');
+        }
+
         try {
             let url = `${this.url}?page=${page}&status=${status.toString()}`;
             if (searchQuery) {
                 url += `&search=${encodeURIComponent(searchQuery)}`;
             }
 
-            return await ApiModule.makeRequestTo<DataWithPagination<Post>>(
-                url
-            ).with({
+            // Logging URL request
+            // console.log(`Request URL: ${url}`);
+
+            return await ApiModule.makeRequestTo<DataWithPagination<Post>>(url).with({
                 headers: this.defaultHeaders,
             });
         } catch (err: any) {
-            throw err satisfies ApiError;
+            // Logging error
+            console.error('Error fetching data:', err);
+
+            throw new Error(`Failed to fetch data: ${err.message}`);
         }
     }
 

@@ -13,11 +13,15 @@ export function useCategoryPartner() {
     {} as ApiError
   );
 
-  const fetchCategoryPartner = async (page?: string): Promise<void> => {
+  const fetchCategoryPartner = async (
+    page: string = '1', 
+    searchQuery: string = ''
+  ): Promise<void> => {
     setIsCategoryPartnerLoading(true);
 
     try {
-      const res = await new CategoryPartnerModule().all(page);
+      const categoryPartModule = new CategoryPartnerModule();
+      const res = await categoryPartModule.all(page, searchQuery);
       setCategoryPartners(res);
     } catch (error) {
       setCategoryPartnerError(error as ApiError);

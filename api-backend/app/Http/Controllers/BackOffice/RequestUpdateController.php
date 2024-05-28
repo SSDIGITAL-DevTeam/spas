@@ -17,6 +17,9 @@ class RequestUpdateController extends Controller
     {
         return RequestUpdateCollection::make(
             RequestUpdate::latest()
+                ->filterRequest(
+                    request(['search'])
+                )
                 ->where('status', 'pending')
                 ->paginate(10)
         );

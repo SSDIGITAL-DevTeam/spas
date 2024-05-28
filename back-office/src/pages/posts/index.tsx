@@ -21,17 +21,22 @@ export default function Posts(): JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearchChange = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setSearchQuery(event.target.value);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    await fetchPosts("1", PostStatusEnum.PUBLISHED, query);
   };
 
-  const handleSearchSubmit = async (event: { preventDefault: () => void }) => {
+  const handleSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    await fetchPosts(searchQuery);
+    await fetchPosts("1", PostStatusEnum.PUBLISHED, searchQuery);
   };
 
   // router

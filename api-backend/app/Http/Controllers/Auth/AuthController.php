@@ -12,7 +12,9 @@ use App\Http\Requests\ValidateOtpRequest;
 use App\Http\Resources\Otp\OtpResource;
 use App\Http\Resources\User\UserResource;
 use App\Mail\Otp;
+use App\Models\Cover;
 use App\Models\OneTimePassword;
+use App\Models\Therapist;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
@@ -136,36 +138,26 @@ class AuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if (
-            $user !== null
-        ) {
-            // Load 'cover' relationships
-            $user->load(['operator.cover', 'therapist.cover']);
+        $therapist_id = $user->therapist_id;
+        $operator_id = $user->operator_id;
 
-            // Initialize covers array to safely handle cases where cover might be null
-            $covers = ['operator' => [], 'therapist' => []];
+        $coverUrl = null;
 
-            // Collect cover URLs for operators
-            if ($user->operator instanceof Illuminate\Database\Eloquent\Collection) {
-                $covers['operator'] = $user->operator->map(function ($op) {
-                    return $op->cover ? $op->cover->url : null;
-                })->filter()->values()->toArray();
-            } elseif ($user->operator && $user->operator->cover) {
-                $covers['operator'][] = $user->operator->cover->url;
+        if ($therapist_id) {
+            $therapist = Cover::find($therapist_id);
+            if ($therapist) {
+                $coverUrl = $therapist->url;
             }
-
-            // Collect cover URLs for therapists
-            if ($user->therapist instanceof Illuminate\Database\Eloquent\Collection) {
-                $covers['therapist'] = $user->therapist->map(function ($th) {
-                    return $th->cover ? $th->cover->url : null;
-                })->filter()->values()->toArray();
-            } elseif ($user->therapist && $user->therapist->cover) {
-                $covers['therapist'][] = $user->therapist->cover->url;
-            }
-
-            // Add covers directly to the user object
-            $user->covers = $covers;
         }
+
+        if (!$coverUrl && $operator_id) {
+            $operator = Cover::find($operator_id);
+            if ($operator) {
+                $coverUrl = $operator->url;
+            }
+        }
+
+        $user->cover_url = $coverUrl;
 
         // Return user data using the UserResource
         return new UserResource($user);

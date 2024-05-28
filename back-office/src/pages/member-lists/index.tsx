@@ -1,5 +1,5 @@
-import { JSX, useEffect } from "react";
-import { Tabs, Tab, Button, Image } from "@nextui-org/react";
+import { JSX, useEffect, useState } from "react";
+import { Tabs, Tab, Button, Image, Input } from "@nextui-org/react";
 import Link from "next/link";
 import Head from "next/head";
 import { useOperator } from "@/hooks/useOperator";
@@ -7,6 +7,25 @@ import { useTherapist } from "@/hooks/useTherapist";
 import Loading from "@/components/partials/Loading";
 
 export default function NewMembers(): JSX.Element {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    await fetchOperator("1", query);
+    await fetchTherapist("1", query);
+  };
+
+  const handleSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    await fetchOperator("1", searchQuery);
+    await fetchTherapist("1", searchQuery);
+  };
+
   const { operator, isOperatorLoading, fetchOperator } = useOperator();
 
   const { therapist, isTherapistLoading, fetchTherapist } = useTherapist();
@@ -43,6 +62,18 @@ export default function NewMembers(): JSX.Element {
           <h1 className="text-lg md:text-2xl lg:text-4xl font-semibold mb-8 md:mb-12">
             Member Lists
           </h1>
+
+          <form onSubmit={handleSearchSubmit}>
+            <div className="w-60 pb-5">
+              <Input
+                name="search"
+                placeholder="Search..."
+                variant="bordered"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </form>
 
           <div className="flex w-full flex-col space-y-4 md:space-y-8">
             <Tabs aria-label="Options" color="secondary" className="mx-auto">

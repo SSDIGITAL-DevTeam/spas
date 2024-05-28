@@ -16,7 +16,11 @@ class CategoryPartnerController extends Controller
     public function index(): CategoryPartnerCollection
     {
         return CategoryPartnerCollection::make(
-            CategoryPartner::latest()->paginate(10)
+            CategoryPartner::latest()
+                ->filterPartnerCategory(
+                    request(['search'])
+                )
+                ->paginate(10)
         );
     }
 

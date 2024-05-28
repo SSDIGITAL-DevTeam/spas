@@ -13,11 +13,15 @@ export function useValuePartner() {
     {} as ApiError
   );
 
-  const fetchValuePartner = async (page?: string): Promise<void> => {
+  const fetchValuePartner = async (
+    page: string = '1', 
+    searchQuery: string = ''
+  ): Promise<void> => {
     setIsValuePartnerLoading(true);
 
     try {
-      const res = await new ValuePartnerModule().all(page);
+      const valueModule = new ValuePartnerModule();
+      const res = await valueModule.all(page, searchQuery);
       setValuePartners(res);
     } catch (error) {
       setValuePartnerError(error as ApiError);
