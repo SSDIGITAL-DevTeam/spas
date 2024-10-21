@@ -28,7 +28,7 @@ class PostController extends Controller
             Post::with('cover', 'categories', 'tags', 'metas')
                 ->where('status', $status)
                 ->latest()
-                ->filterByCategory($request->input('search'))
+                ->filterPost(['search' => $request->input('search')])
                 ->paginate(3)
         );
     }
