@@ -44,7 +44,6 @@ class PostController extends Controller
             'published_at' => now(),
         ]);
 
-
         $post->cover()->create([
             'url' => $request->file('url')->store('post-image')
         ]);
@@ -88,10 +87,10 @@ class PostController extends Controller
 
         $post->update($validatedData);
 
-        if (array_key_exists('company_name', $validatedData)) {
-            $post->slug = Str::slug($validatedData['company_name']);
-            $post->save();
-        }
+            if (array_key_exists('company_name', $validatedData)) {
+                $post->slug = Str::slug($validatedData['company_name']);
+                $post->save();
+            }
 
         // Create tags and attach them to the post
         $tags = $request->input('tags');
