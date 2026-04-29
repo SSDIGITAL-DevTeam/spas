@@ -16,12 +16,17 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        static $categories = [
+        $categories = [
             'Facial Treatments',
             'Body Massages',
             'Aromatherapy',
             'Hydrotherapy',
-            'Manicure & Pedicure'
+            'Manicure & Pedicure',
+            'Reflexology',
+            'Sauna & Steam',
+            'Hair & Scalp Treatments',
+            'Yoga & Meditation',
+            'Wellness Consultation'
         ];
 
         return [

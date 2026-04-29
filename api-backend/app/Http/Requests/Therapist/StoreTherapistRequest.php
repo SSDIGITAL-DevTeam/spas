@@ -19,6 +19,13 @@ class StoreTherapistRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'contact_no' => preg_replace('/[\s\-]/', '', $this->contact_no ?? ''),
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -27,7 +34,7 @@ class StoreTherapistRequest extends FormRequest
             'passport_finno' => ['required', 'string', 'max:255'],
             'date_of_birth' => ['required', 'date'],
             'sex' => ['required', 'in:Male,Female'],
-            'contact_no' => ['required', 'max:255', 'phone'],
+            'contact_no' => ['required', 'regex:/^\+65[0-9]{8}$/'],
             'nationality' => ['required', 'string'],
             'date_of_issue' => ['required', 'date'],
             'address' => ['required', 'string'],
@@ -35,7 +42,6 @@ class StoreTherapistRequest extends FormRequest
             'email' => ['required', 'email', 'unique:users,email'],
             'name_cert' => ['required'],
             'issuing_organization' => ['required'],
-            'date_of_issue' => ['required', 'date'],
             'expired_date' => ['required', 'date'],
             'credential_id' => ['required', 'numeric'],
         ];
@@ -55,7 +61,7 @@ class StoreTherapistRequest extends FormRequest
             'sex.required' => 'Please select a gender.',
             'sex.in' => 'Gender must be male, female.',
             'contact_no.required' => 'A contact number is required.',
-            'contact_no.phone' => 'Contact number is not valid.',
+            'contact_no.regex' => 'Contact number must be a valid Singapore number (e.g. +6591234567).',
             'nationality.required' => 'Nationality is required.',
             'date_of_issue.required' => 'Date of issue is required.',
             'date_of_issue.date' => 'Date of issue must be a valid date.',

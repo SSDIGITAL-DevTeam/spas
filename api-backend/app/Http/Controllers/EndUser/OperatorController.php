@@ -56,10 +56,10 @@ class OperatorController extends Controller
             ]);
 
             $operatorData->user()->create([
-                'name' => $request->company_name, // Assuming you have a 'name' field for the user
+                'name' => $request->company_name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role' => UserStatus::Operator, // Set the role to default operator
+                'password' => \Illuminate\Support\Str::random(64),
+                'role' => UserStatus::Operator,
             ]);
 
             return new OperatorResource($operatorData->load('user', 'cover'));

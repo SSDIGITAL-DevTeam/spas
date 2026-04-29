@@ -31,7 +31,7 @@ class ApproveTherapist extends Mailable
     {
         return new Envelope(
             from: new Address(
-                address: config('mail.mailers.smtp.username'),
+                address: config('mail.from.address'),
                 name: sprintf('SPAS Information - %s', config('app.name')),
             ),
             subject: sprintf('%s Your login detail', config('app.name')),

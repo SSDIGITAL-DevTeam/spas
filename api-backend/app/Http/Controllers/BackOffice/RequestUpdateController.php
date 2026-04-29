@@ -118,10 +118,10 @@ class RequestUpdateController extends Controller
                 $therapist->cover()->updateOrCreate([], ['url' => $url_logo_therapist]);
             }
 
-            // Hapus data RequestUpdate yang sudah di-approve
-            // RequestUpdate::where('therapist_id', $request_update->therapist_id)
-            //     ->where('status', 'approve')
-            //     ->delete();
+            RequestUpdate::where('therapist_id', $request_update->therapist_id)
+                ->where('status', 'approve')
+                ->delete();
+
             DB::commit();
 
             return response()->json([

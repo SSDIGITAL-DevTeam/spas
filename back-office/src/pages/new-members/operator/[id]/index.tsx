@@ -1,97 +1,64 @@
 import Link from "next/link";
-import { FormEvent, JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
-import { Button, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import OperatorModule from "@/modules/OperatorModule";
+import ApiError from "@/errors/ApiError";
 import { Operator } from "@/@types";
 import Head from "next/head";
 import Loading from "@/components/partials/Loading";
 import { useRouter } from "next/router";
-import axios from "axios";
 import toast from "react-hot-toast";
 import ModalRejected from "@/components/modals/Rejected";
 
 export default function DetailMember(): JSX.Element {
-  const [singleOperator, setSingleOperator] = useState<Operator>(
-    {} as Operator
-  );
-
-  const [isApprove, setIsApprove] = useState<boolean>(false);
-  const [operatorId, setOperatorId] = useState<number>(0);
+  const [singleOperator, setSingleOperator] = useState<Operator>({} as Operator);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedOperatorId, setSelectedOperatorId] = useState<number | null>(
-    null
-  );
+  const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isOpenRejected, setIsOpenRejected] = useState<boolean>(false);
 
   const router = useRouter();
 
   useEffect(() => {
+    if (!router.query.id) return;
+
     const fetchSingleOperator = async () => {
       setIsLoading(true);
-
       try {
-        const res = await new OperatorModule().singleOperator(
-          +router.query.id!
-        );
+        const res = await new OperatorModule().singleOperator(+router.query.id!);
         setSingleOperator(res.data);
-        setIsLoading(true);
-
-        console.log(setSingleOperator);
       } catch (error) {
+        const message = error instanceof ApiError ? error.getFirstError() : "Failed to load operator.";
+        toast.error(message);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchSingleOperator();
-  }, [router]);
+  }, [router.query.id]);
 
-  const handleStatusMember = async (e: FormEvent) => {
-    e.preventDefault();
-
+  const handleApprove = async () => {
+    setIsApproving(true);
     try {
-      // Menjalankan permintaan PATCH untuk memperbarui status member
-      await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/operators/${operatorId}`,
-        {
-          status: isApprove ? "approve" : "pending",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || ""
-            )}`,
-          },
-        }
-      );
+      const formData = new FormData();
+      formData.append("status", "approve");
+      await new OperatorModule().update(formData, singleOperator.id);
 
-      // Menjalankan permintaan untuk mengirim email
-      await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/send-mail-operator/${operatorId}`,
-        {}, // Body data kosong karena tidak memerlukan data tambahan untuk mengirim email
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || ""
-            )}`,
-          },
-        }
-      );
+      const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || "");
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-mail-operator/${singleOperator.id}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      });
+
+      toast.success("Operator has been approved.");
+      router.push("/member-lists");
     } catch (error) {
-      console.error("Error during PATCH request:", error);
+      const message = error instanceof ApiError ? error.getFirstError() : "Failed to approve operator.";
+      toast.error(message);
+    } finally {
+      setIsApproving(false);
     }
-
-    // Tutup modal
-    toast("Operator has been approved.", {
-      icon: "✅",
-      style: {
-        backgroundColor: "#F4B202",
-        color: "#ffffff",
-        paddingBlock: 12,
-      },
-    });
-    router.push("/member-lists");
   };
 
   return (
@@ -101,10 +68,7 @@ export default function DetailMember(): JSX.Element {
       </Head>
       <main>
         <header className="mb-8 md:mb-12">
-          <Link
-            href={"/new-members"}
-            className="flex gap-x-4 items-center w-max"
-          >
+          <Link href="/new-members" className="flex gap-x-4 items-center w-max">
             <div className="bg-secondary p-2 rounded-md">
               <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
             </div>
@@ -125,15 +89,13 @@ export default function DetailMember(): JSX.Element {
 
               <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12">
                 <div className="md:w-1/2 md:space-y-8">
-                  <label htmlFor="">Logo</label>
-
+                  <label>Logo</label>
                   <div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      key={singleOperator.id}
                       src={
                         singleOperator.cover
-                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover?.url}`
+                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover.url}`
                           : "/no-image.png"
                       }
                       alt={singleOperator.company_name}
@@ -142,12 +104,10 @@ export default function DetailMember(): JSX.Element {
                   </div>
                 </div>
                 <div className="md:w-1/2 md:space-y-8">
-                  <label htmlFor="">Payment Slip</label>
-
+                  <label>Payment Slip</label>
                   <div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      key={singleOperator.id}
                       src={
                         singleOperator.payment_slip
                           ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.payment_slip}`
@@ -163,42 +123,31 @@ export default function DetailMember(): JSX.Element {
               <div className="flex justify-between flex-col md:flex-row md:gap-x-20">
                 <div className="md:w-1/2 space-y-4 md:space-y-8">
                   <div className="space-y-2">
-                    <label htmlFor="">Company Name</label>
-
+                    <label>Company Name</label>
                     <div className="border-2 p-2">
-                      <span className="pl-2">
-                        {singleOperator.company_name}
-                      </span>
+                      <span className="pl-2">{singleOperator.company_name}</span>
                     </div>
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="">UEN No</label>
-
+                    <label>UEN No</label>
                     <div className="border-2 p-2">
                       <span className="pl-2">{singleOperator.uen_no}</span>
                     </div>
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="">Email</label>
-
+                    <label>Email</label>
                     <div className="border-2 p-2">
                       <span className="pl-2">{singleOperator.user?.email}</span>
                     </div>
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="">Brand Name</label>
-
+                    <label>Brand Name</label>
                     <div className="border-2 p-2">
                       <span className="pl-2">{singleOperator.brand_name}</span>
                     </div>
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="">Contact Company No</label>
-
+                    <label>Contact Company No</label>
                     <div className="border-2 p-2">
                       <span className="pl-2">{singleOperator.contact_no}</span>
                     </div>
@@ -207,72 +156,48 @@ export default function DetailMember(): JSX.Element {
 
                 <div className="md:w-1/2 space-y-4 md:space-y-8">
                   <div className="flex flex-col gap-y-2">
-                    <label htmlFor="">Address</label>
-
+                    <label>Address</label>
                     <textarea
                       className="border-2 p-2 h-36"
                       disabled
                       defaultValue={singleOperator.address}
                     />
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="">Contact Person</label>
-
+                    <label>Contact Person</label>
                     <div className="border-2 p-2">
-                      <span className="pl-2">
-                        {singleOperator.contact_person}
-                      </span>
+                      <span className="pl-2">{singleOperator.contact_person}</span>
                     </div>
                   </div>
-
                   <div className="space-y-2">
-                    <label htmlFor="">Contact Person No</label>
-
+                    <label>Contact Person No</label>
                     <div className="border-2 p-2">
-                      <span className="pl-2">
-                        {singleOperator.contact_person_no}
-                      </span>
+                      <span className="pl-2">{singleOperator.contact_person_no}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </section>
 
-            <section>
+            <section className="pb-12">
               <div className="w-max mx-auto">
                 <div className="flex flex-col md:flex-row gap-x-10 gap-y-4">
                   <Button
-                    onClick={() => {
-                      setSelectedOperatorId(singleOperator.id);
-                      setIsOpenRejected(!isOpenRejected);
-                    }}
+                    onClick={() => setIsOpenRejected(true)}
                     color="danger"
                     size="lg"
                   >
                     Reject
                   </Button>
-
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      setOperatorId(singleOperator.id);
-                      setIsApprove(true);
-                      handleStatusMember(e);
-                    }}
+                  <Button
+                    onClick={handleApprove}
+                    isLoading={isApproving}
+                    isDisabled={isApproving}
+                    color="secondary"
+                    size="lg"
                   >
-                    <Button
-                      type="submit"
-                      color="secondary"
-                      size="lg"
-                      onClick={() => {
-                        setOperatorId(singleOperator.id);
-                        setIsApprove(true);
-                      }}
-                    >
-                      Approve
-                    </Button>
-                  </form>
+                    {isApproving ? "Approving..." : "Approve"}
+                  </Button>
                 </div>
               </div>
             </section>
@@ -283,7 +208,7 @@ export default function DetailMember(): JSX.Element {
       <ModalRejected
         isOpen={isOpenRejected}
         setIsOpen={setIsOpenRejected}
-        operatorId={selectedOperatorId}
+        operatorId={singleOperator.id ?? null}
       />
     </>
   );

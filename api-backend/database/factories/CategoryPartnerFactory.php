@@ -18,9 +18,11 @@ class CategoryPartnerFactory extends Factory
     public function definition(): array
     {
         static $categoryPartners = [
-            'Aircon vendor',
-            'Digital partner',
-            'POS system vendor',
+            'Spa Equipment Vendor',
+            'Skincare & Cosmetics Supplier',
+            'Aromatherapy & Essential Oils Provider',
+            'Wellness Tech Partner',
+            'Booking & POS System',
         ];
 
         $name = fake()->unique()->randomElement($categoryPartners);

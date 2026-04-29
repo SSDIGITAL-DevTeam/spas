@@ -29,7 +29,7 @@ class SendMailPasswordController extends Controller
         $newPassword = Str::random(8);
 
         $user->update([
-            'password' => Hash::make($newPassword),
+            'password' => $newPassword,
         ]);
 
         // Mail::to('lawakclub17@gmail.com')->send(new ApproveOperator($newPassword, $user));
@@ -52,7 +52,7 @@ class SendMailPasswordController extends Controller
         $newPassword = Str::random(8);
 
         $user->update([
-            'password' => Hash::make($newPassword),
+            'password' => $newPassword,
         ]);
 
         // Mail::to('lawakclub17@gmail.com')->send(new ApproveTherapist($newPassword, $user));

@@ -19,6 +19,14 @@ class StoreOperatorRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'contact_no' => preg_replace('/[\s\-]/', '', $this->contact_no ?? ''),
+            'contact_person_no' => preg_replace('/[\s\-]/', '', $this->contact_person_no ?? ''),
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -26,9 +34,9 @@ class StoreOperatorRequest extends FormRequest
             'uen_no' => ['required', 'string', 'max:255', 'unique:operators,uen_no'],
             'brand_name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
-            'contact_no' => ['required', 'max:255', 'phone'],
+            'contact_no' => ['required', 'regex:/^\+65[0-9]{8}$/'],
             'contact_person' => ['required', 'string', 'max:255'],
-            'contact_person_no' => ['required', 'string', 'max:255', 'phone'],
+            'contact_person_no' => ['required', 'regex:/^\+65[0-9]{8}$/'],
             'url' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'payment_slip' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'email' => ['required', 'email', 'unique:users,email'],
@@ -44,10 +52,10 @@ class StoreOperatorRequest extends FormRequest
             'brand_name.required' => 'Brand name is required.',
             'address.required' => 'Address is required.',
             'contact_no.required' => 'Contact number is required.',
-            'contact_no.phone' => 'Contact number is not valid.',
+            'contact_no.regex' => 'Contact number must be a valid Singapore number (e.g. +6591234567).',
             'contact_person.required' => 'Contact person name is required.',
             'contact_person_no.required' => 'Contact person number is required.',
-            'contact_person_no.phone' => 'Contact person number is not valid.',
+            'contact_person_no.regex' => 'Contact person number must be a valid Singapore number (e.g. +6591234567).',
             'payment_slip.required' => 'Payment slip is required.',
             'payment_slip.image' => 'Payment slip must be an image.',
             'payment_slip.mimes' => 'Payment slip must be a file of type: jpeg, png, jpg, gif, svg.',

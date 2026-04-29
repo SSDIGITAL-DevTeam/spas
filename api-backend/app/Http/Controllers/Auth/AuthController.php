@@ -14,6 +14,8 @@ use App\Http\Resources\User\UserResource;
 use App\Mail\Otp;
 use App\Models\Cover;
 use App\Models\OneTimePassword;
+use App\Models\Operator;
+use App\Models\Therapist;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +34,7 @@ class AuthController extends Controller
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        $user->password = $request->password;
         $user->role = UserStatus::Admin->value;
         $user->save();
 
@@ -49,6 +51,20 @@ class AuthController extends Controller
 
         /** @var User $user */
         $user = auth()->user();
+
+        if ($user->role === UserStatus::Operator) {
+            $operator = Operator::find($user->operator_id);
+            if (!$operator || $operator->status !== 'approve') {
+                return $this->error('Your account is pending approval. Please wait for admin review.', 403);
+            }
+        }
+
+        if ($user->role === UserStatus::Therapist) {
+            $therapist = Therapist::find($user->therapist_id);
+            if (!$therapist || $therapist->status !== 'approve') {
+                return $this->error('Your account is pending approval. Please wait for admin review.', 403);
+            }
+        }
 
         return $this->success([
             'token' => $user->createToken('access-token')->plainTextToken,
@@ -95,7 +111,7 @@ class AuthController extends Controller
 
             unset($validatedData['password_confirmation']);
 
-            $user->update(['password' => Hash::make($validatedData['password'])]);
+            $user->update(['password' => $validatedData['password']]);
 
             return response()->json([
                 'status' => true,

@@ -16,9 +16,22 @@ class EventFactory extends Factory
      */
     public function definition(): array
     {
+        $events = [
+            'Weekend Wellness Retreat',
+            'Global Spa & Beauty Expo',
+            'Aromatherapy Formulation Workshop',
+            'Holistic Healing Symposium',
+            'Advanced Massage Techniques Masterclass',
+            'Yoga and Mindfulness Summit',
+            'Therapist Networking Night',
+            'Skincare Innovations Conference'
+        ];
+
+        $name = fake()->randomElement($events) . ' ' . fake()->year();
+
         return [
-            'name' => fake()->sentence,
-            'description' => fake()->paragraph,
+            'name' => $name,
+            'description' => "Join us for the " . $name . ". " . fake()->paragraph(3) . " Don't miss out on this exclusive opportunity to improve your wellness journey and connect with top spa professionals.",
             'start_date' => fake()->dateTimeBetween('+1 week', '+1 month'),
             'end_date' => fake()->dateTimeBetween('+1 month', '+2 months')
         ];

@@ -16,9 +16,7 @@ class ChangePasswordController extends Controller
         unset($validatedData['current_password']);
         unset($validatedData['password_confirmation']);
 
-        $hashedPassword = Hash::make($validatedData['password']);
-
-        $request->user()->update(['password' => $hashedPassword]);
+        $request->user()->update(['password' => $validatedData['password']]);
 
         $user = $request->user();
 

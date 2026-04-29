@@ -53,10 +53,10 @@ class TherapistController extends Controller
                 'url' => $request->file('url')->store('therapist-picture', 'public')
             ]);
 
-            $user = $therapistData->user()->create([
+            $therapistData->user()->create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => \Illuminate\Support\Str::random(64),
                 'role' => UserStatus::Therapist,
             ]);
 

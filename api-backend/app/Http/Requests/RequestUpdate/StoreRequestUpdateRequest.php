@@ -3,6 +3,7 @@
 namespace App\Http\Requests\RequestUpdate;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequestUpdateRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class StoreRequestUpdateRequest extends FormRequest
         return [
             // operator
             'company_name' => ['nullable', 'string', 'max:255'],
-            'uen_no' => ['nullable', 'string', 'max:255', 'unique:operators,uen_no'],
+            'uen_no' => ['nullable', 'string', 'max:255', Rule::unique('operators', 'uen_no')->ignore($this->user()?->operator_id)],
             'brand_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:255'],
             'contact_no' => ['nullable', 'max:255', 'phone'],

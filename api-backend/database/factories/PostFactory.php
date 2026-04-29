@@ -17,10 +17,23 @@ class PostFactory extends Factory
 
     public function definition()
     {
+        $titles = [
+            'The Ultimate Guide to Relaxation through Aromatherapy',
+            '5 Benefits of Deep Tissue Body Massage',
+            'How Hydrotherapy Can Improve Your Wellbeing',
+            'Top 10 Essential Oils for a Calming Home Spa',
+            'Understanding the Healing Power of Reflexology',
+            'Skincare Routine: Maintaining Your Glow After a Facial',
+            'Mindfulness Tips for a Stress-Free Week',
+            'Why Regular Spa Visits Are Good for Mental Health'
+        ];
+
+        $title = fake()->randomElement($titles);
+
         return [
-            'title' => $title = fake()->sentence,
-            'slug' => Str::slug($title),
-            'content' => fake()->paragraph,
+            'title' => $title,
+            'slug' => Str::slug($title . '-' . fake()->numberBetween(100, 999)),
+            'content' => "In this post, we explore why wellness is vital for your daily life. " . fake()->paragraph(4) . "\n\n" . fake()->paragraph(4),
             'status' => fake()->randomElement(['2', '4']),
             'published_at' => fake()->dateTimeThisYear,
         ];
