@@ -123,7 +123,7 @@ export default function JoinUs(): JSX.Element {
   // push to sign in when not logged in
   useEffect(() => {
     const isLoggedIn = localStorage.getItem(
-      process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+      process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
     );
     if (isLoggedIn) {
       router.push("/");

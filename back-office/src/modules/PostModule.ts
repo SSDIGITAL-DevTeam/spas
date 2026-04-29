@@ -28,24 +28,14 @@ export default class PostModule {
             throw new Error('Invalid status value');
         }
 
-        try {
-            let url = `${this.url}?page=${page}&status=${status.toString()}`;
-            if (searchQuery) {
-                url += `&search=${encodeURIComponent(searchQuery)}`;
-            }
-
-            // Logging URL request
-            // console.log(`Request URL: ${url}`);
-
-            return await ApiModule.makeRequestTo<DataWithPagination<Post>>(url).with({
-                headers: this.defaultHeaders,
-            });
-        } catch (err: any) {
-            // Logging error
-            console.error('Error fetching data:', err);
-
-            throw new Error(`Failed to fetch data: ${err.message}`);
+        let url = `${this.url}?page=${page}&status=${status.toString()}`;
+        if (searchQuery) {
+            url += `&search=${encodeURIComponent(searchQuery)}`;
         }
+
+        return await ApiModule.makeRequestTo<DataWithPagination<Post>>(url).with({
+            headers: this.defaultHeaders,
+        });
     }
 
     public async single(slug: string): Promise<{ data: Post }> {

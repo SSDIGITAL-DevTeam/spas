@@ -7,17 +7,13 @@ use Illuminate\Http\Request;
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next, string $role)
     {
-        // dd(auth()->user()->role, $role);
-
         if (auth()->user()->role->value !== $role) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'status' => false,
+                'message' => 'You do not have permission to perform this action.',
+            ], 403);
         }
 
         return $next($request);

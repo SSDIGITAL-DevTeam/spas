@@ -36,7 +36,7 @@ class RequestUpdateController extends Controller
 
         $url_logo_operator = null;
         if ($request->hasFile('url_logo_operator') && $request->file('url_logo_operator')->isValid()) {
-            $url_logo_operator = $request->file('url_logo_operator')->store('operator-logo');
+            $url_logo_operator = $request->file('url_logo_operator')->store('operator-logo', 'public');
         }
 
         $dataRequest = RequestUpdate::where('operator_id', $request_update->operator_id)
@@ -85,7 +85,7 @@ class RequestUpdateController extends Controller
 
         $url_logo_therapist = null;
         if ($request->hasFile('url_logo_therapist') && $request->file('url_logo_therapist')->isValid()) {
-            $url_logo_therapist = $request->file('url_logo_therapist')->store('therapist-picture');
+            $url_logo_therapist = $request->file('url_logo_therapist')->store('therapist-picture', 'public');
         }
 
         $dataRequest = RequestUpdate::where('therapist_id', $request_update->therapist_id)

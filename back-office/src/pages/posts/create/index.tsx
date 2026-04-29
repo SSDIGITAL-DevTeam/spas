@@ -19,20 +19,17 @@ import {
 import toast from "react-hot-toast";
 import Image from "next/image";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    title: string;
-    slug: string;
-    status: string;
-    published: string;
-    cover: string;
-    content: string;
-    category: string;
-    key: string;
-    value: string;
-    content1: string;
-  };
+type PostValidationErrors = {
+  title?: string[];
+  slug?: string[];
+  status?: string[];
+  url?: string[];
+  content?: string[];
+  categories?: string[];
+  tags?: string[];
+  key?: string[];
+  value?: string[];
+  content1?: string[];
 };
 
 export default function CreatePost(): JSX.Element {
@@ -45,9 +42,7 @@ export default function CreatePost(): JSX.Element {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isCoverUploaded, setIsCoverUploaded] = useState<boolean>(false);
   const [postTags, setPostTags] = useState([] as string[]);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
+  const [validationErrors, setValidationErrors] = useState<PostValidationErrors>({});
 
   // fetch posts
   const { categories, isCategoryLoading, fetchCategory } = useCategory();
@@ -59,6 +54,7 @@ export default function CreatePost(): JSX.Element {
 
   // refs
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const tagInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>): void => {
     const image: File | null | undefined = e.currentTarget.files?.item(0);
@@ -107,7 +103,11 @@ export default function CreatePost(): JSX.Element {
     const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
 
     formData.append("status", status.value);
-    postTags.forEach((tag: string, i: number) =>
+
+    // Ambil teks yang belum di-Enter juga
+    const pendingTag = tagInputRef.current?.value.trim();
+    const allTags = pendingTag ? [...postTags, pendingTag] : postTags;
+    allTags.forEach((tag: string, i: number) =>
       formData.append(`tags[${i}][name]`, tag)
     );
 
@@ -128,12 +128,10 @@ export default function CreatePost(): JSX.Element {
       router.push(`/posts?status=PUBLISHED`);
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
+      const errors = err.getValidationErrors() as PostValidationErrors | null;
+      setValidationErrors(errors ?? {});
 
-      // console.log(err);
-
-      toast("Something Wrong", {
+      toast(err.getFirstError(), {
         icon: "🚫",
         style: {
           backgroundColor: "#D81222",
@@ -177,9 +175,9 @@ export default function CreatePost(): JSX.Element {
                   placeholder="Title..."
                 />
 
-                {validationErrors?.errors?.title && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.title[0]}
+                {validationErrors?.title && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.title[0]}
                   </p>
                 )}
               </div>
@@ -194,9 +192,9 @@ export default function CreatePost(): JSX.Element {
                   placeholder="Slug..."
                 />
 
-                {validationErrors?.errors?.slug && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.slug[0]}
+                {validationErrors?.slug && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.slug[0]}
                   </p>
                 )}
               </div>
@@ -207,9 +205,9 @@ export default function CreatePost(): JSX.Element {
                 {/* CK Editor */}
                 <TinyMceEditor id="content" textareaName="content" />
 
-                {validationErrors?.errors?.content && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.content[0]}
+                {validationErrors?.content && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.content[0]}
                   </p>
                 )}
               </div>
@@ -240,9 +238,9 @@ export default function CreatePost(): JSX.Element {
                   </div>
                 </div>
 
-                {validationErrors?.errors?.category && (
-                  <p className="text-ligh text-[#654648] mt-2">
-                    {validationErrors.errors.category[0]}
+                {validationErrors?.categories && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.categories[0]}
                   </p>
                 )}
               </div>
@@ -286,9 +284,9 @@ export default function CreatePost(): JSX.Element {
                 />
               </div>
 
-              {validationErrors?.errors?.cover && (
-                <p className="text-ligh text-[#D81222] mt-2">
-                  {validationErrors.errors.cover[0]}
+              {validationErrors?.url && (
+                <p className="text-[#D81222] mt-2">
+                  {validationErrors.url[0]}
                 </p>
               )}
 
@@ -296,8 +294,8 @@ export default function CreatePost(): JSX.Element {
               <div className="flex flex-col gap-y-4">
                 <label htmlFor="tags">Tags</label>
                 <input
+                  ref={tagInputRef}
                   className="form-input px-4 py-3 border-2 rounded-lg"
-                  name="tags"
                   type="text"
                   placeholder="Press enter to add new tag..."
                   onKeyDown={(e): void => addTag(e)}
@@ -333,9 +331,9 @@ export default function CreatePost(): JSX.Element {
                   as name, property or custom attribute.
                 </p>
 
-                {validationErrors?.errors?.key && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.key[0]}
+                {validationErrors?.key && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.key[0]}
                   </p>
                 )}
               </div>
@@ -352,9 +350,9 @@ export default function CreatePost(): JSX.Element {
                   The value that the meta tag should use as value of the
                   attribute, such as title, description, og:image, etc.
                 </p>
-                {validationErrors?.errors?.value && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.value[0]}
+                {validationErrors?.value && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.value[0]}
                   </p>
                 )}
               </div>
@@ -371,9 +369,9 @@ export default function CreatePost(): JSX.Element {
                   The content that the meta tag should use.
                 </p>
 
-                {validationErrors?.errors?.content1 && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.content1[0]}
+                {validationErrors?.content1 && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.content1[0]}
                   </p>
                 )}
               </div>

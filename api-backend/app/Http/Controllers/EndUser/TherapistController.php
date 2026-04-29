@@ -42,7 +42,7 @@ class TherapistController extends Controller
             $therapistData->date_of_issue = $request->date_of_issue;
             $therapistData->address = $request->address;
             $therapistData->address_nearest_mrt = "";
-            $therapistData->professional_certs = $request->file('professional_certs')->store('therapist-certs');
+            $therapistData->professional_certs = $request->file('professional_certs')->store('therapist-certs', 'public');
             $therapistData->name_cert = $request->name_cert;
             $therapistData->issuing_organization = $request->issuing_organization;
             $therapistData->expired_date = $request->expired_date;
@@ -50,7 +50,7 @@ class TherapistController extends Controller
             $therapistData->save();
 
             $therapistData->cover()->create([
-                'url' => $request->file('url')->store('therapist-picture')
+                'url' => $request->file('url')->store('therapist-picture', 'public')
             ]);
 
             $user = $therapistData->user()->create([
@@ -91,7 +91,7 @@ class TherapistController extends Controller
 
         $newFile = $request->file('url');
         if ($newFile) {
-            $therapist->cover()->update(['url' => $newFile->store('therapist-picture')]);
+            $therapist->cover()->update(['url' => $newFile->store('therapist-picture', 'public')]);
         }
 
         return new TherapistResource($therapist->load('user', 'cover'));

@@ -14,11 +14,9 @@ use App\Http\Resources\User\UserResource;
 use App\Mail\Otp;
 use App\Models\Cover;
 use App\Models\OneTimePassword;
-use App\Models\Therapist;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -35,32 +33,25 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = UserStatus::class;
+        $user->role = UserStatus::Admin->value;
         $user->save();
 
-        return response()->json([
-            'message' => $user
-        ]);
+        return $this->success(new UserResource($user), 'User registered successfully.', 201);
     }
 
     public function login(LoginUserRequest $request)
     {
-
         $credentials = $request->validated();
 
         if (!auth()->attempt($credentials)) {
-            return response()->json([
-                'message' => 'The provided credentials do not match our records.',
-            ], 401);
+            return $this->error('The provided credentials do not match our records.', 401);
         }
 
         /** @var User $user */
         $user = auth()->user();
 
-        return response()->json([
-            'data' => [
-                'token' => $user->createToken('access-token')->plainTextToken,
-            ],
+        return $this->success([
+            'token' => $user->createToken('access-token')->plainTextToken,
         ]);
     }
 
@@ -68,32 +59,24 @@ class AuthController extends Controller
     {
         Auth::user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'You have successfully been logged out'
-        ]);
+        return $this->success(null, 'You have successfully been logged out.');
     }
 
-    // SEND MAIL OTP
-    public function forgotPassword(ForgotPasswordRequest $request): array
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $email = $request->validated();
+        $validated = $request->validated();
 
-        $user = User::where('email', $email)->firstOrFail();
+        $user = User::where('email', $validated['email'])->firstOrFail();
 
-        if (!$user) {
-            return  ['message' => 'user not found'];
-        }
+        $otp = OneTimePassword::create([
+            'user_id' => $user->id,
+            'code' => random_int(100000, 999999),
+            'expired_at' => now()->addMinutes(5),
+        ]);
 
-        $otp = OneTimePassword::create(
-            [
-                'user_id' => $user->id,
-                'code' => random_int(100000, 999999),
-                'expired_at' => now()->addMinutes(5),
-            ]
-        );
+        Mail::to($user->email)->send(new Otp($otp));
 
-        Mail::to('lawakclub17@gmail.com')->send(new Otp($otp));
-        return compact('user', 'otp');
+        return $this->success(null, 'OTP has been sent to your email.');
     }
 
     public function validateotp(ValidateOtpRequest $request)
@@ -102,13 +85,7 @@ class AuthController extends Controller
 
         $otp = OneTimePassword::where('code', $validatedData['code'])->firstOrFail();
 
-        if ($otp) {
-            return new OtpResource($otp->load('user'));
-        } else {
-            return response()->json([
-                'message' => 'Invalid Otp'
-            ], 400);
-        }
+        return new OtpResource($otp->load('user'));
     }
 
     public function resetPassword(PasswordResetRequest $request, User $user): JsonResponse
@@ -118,40 +95,36 @@ class AuthController extends Controller
 
             unset($validatedData['password_confirmation']);
 
-            $hashedPassword = Hash::make($validatedData['password']);
+            $user->update(['password' => Hash::make($validatedData['password'])]);
 
-            $user->update(['password' => $hashedPassword]);
-
-            return new JsonResponse([
+            return response()->json([
+                'status' => true,
                 'message' => 'Password reset successfully.',
             ]);
         } catch (\Exception $e) {
-            return new JsonResponse([
+            return response()->json([
+                'status' => false,
                 'message' => 'Failed to reset password. Please try again later.',
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            ], 500);
         }
     }
 
     public function me()
     {
-
         /** @var User $user */
         $user = Auth::user();
 
-        $therapist_id = $user->therapist_id;
-        $operator_id = $user->operator_id;
-
         $coverUrl = null;
 
-        if ($therapist_id) {
-            $therapist = Cover::find($therapist_id);
+        if ($user->therapist_id) {
+            $therapist = Cover::find($user->therapist_id);
             if ($therapist) {
                 $coverUrl = $therapist->url;
             }
         }
 
-        if (!$coverUrl && $operator_id) {
-            $operator = Cover::find($operator_id);
+        if (!$coverUrl && $user->operator_id) {
+            $operator = Cover::find($user->operator_id);
             if ($operator) {
                 $coverUrl = $operator->url;
             }
@@ -159,7 +132,6 @@ class AuthController extends Controller
 
         $user->cover_url = $coverUrl;
 
-        // Return user data using the UserResource
         return new UserResource($user);
     }
 }

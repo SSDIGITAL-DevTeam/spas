@@ -61,7 +61,14 @@ export default function Posts(): JSX.Element {
       });
     } catch (error) {
       const err = error as ApiError;
-      alert(err.message);
+      toast(err.getFirstError(), {
+        icon: "🚫",
+        style: {
+          backgroundColor: "#D81222",
+          color: "#ffffff",
+          paddingBlock: 12,
+        },
+      });
     } finally {
       setIsOpen(false);
       setIsDeleting(false);
@@ -126,8 +133,6 @@ export default function Posts(): JSX.Element {
         </form>
 
         <section>
-          {!posts?.data}
-
           <div className="grid gap-4 md:gap-8">
             {posts?.data?.length === 0 && (
               <div>
@@ -361,9 +366,10 @@ export default function Posts(): JSX.Element {
               <div className="flex gap-x-4">
                 <button
                   onClick={() => handleDeleteBlog(postId)}
-                  className="btn bg-secondary px-8"
+                  disabled={isDeleting}
+                  className="btn bg-secondary px-8 disabled:opacity-50"
                 >
-                  Yes
+                  {isDeleting ? "Deleting..." : "Yes"}
                 </button>
 
                 <button onClick={() => setIsOpen(false)} className="btn">

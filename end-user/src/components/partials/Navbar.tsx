@@ -78,7 +78,7 @@ export default function Navbar(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`
             )}`,
           },
         }
@@ -106,13 +106,13 @@ export default function Navbar(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
       );
 
-      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`);
+      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`);
 
       router.push("/auth/sign-in");
     } catch (error) {

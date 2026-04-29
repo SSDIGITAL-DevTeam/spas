@@ -18,15 +18,13 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    title: string;
-    cover: string;
-    status: string;
-    content: string;
-    category: string;
-  };
+type PostValidationErrors = {
+  title?: string[];
+  url?: string[];
+  status?: string[];
+  content?: string[];
+  categories?: string[];
+  tags?: string[];
 };
 
 export default function EditPost(): JSX.Element {
@@ -38,9 +36,7 @@ export default function EditPost(): JSX.Element {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isCoverUploaded, setIsCoverUploaded] = useState<boolean>(false);
   const [postTags, setPostTags] = useState([] as string[]);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
+  const [validationErrors, setValidationErrors] = useState<PostValidationErrors>({});
 
   // fetch posts
   const { categories, isCategoryLoading, fetchCategory } = useCategory();
@@ -64,7 +60,11 @@ export default function EditPost(): JSX.Element {
           );
         }
       } catch (error) {
-      } finally {
+        const err = error as ApiError;
+        toast(err.getFirstError(), {
+          icon: "🚫",
+          style: { backgroundColor: "#D81222", color: "#ffffff", paddingBlock: 12 },
+        });
       }
     };
 
@@ -73,6 +73,7 @@ export default function EditPost(): JSX.Element {
 
   // refs
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const tagInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>): void => {
     const image: File | null | undefined = e.currentTarget.files?.item(0);
@@ -121,11 +122,13 @@ export default function EditPost(): JSX.Element {
     const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
 
     formData.append("status", status.value);
-    postTags.forEach((tag: string, i: number) =>
+
+    // Ambil teks yang belum di-Enter juga
+    const pendingTag = tagInputRef.current?.value.trim();
+    const allTags = pendingTag ? [...postTags, pendingTag] : postTags;
+    allTags.forEach((tag: string, i: number) =>
       formData.append(`tags[${i}][name]`, tag)
     );
-
-    // console.log(postTags);
 
     try {
       await new PostModule().update(formData, +router.query.id!);
@@ -142,10 +145,10 @@ export default function EditPost(): JSX.Element {
       router.push(`/posts/view/${singlePost.id}`);
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
+      const errors = err.getValidationErrors() as PostValidationErrors | null;
+      setValidationErrors(errors ?? {});
 
-      toast("Something Wrong", {
+      toast(err.getFirstError(), {
         icon: "🚫",
         style: {
           backgroundColor: "#D81222",
@@ -190,9 +193,9 @@ export default function EditPost(): JSX.Element {
                   defaultValue={singlePost.title}
                 />
 
-                {validationErrors.errors?.title && (
-                  <small className="text-light">
-                    {validationErrors.errors.title[0]}
+                {validationErrors?.title && (
+                  <small className="text-red-500">
+                    {validationErrors.title[0]}
                   </small>
                 )}
               </div>
@@ -206,9 +209,9 @@ export default function EditPost(): JSX.Element {
                   initialValue={singlePost.content}
                 />
 
-                {validationErrors.errors?.content && (
-                  <small className="text-light">
-                    {validationErrors.errors.content[0]}
+                {validationErrors?.content && (
+                  <small className="text-red-500">
+                    {validationErrors.content[0]}
                   </small>
                 )}
               </div>
@@ -239,9 +242,9 @@ export default function EditPost(): JSX.Element {
                   </div>
                 </div>
 
-                {validationErrors?.errors?.category && (
-                  <p className="text-ligh text-[#654648] mt-2">
-                    {validationErrors.errors.category[0]}
+                {validationErrors?.categories && (
+                  <p className="text-[#D81222] mt-2">
+                    {validationErrors.categories[0]}
                   </p>
                 )}
               </div>
@@ -289,9 +292,9 @@ export default function EditPost(): JSX.Element {
                 />
               </div>
 
-              {validationErrors.errors?.cover && (
-                <small className="-mt-8 text-light">
-                  {validationErrors.errors.cover[0]}
+              {validationErrors?.url && (
+                <small className="-mt-8 text-red-500">
+                  {validationErrors.url[0]}
                 </small>
               )}
 
@@ -299,8 +302,8 @@ export default function EditPost(): JSX.Element {
               <div className="flex flex-col gap-y-4">
                 <label htmlFor="tags">Tags</label>
                 <input
+                  ref={tagInputRef}
                   className="form-input block w-full px-4 py-3 border-2 rounded-lg"
-                  name="tags"
                   type="text"
                   placeholder="Press enter to add new tag..."
                   onKeyDown={(e): void => addTag(e)}

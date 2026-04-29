@@ -24,7 +24,7 @@ class UpdateValuePartnerRequest extends FormRequest
         return [
             'category_partner_id' => ['nullable'],
             'brand_name' => ['nullable', 'string'],
-            'phone_number' => ['nullable', 'phone'],
+            'phone_number' => ['nullable', 'phone:ID,AUTO'],
             'email' => ['nullable', 'email'],
             'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];

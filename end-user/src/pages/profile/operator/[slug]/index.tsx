@@ -1,4 +1,5 @@
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import React, { FormEvent, useEffect, useState } from "react";
 import "react-international-phone/style.css";
 import {
@@ -26,11 +27,12 @@ import { Branch, Operator } from "@/@types";
 import { useRouter } from "next/router";
 import { IoLogOut } from "react-icons/io5";
 import { Bounce, ToastContainer, toast } from "react-toastify";
-import Lottie from "react-lottie-player";
 import { SlOptionsVertical } from "react-icons/sl";
 import "react-toastify/dist/ReactToastify.css";
 import { IoIosTimer, IoMdAdd, IoMdAddCircle, IoMdTime } from "react-icons/io";
 import AssetWaitingAnimation from "@/assets/animation/waiting.json";
+
+const Lottie = dynamic(() => import("react-lottie-player"), { ssr: false });
 
 type ErrorResponse = {
   errors: {
@@ -82,7 +84,7 @@ export default function OperatorProfile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -100,7 +102,7 @@ export default function OperatorProfile() {
   // push to sign in when not logged in
   useEffect(() => {
     const isLoggedIn = localStorage.getItem(
-      process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+      process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
     );
     if (!isLoggedIn) {
       router.push("/auth/sign-in");
@@ -130,7 +132,7 @@ export default function OperatorProfile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -152,13 +154,13 @@ export default function OperatorProfile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
       );
 
-      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`);
+      localStorage.removeItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`);
 
       router.push("/auth/sign-in");
     } catch (error) {
@@ -180,7 +182,7 @@ export default function OperatorProfile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -210,7 +212,7 @@ export default function OperatorProfile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -236,7 +238,7 @@ export default function OperatorProfile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }

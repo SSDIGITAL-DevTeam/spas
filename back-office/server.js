@@ -3,10 +3,9 @@ const { createServer } = require("http");
 const { parse } = require("url");
 const next = require("next");
 
-const dev = process.env.NODE_ENV !== "development";
-const hostname =
-  process.env.NODE_ENV !== "development" ? "localhost" : "api.spas.com.sg";
-const port = process.env.port || 3000;
+const dev = process.env.NODE_ENV === "development";
+const hostname = process.env.HOSTNAME || "0.0.0.0";
+const port = Number(process.env.PORT || process.env.port || 3000);
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
@@ -31,7 +30,7 @@ app.prepare().then(() => {
       res.statusCode = 500;
       res.end("internal server error");
     }
-  }).listen(port, (err) => {
+  }).listen(port, hostname, (err) => {
     if (err) throw err;
     console.log(`> Ready on http://${hostname}:${port}`);
   });

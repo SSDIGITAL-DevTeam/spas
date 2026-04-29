@@ -24,7 +24,7 @@ class StoreValuePartnerRequest extends FormRequest
         return [
             'category_partner_id' => ['required'],
             'brand_name' => ['required', 'string'],
-            'phone_number' => ['required', 'phone'],
+            'phone_number' => ['required', 'phone:ID,AUTO'],
             'email' => ['required', 'email', 'unique:value_partners,email'],
             'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];

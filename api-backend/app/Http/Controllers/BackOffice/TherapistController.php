@@ -33,7 +33,7 @@ class TherapistController extends Controller
         $validatedData = $request->validated();
 
         if ($request->hasFile('professional_certs')) {
-            $certFilePath = $request->file('professional_certs')->store('therapist-certs');
+            $certFilePath = $request->file('professional_certs')->store('therapist-certs', 'public');
             $validatedData['professional_certs'] = $certFilePath;
         }
         $therapist->update($validatedData);
@@ -42,7 +42,7 @@ class TherapistController extends Controller
             $newFile = $request->file('url');
 
             // Simpan file baru
-            $filePath = $newFile->store('therapist-picture');
+            $filePath = $newFile->store('therapist-picture', 'public');
 
             if ($filePath) {
                 if ($therapist->cover) {

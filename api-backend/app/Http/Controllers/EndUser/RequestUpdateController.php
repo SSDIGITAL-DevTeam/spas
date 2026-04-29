@@ -30,7 +30,7 @@ class RequestUpdateController extends Controller
         $data['role'] = 'operator';
 
         if ($request->hasFile('url_logo_operator')) {
-            $data['url_logo_operator'] = $request->file('url_logo_operator')->store('operator-logo');
+            $data['url_logo_operator'] = $request->file('url_logo_operator')->store('operator-logo', 'public');
         }
 
         $requestUpdate = RequestUpdate::create($data);
@@ -53,11 +53,11 @@ class RequestUpdateController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('professional_certs')) {
-            $data['professional_certs'] = $request->file('professional_certs')->store('therapist-certs');
+            $data['professional_certs'] = $request->file('professional_certs')->store('therapist-certs', 'public');
         }
 
         if ($request->hasFile('url_logo_therapist')) {
-            $data['url_logo_therapist'] = $request->file('url_logo_therapist')->store('therapist-logos');
+            $data['url_logo_therapist'] = $request->file('url_logo_therapist')->store('therapist-logos', 'public');
         }
 
         $data['therapist_id'] = $id_therapist;

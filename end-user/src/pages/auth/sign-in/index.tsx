@@ -1,52 +1,49 @@
 import Head from "next/head";
 import React, { FormEvent, useState } from "react";
-import AssetBlank from "@/assets/images/blank.png";
 import Link from "next/link";
-import { Button, Image, Input, Pagination } from "@nextui-org/react";
-import Logo from "@/components/utils/Logo";
+import { Button, Image, Input } from "@nextui-org/react";
 import { LuUser2 } from "react-icons/lu";
 import AssetLogo from "@/assets/logo/spas-logo.png";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
-
-type ErrorResponse = {
-  errors: {
-    message: string;
-  };
-};
+import { apiModule, ApiRequestError } from "@/modules/apiModule";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function SpaOperators() {
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
-  const [errMessage, setErrMessage] = useState<ErrorResponse>(
-    {} as ErrorResponse
-  );
-  const [token, setToken] = useState<string>("");
-  const [isError, setIsError] = useState<boolean>(false);
+  const [errMessage, setErrMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form: HTMLFormElement = e.currentTarget;
+    setErrMessage("");
+    setIsLoading(true);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
-        form
-      );
-      setToken(response.data.data.token);
+      const response = await apiModule("/auth/sign-in", "POST", {}, formData);
+      const token = response?.data?.token;
 
       localStorage.setItem(
-        process.env.NEXT_PUBLIC_ACCESS_TOKEN || "",
-        response.data.data.token
+        process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || "",
+        token
       );
+
+      toast.success("Login successful!");
       router.push("/");
     } catch (error) {
-      console.log(error);
-      const errorMessage = error as AxiosError;
-      setErrMessage(errorMessage.response?.data as ErrorResponse);
-      setIsError(true);
+      const message =
+        error instanceof ApiRequestError
+          ? error.getFirstError()
+          : "An error occurred. Please try again.";
+      setErrMessage(message);
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -90,6 +87,7 @@ export default function SpaOperators() {
         />
       </Head>
 
+      <Toaster position="top-right" />
       <main>
         <div className="bg-[url('/hero-sign-in.webp')] bg-center lg:bg-cover bg-no-repeat h-screen">
           <div className="md:w-1/3 mx-auto">
@@ -146,16 +144,18 @@ export default function SpaOperators() {
                   </div>
 
                   <div className="w-full  md:w-3/4 mx-auto">
-                    {isError && (
-                      <p className="text-center text-red-500">
-                        Wrong email or password
+                    {errMessage && (
+                      <p className="text-center text-red-500 text-sm mb-2">
+                        {errMessage}
                       </p>
                     )}
                     <Button
                       type="submit"
+                      isLoading={isLoading}
+                      isDisabled={isLoading}
                       className="w-full bg-secondary text-white"
                     >
-                      Submit
+                      {isLoading ? "Signing in..." : "Submit"}
                     </Button>
                   </div>
 

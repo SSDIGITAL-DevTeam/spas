@@ -45,14 +45,14 @@ class OperatorController extends Controller
             $operatorData->contact_person_no = $request->contact_person_no;
 
             if ($request->hasFile('payment_slip')) {
-                $paymentSlipPath = $request->file('payment_slip')->store('payment_slips');
+                $paymentSlipPath = $request->file('payment_slip')->store('payment_slips', 'public');
                 $operatorData->payment_slip = $paymentSlipPath;
             }
 
             $operatorData->save();
 
             $operatorData->cover()->create([
-                'url' => $request->file('url')->store('operator-logo')
+                'url' => $request->file('url')->store('operator-logo', 'public')
             ]);
 
             $operatorData->user()->create([

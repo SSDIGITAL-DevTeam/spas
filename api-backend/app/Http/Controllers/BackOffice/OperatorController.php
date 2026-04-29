@@ -44,7 +44,7 @@ class OperatorController extends Controller
         $newFile = $request->file('url');
 
         if ($newFile) {
-            $operator->cover()->update(['url' => $newFile->store('operator-logo')]);
+            $operator->cover()->update(['url' => $newFile->store('operator-logo', 'public')]);
         }
 
         return new OperatorResource($operator->load('user', 'cover'));

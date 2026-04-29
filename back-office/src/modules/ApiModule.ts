@@ -1,4 +1,4 @@
-import ApiError from '@/errors/ApiError'
+import ApiError, { ApiErrorData } from '@/errors/ApiError'
 
 export default class ApiModule<ResType> {
     public static defaultHeaders: HeadersInit = {
@@ -29,7 +29,13 @@ export default class ApiModule<ResType> {
         const res = await fetch(`${this.apiUrl}${this.url}`, this.request)
 
         if (!res.ok) {
-            throw ApiError.make(res.status, await res.json())
+            let body: ApiErrorData = {}
+            try {
+                body = await res.json()
+            } catch {
+                // response body is not JSON
+            }
+            throw ApiError.make(res.status, body, body?.message)
         }
 
         if (res.status === 204) {

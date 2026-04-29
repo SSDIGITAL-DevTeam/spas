@@ -32,7 +32,7 @@ export default function Therapists(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`
             )}`,
           },
         }
@@ -55,7 +55,7 @@ export default function Therapists(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }

@@ -1,5 +1,5 @@
-import { CategoryPartner, ValuePartner } from "@/@types";
-import ApiError from "@/errors/ApiError";
+import { ValuePartner } from "@/@types";
+import ApiError, { ValidationErrors } from "@/errors/ApiError";
 import CategoryPartnerModule from "@/modules/CategoryPartner";
 import ValuePartnerModule from "@/modules/ValuePartnerModule";
 import Head from "next/head";
@@ -9,25 +9,22 @@ import { FormEvent, JSX, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Button, Image } from "@nextui-org/react";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    name: string;
-  };
+type PartnerValidationErrors = {
+  logo?: string[];
+  brand_name?: string[];
+  email?: string[];
+  phone_number?: string[];
+  category_partner_id?: string[];
 };
 
 export default function DetailPartner(): JSX.Element {
-  // router
   const router = useRouter();
 
-  // states
   const [singlePartner, setSinglePartner] = useState<ValuePartner>(
     {} as ValuePartner
   );
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
+  const [validationErrors, setValidationErrors] = useState<PartnerValidationErrors>({});
 
   useEffect(() => {
     const fetchingSinglePartner = async () => {
@@ -35,14 +32,23 @@ export default function DetailPartner(): JSX.Element {
         const res = await new ValuePartnerModule().single(+router.query.id!);
         setSinglePartner(res.data);
       } catch (error) {
-        console.log(error);
+        const err = error as ApiError;
+        toast(err.getFirstError(), {
+          icon: "🚫",
+          style: {
+            backgroundColor: "#D81222",
+            color: "#ffffff",
+            paddingBlock: 12,
+          },
+        });
       }
     };
 
-    fetchingSinglePartner();
-  }, [router]);
+    if (router.query.id) {
+      fetchingSinglePartner();
+    }
+  }, [router.query.id]);
 
-  // handle update Partner
   const handleUpdatePartner = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {
@@ -51,12 +57,11 @@ export default function DetailPartner(): JSX.Element {
 
     const form: HTMLFormElement = e.currentTarget;
     const formData: FormData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
 
     try {
       await new ValuePartnerModule().update(formData, +router.query.id!);
 
+      setValidationErrors({});
       toast("Partner Updated Successfully", {
         icon: "✅",
         style: {
@@ -69,10 +74,10 @@ export default function DetailPartner(): JSX.Element {
       router.reload();
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
+      const errors = err.getValidationErrors() as PartnerValidationErrors | null;
+      setValidationErrors(errors ?? {});
 
-      toast("Something Wrong", {
+      toast(err.getFirstError(), {
         icon: "🚫",
         style: {
           backgroundColor: "#D81222",
@@ -85,7 +90,6 @@ export default function DetailPartner(): JSX.Element {
     }
   };
 
-  console.log(singlePartner);
   return (
     <>
       <Head>
@@ -110,29 +114,25 @@ export default function DetailPartner(): JSX.Element {
               <div className="font-montserrat flex flex-col gap-y-8">
                 {/* Logo */}
                 <div>
-                  <label htmlFor="name">Brand Logo</label>
+                  <label htmlFor="logo">Brand Logo</label>
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singlePartner?.logo}`}
-                    alt={singlePartner?.brand_name}
+                    src={singlePartner?.logo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singlePartner?.logo}` : '/no-image.png'}
+                    alt={singlePartner?.brand_name || 'value partner logo'}
                     className="object-cover md:w-40 md:h-40 aspect-square"
                   />
                   <input
                     className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                     name="logo"
                     type="file"
-                    defaultValue={singlePartner?.logo}
                   />
-
-                  {validationErrors.errors?.name && (
-                    <small className="text-light">
-                      {validationErrors.errors.name[0]}
-                    </small>
+                  {validationErrors.logo && (
+                    <small className="text-red-500">{validationErrors.logo[0]}</small>
                   )}
                 </div>
 
                 {/* Brand name */}
                 <div>
-                  <label htmlFor="name">Brand Name</label>
+                  <label htmlFor="brand_name">Brand Name</label>
                   <input
                     className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                     name="brand_name"
@@ -140,17 +140,14 @@ export default function DetailPartner(): JSX.Element {
                     placeholder="Name..."
                     defaultValue={singlePartner?.brand_name}
                   />
-
-                  {validationErrors.errors?.name && (
-                    <small className="text-light">
-                      {validationErrors.errors.name[0]}
-                    </small>
+                  {validationErrors.brand_name && (
+                    <small className="text-red-500">{validationErrors.brand_name[0]}</small>
                   )}
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label htmlFor="name">Email</label>
+                  <label htmlFor="email">Email</label>
                   <input
                     className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                     name="email"
@@ -158,29 +155,22 @@ export default function DetailPartner(): JSX.Element {
                     placeholder="Email.."
                     defaultValue={singlePartner?.email}
                   />
-
-                  {validationErrors.errors?.name && (
-                    <small className="text-light">
-                      {validationErrors.errors.name[0]}
-                    </small>
+                  {validationErrors.email && (
+                    <small className="text-red-500">{validationErrors.email[0]}</small>
                   )}
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label htmlFor="name">Phone</label>
+                  <label htmlFor="phone_number">Phone</label>
                   <input
                     className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                     name="phone_number"
-                    // type="number"
                     placeholder="Phone.."
                     defaultValue={singlePartner?.phone_number}
                   />
-
-                  {validationErrors.errors?.name && (
-                    <small className="text-light">
-                      {validationErrors.errors.name[0]}
-                    </small>
+                  {validationErrors.phone_number && (
+                    <small className="text-red-500">{validationErrors.phone_number[0]}</small>
                   )}
                 </div>
               </div>
@@ -191,12 +181,6 @@ export default function DetailPartner(): JSX.Element {
                 </button>
               </div>
             </form>
-          </div>
-        </section>
-
-        <section>
-          <div className="container p-4 md:p-8">
-            <div></div>
           </div>
         </section>
       </main>

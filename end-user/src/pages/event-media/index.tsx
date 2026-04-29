@@ -42,7 +42,7 @@ export default function EventMedia(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`
+              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`
             )}`,
           },
         }

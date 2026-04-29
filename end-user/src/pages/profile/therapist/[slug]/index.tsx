@@ -1,4 +1,5 @@
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import moment from "moment";
 import { FormEvent, JSX, useEffect, useMemo, useState } from "react";
 import { Bounce, ToastContainer, toast } from "react-toastify";
@@ -40,7 +41,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDelete, MdEdit, MdOutlineDelete } from "react-icons/md";
 import DetailOperator from "@/pages/spa-operators/[slug]";
-import Lottie from "react-lottie-player";
+
+const Lottie = dynamic(() => import("react-lottie-player"), { ssr: false });
 
 type ErrorResponse = {
   errors: {
@@ -119,7 +121,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -148,7 +150,7 @@ export default function TherapistProfile(): JSX.Element {
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem(
-      process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+      process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
     );
     if (!isLoggedIn) {
       router.push("/auth/sign-in");
@@ -192,7 +194,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -219,7 +221,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -255,7 +257,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -293,7 +295,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -316,7 +318,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -351,7 +353,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -429,7 +431,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -453,7 +455,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }
@@ -489,7 +491,7 @@ export default function TherapistProfile(): JSX.Element {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN!
+              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
             )}`,
           },
         }

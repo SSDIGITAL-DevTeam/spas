@@ -1,43 +1,30 @@
 import ApiError from "@/errors/ApiError";
-import CategoryModule from "@/modules/CategoryModule";
 import ValuePartnerModule from "@/modules/ValuePartnerModule";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormEvent, JSX, useRef, useState } from "react";
+import { FormEvent, JSX, useState } from "react";
 import toast from "react-hot-toast";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    name: string;
-  };
+type PartnerValidationErrors = {
+  logo?: string[];
+  brand_name?: string[];
+  email?: string[];
+  phone_number?: string[];
+  category_partner_id?: string[];
 };
 
 export default function CreateValuePartner(): JSX.Element {
-  // router
   const router = useRouter();
 
-  // states
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
+  const [validationErrors, setValidationErrors] = useState<PartnerValidationErrors>({});
 
-  // refs
-  const imageRef = useRef<HTMLImageElement | null>(null);
-
-  // handle create category
   const handleCreate = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     setIsProcessing(true);
     e.preventDefault();
 
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
-
-    // console.log(postTags);
+    const formData: FormData = new FormData(e.currentTarget);
 
     try {
       await new ValuePartnerModule().store(formData);
@@ -54,12 +41,10 @@ export default function CreateValuePartner(): JSX.Element {
       router.push(`/value-partners`);
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
+      const errors = err.getValidationErrors() as PartnerValidationErrors | null;
+      setValidationErrors(errors ?? {});
 
-      // console.log(err.data);
-
-      toast("Something Wrong", {
+      toast(err.getFirstError(), {
         icon: "🚫",
         style: {
           backgroundColor: "#D81222",
@@ -80,7 +65,7 @@ export default function CreateValuePartner(): JSX.Element {
 
       <main>
         <Link
-          href="/categories"
+          href="/value-partners"
           className="btn bg-primary rounded-lg text-white px-4 py-2"
         >
           Back
@@ -90,61 +75,81 @@ export default function CreateValuePartner(): JSX.Element {
           <h1 className="text-2xl">New Value Partner</h1>
         </header>
 
-        <section className="">
-          <form onSubmit={(e) => handleCreate(e)}>
+        <section>
+          <form onSubmit={handleCreate}>
             <div className="font-montserrat flex flex-col gap-y-8">
-              {/* title */}
               <div>
-                <label htmlFor="name">Categories Parner</label>
-                <select name="category_partner_id">
+                <label htmlFor="category_partner_id">Category Partner</label>
+                <select
+                  name="category_partner_id"
+                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
+                >
                   <option value="3">Anything</option>
                 </select>
+                {validationErrors.category_partner_id && (
+                  <small className="text-red-500">{validationErrors.category_partner_id[0]}</small>
+                )}
               </div>
 
               <div>
-                <label htmlFor="name">Brand Name</label>
+                <label htmlFor="brand_name">Brand Name</label>
                 <input
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="brand_name"
                   type="text"
                   placeholder="Brand name.."
                 />
+                {validationErrors.brand_name && (
+                  <small className="text-red-500">{validationErrors.brand_name[0]}</small>
+                )}
               </div>
 
               <div>
-                <label htmlFor="name">Email</label>
+                <label htmlFor="email">Email</label>
                 <input
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="email"
                   type="text"
                   placeholder="Email"
                 />
+                {validationErrors.email && (
+                  <small className="text-red-500">{validationErrors.email[0]}</small>
+                )}
               </div>
 
               <div>
-                <label htmlFor="name">Phone Number</label>
+                <label htmlFor="phone_number">Phone Number</label>
                 <input
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="phone_number"
                   type="text"
-                  placeholder="Email"
+                  placeholder="Phone number"
                 />
+                {validationErrors.phone_number && (
+                  <small className="text-red-500">{validationErrors.phone_number[0]}</small>
+                )}
               </div>
 
               <div>
-                <label htmlFor="name">Logo</label>
+                <label htmlFor="logo">Logo</label>
                 <input
                   className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
                   name="logo"
                   type="file"
-                  placeholder="Email"
+                  accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml"
                 />
+                {validationErrors.logo && (
+                  <small className="text-red-500">{validationErrors.logo[0]}</small>
+                )}
               </div>
             </div>
 
             <div className="mt-12 flex justify-center gap-x-12 font-medium">
-              <button className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12">
-                {isProcessing ? "Save..." : "Save"}
+              <button
+                disabled={isProcessing}
+                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12 disabled:opacity-50"
+              >
+                {isProcessing ? "Saving..." : "Save"}
               </button>
             </div>
           </form>

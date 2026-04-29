@@ -8,133 +8,114 @@ use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Tag;
-use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    use HttpResponses;
+
+    public function index()
     {
         return PostResource::collection(
-            Post::with('cover', 'categories', 'tags', 'metas')
+            Post::with(['cover', 'categories', 'tags', 'metas'])
                 ->filterPost(request(['search']))
                 ->latest()
                 ->paginate(10)
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StorePostRequest $request)
     {
-        // return PostResource::make(Post::created($request->validated()));
-        $validatedData = $request->validated();
+        try {
+            $validatedData = $request->validated();
 
-        $slug = Str::slug($request->title);
+            $post = Post::create([
+                'title' => $validatedData['title'],
+                'slug' => Str::slug($validatedData['title']),
+                'content' => $validatedData['content'],
+                'status' => $validatedData['status'],
+                'published_at' => now(),
+            ]);
 
-        $post = Post::create([
-            'title' => $validatedData['title'],
-            'slug' => $slug,
-            'content' => $validatedData['content'],
-            'status' => $validatedData['status'],
-            'published_at' => now(),
-        ]);
+            $post->cover()->create([
+                'url' => $request->file('url')->store('post-image', 'public'),
+            ]);
 
-        $post->cover()->create([
-            'url' => $request->file('url')->store('post-image')
-        ]);
+            $post->tags()->createMany($request->input('tags', []));
 
-        // Create tags and attach them to the post
-        $tags = $request->input('tags');
-        $post->tags()->createMany($tags);
+            $categoryIds = array_column($request->input('categories', []), 'category_id');
+            $post->categories()->attach($categoryIds);
 
-        // Create categories and attach them to the post
-        $post->categories()->attach($request->input('categories'));
+            $post->metas()->create([
+                'key' => $request->key,
+                'value' => $request->value,
+                'content' => $request->content1,
+            ]);
 
-        $post->metas()->create([
-            'key' => $request->key,
-            'value' => $request->value,
-            'content' => $request->content1,
-        ]);
-
-        return new PostResource($post->load('cover', 'categories', 'tags', 'metas'));
+            return new PostResource($post->load(['cover', 'categories', 'tags', 'metas']));
+        } catch (\Exception $e) {
+            return $this->error('Failed to create post. ' . $e->getMessage(), 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Post $post): PostResource
     {
         return PostResource::make($post->load([
             'cover',
             'categories',
             'tags',
-            'metas'
+            'metas',
         ]));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdatePostRequest $request, Post $post)
     {
+        try {
+            $validatedData = $request->validated();
 
-        $validatedData = $request->validated();
+            $post->update($validatedData);
 
-        $post->update($validatedData);
-
-            if (array_key_exists('company_name', $validatedData)) {
-                $post->slug = Str::slug($validatedData['company_name']);
+            if (array_key_exists('title', $validatedData)) {
+                $post->slug = Str::slug($validatedData['title']);
                 $post->save();
             }
 
-        // Create tags and attach them to the post
-        $tags = $request->input('tags');
+            $tagNames = array_column($request->input('tags', []), 'name');
 
-        foreach ($tags as $tag) {
-            $existingTag = Tag::where('name', $tag)->first();
-
-            if (!$existingTag) {
-                Tag::updateOrInsert(['name' => $tag], ['name' => $tag]);
+            foreach ($tagNames as $name) {
+                if (!Tag::where('name', $name)->exists()) {
+                    Tag::insert(['name' => $name]);
+                }
             }
+
+            $post->tags()->sync(Tag::whereIn('name', $tagNames)->pluck('id'));
+
+            $categoryIds = array_column($request->input('categories', []), 'category_id');
+            $post->categories()->sync($categoryIds);
+
+            $newFile = $request->file('url');
+            if ($newFile) {
+                $post->cover()->update(['url' => $newFile->store('post-image', 'public')]);
+            }
+
+            $post->load(['tags', 'categories', 'cover']);
+
+            return new PostResource($post);
+        } catch (\Exception $e) {
+            return $this->error('Failed to update post. ' . $e->getMessage(), 500);
         }
-
-        $post->tags()->sync(Tag::whereIn('name', $tags)->pluck('id'));
-
-
-        // Create categories and attach them to the post
-        $post->categories()->sync($request->input('categories'));
-
-        // Update data di tabel cover
-        $newFile = $request->file('url');
-        // Lakukan update pada relasi cover
-        if ($newFile) {
-            $post->cover()->update(['url' => $newFile->store('post-image')]);
-        }
-
-        // Muat kembali relasi-relasi yang diperlukan
-        $post->load('tags', 'categories', 'cover');
-
-        return new PostResource($post);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Post $post)
     {
         try {
             $post->cover()->delete();
             $post->delete();
 
-            return response()->json(['message' => 'Post deleted successfully'], 200);
+            return $this->success(null, 'Post deleted successfully.');
         } catch (\Exception $e) {
-            // Jika terjadi kesalahan saat menghapus halaman
-            return response()->json(['error' => 'Failed to delete post. ' . $e->getMessage()], 500);
+            return $this->error('Failed to delete post. ' . $e->getMessage(), 500);
         }
     }
 }
