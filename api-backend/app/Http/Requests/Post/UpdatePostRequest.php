@@ -28,7 +28,7 @@ class UpdatePostRequest extends FormRequest
             'content' => ['nullable', 'string'],
             'status' => ['nullable', 'in:4,2'],
             'published_at' => ['nullable', 'date'],
-            'url' => ['image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'url' => ['image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'tags' => ['array'],
             'tags.*.name' => ['required'],
             'categories' => ['array'],
