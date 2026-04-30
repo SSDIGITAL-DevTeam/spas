@@ -243,7 +243,11 @@ export default function EventMedia(): JSX.Element {
                               <div className="relative">
                                 <img
                                   className="aspect-video w-full object-cover"
-                                  src={post?.cover?.url}
+                                  src={
+                                    post?.cover?.url?.startsWith("http")
+                                      ? post?.cover?.url
+                                      : `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post?.cover?.url}`
+                                  }
                                   alt={post.title}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -275,7 +279,11 @@ export default function EventMedia(): JSX.Element {
                         <Link href={`/event-media/${post.slug}`} key={post.id} className="group flex-1">
                           <div className="overflow-hidden rounded-xl">
                             <img
-                              src={post?.cover?.url}
+                              src={
+                                post?.cover?.url?.startsWith("http")
+                                  ? post?.cover?.url
+                                  : `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post?.cover?.url}`
+                              }
                               alt={post.title}
                               className="aspect-video w-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
