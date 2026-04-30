@@ -66,7 +66,11 @@ export default function ViewPost(): JSX.Element {
         {post.cover?.url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+            src={
+              post.cover.url.startsWith("http")
+                ? post.cover.url
+                : `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`
+            }
             alt={post.title}
             className="w-full aspect-video object-cover rounded-xl border border-slate-200 mb-6"
           />

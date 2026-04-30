@@ -117,7 +117,9 @@ export default function EditPost(): JSX.Element {
   if (isLoading) return <LoadingSpinner fullPage />;
 
   const inputClass = "w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary";
-  const existingCover = post.cover?.url ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}` : null;
+  const existingCover = post.cover?.url 
+    ? (post.cover.url.startsWith("http") ? post.cover.url : `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`) 
+    : null;
 
   return (
     <>
