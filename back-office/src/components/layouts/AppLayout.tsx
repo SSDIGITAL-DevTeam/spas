@@ -1,37 +1,25 @@
 import { JSX, ReactNode, useState } from "react";
 import Sidebar from "@/components/partials/Sidebar";
-import Image from "next/image";
-import Hamburger from "@/assets/svg/hum.svg";
-import ForkKnife from "@/assets/svg/x.svg";
+import Navbar from "@/components/partials/Navbar";
 
 type Props = {
   children: ReactNode;
 };
 
 export default function AppLayout({ children }: Props): JSX.Element {
-  // states
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <>
-      <div className="flex min-h-screen">
-        <Sidebar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+    <div className="min-h-screen bg-slate-50">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <div className="p-4 lg:pl-72">
-          <div className="fixed left-4 right-4 top-1/2 h-[95vh] -translate-y-1/2 overflow-y-auto rounded-xl p-4 bg-white shadow-xl md:p-8 lg:left-72">
-            {children}
-          </div>
-        </div>
+      {/* Main content shifted right on desktop */}
+      <div className="lg:pl-64 flex flex-col min-h-screen">
+        <Navbar onMenuToggle={() => setSidebarOpen((v) => !v)} />
+        <main className="flex-1 p-4 sm:p-6 min-w-0">
+          {children}
+        </main>
       </div>
-
-      <div className="fixed bottom-6 right-6 z-10 lg:hidden">
-        <Image
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-14 rounded-full bg-light/20 px-2 py-2 text-lg text-light duration-300"
-          src={isMenuOpen ? ForkKnife : Hamburger}
-          alt="Hamburger Menu"
-        />
-      </div>
-    </>
+    </div>
   );
 }

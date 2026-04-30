@@ -1,84 +1,94 @@
-/* eslint-disable @next/next/no-img-element */
-import { Dispatch, JSX, SetStateAction, useState } from "react";
+import { JSX, useState } from "react";
 import Logo from "@/assets/logo/spas-logo.png";
 import Link from "next/link";
-import { NavLink, navLinks } from "@/constants/navlink";
+import { navGroups, NavLink } from "@/constants/navlink";
 import { useRouter } from "next/router";
 import Image from "next/image";
-
+import { MdLogout } from "react-icons/md";
 import AuthModule from "@/modules/AuthModule";
 
 type Props = {
-  isMenuOpen: boolean;
-  setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
+  isOpen: boolean;
+  onClose: () => void;
 };
 
-export default function Sidebar({
-  isMenuOpen,
-  setIsMenuOpen,
-}: Props): JSX.Element {
-  // router
+export default function Sidebar({ isOpen, onClose }: Props): JSX.Element {
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // states
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const handleLogout = async (): Promise<void> => {
-    setIsLoading(true);
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
     await new AuthModule().signOut();
     localStorage.removeItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME);
     router.push("/login");
-    setIsLoading(false);
+    setIsLoggingOut(false);
   };
 
-  return (
-    <aside
-      className={`${
-        isMenuOpen
-          ? "left-0 right-0 md:left-4 md:right-4"
-          : "-translate-x-full lg:translate-x-4"
-      } fixed top-1/2 z-10 h-[95vh] -translate-y-1/2 overflow-y-auto rounded-xl bg-white shadow-lg backdrop-blur duration-300 lg:w-64`}
-    >
-      <div className="flex h-full flex-col gap-y-8 text-center">
-        <div>
-          <img
-            src={Logo.src}
-            className="w-[180px] my-6 mx-auto"
-            alt="Logo SPAS"
-          />
+  const isActive = (url: string) =>
+    url === "/" ? router.pathname === "/" : router.pathname.startsWith(url);
 
-          {/* <p className="text-2xl font-semibold text-secondary">
-						SPAS
-					</p> */}
+  return (
+    <>
+      {/* Mobile overlay — uses opacity transition so it fades in/out */}
+      <div
+        className={`fixed inset-0 z-20 bg-slate-900/50 lg:hidden transition-opacity duration-300 ease-in-out
+          ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        onClick={onClose}
+      />
+
+      <aside
+        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+      >
+        {/* Logo */}
+        <div className="flex items-center justify-center h-16 border-b border-slate-100 px-6 shrink-0">
+          <Image src={Logo} alt="SPAS Logo" className="h-8 w-auto" />
         </div>
 
-        <ul className="flex flex-col gap-y-2">
-          {navLinks.map((navLink: NavLink, index: number) => (
-            <li onClick={() => setIsMenuOpen(false)} key={`navlink-${index}`}>
-              <Link
-                className={`${
-                  router.pathname === navLink.url
-                    ? "bg-secondary w-full text-center px-5 text-white"
-                    : ""
-                } btn flex items-center gap-x-2 py-2.5 text-secondary hover:bg-secondary hover:text-white hover:text-center hover:px-5 transition-all ease-in-out`}
-                href={navLink.url}
-                aria-label="Link"
-              >
-                <Image className="w-4 pb-1" src={navLink.icon} alt="Icon" />
-                <span>{navLink.name}</span>
-              </Link>
-            </li>
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                {group.label}
+              </p>
+              <ul className="space-y-0.5">
+                {group.links.map((link: NavLink) => {
+                  const active = isActive(link.url);
+                  return (
+                    <li key={link.url}>
+                      <Link
+                        href={link.url}
+                        onClick={onClose}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${active
+                            ? "bg-primary text-white"
+                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                          }`}
+                      >
+                        <link.icon className="w-4 h-4 shrink-0" />
+                        <span>{link.name}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </nav>
 
-        <button
-          onClick={handleLogout}
-          className="bg-secondary hover:bg-primary text-center transition-all capitalize mt-auto py-2 text-white"
-        >
-          {/* <Image className="w-4 pb-1" src={AssetLogout} alt="Icon" /> */}
-          <span>{isLoading ? "Logging out.." : "Sign Out"}</span>
-        </button>
-      </div>
-    </aside>
+        {/* Logout */}
+        <div className="shrink-0 border-t border-slate-100 px-3 py-3">
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+          >
+            <MdLogout className="w-4 h-4 shrink-0" />
+            <span>{isLoggingOut ? "Signing out…" : "Sign Out"}</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

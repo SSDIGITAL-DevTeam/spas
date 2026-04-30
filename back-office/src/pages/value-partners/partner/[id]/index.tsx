@@ -1,189 +1,126 @@
-import { ValuePartner } from "@/@types";
-import ApiError, { ValidationErrors } from "@/errors/ApiError";
-import CategoryPartnerModule from "@/modules/CategoryPartner";
-import ValuePartnerModule from "@/modules/ValuePartnerModule";
+import { JSX, useEffect, useState, FormEvent } from "react";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormEvent, JSX, useEffect, useState } from "react";
+import ApiError from "@/errors/ApiError";
+import ValuePartnerModule from "@/modules/ValuePartnerModule";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import { ValuePartner } from "@/@types";
+import { Button } from "@nextui-org/react";
+import FileInput from "@/components/ui/FileInput";
+import ImageViewer from "@/components/ui/ImageViewer";
 import toast from "react-hot-toast";
-import { Button, Image } from "@nextui-org/react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
-type PartnerValidationErrors = {
+type Errors = {
   logo?: string[];
   brand_name?: string[];
   email?: string[];
   phone_number?: string[];
-  category_partner_id?: string[];
 };
 
-export default function DetailPartner(): JSX.Element {
+export default function EditValuePartner(): JSX.Element {
   const router = useRouter();
-
-  const [singlePartner, setSinglePartner] = useState<ValuePartner>(
-    {} as ValuePartner
-  );
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [validationErrors, setValidationErrors] = useState<PartnerValidationErrors>({});
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [partner, setPartner] = useState<ValuePartner>({} as ValuePartner);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
-    const fetchingSinglePartner = async () => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Value Partners", href: "/value-partners" },
+      { label: "Edit Partner" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!router.query.id) return;
+    const load = async () => {
+      setIsLoading(true);
       try {
         const res = await new ValuePartnerModule().single(+router.query.id!);
-        setSinglePartner(res.data);
+        setPartner(res.data);
       } catch (error) {
         const err = error as ApiError;
-        toast(err.getFirstError(), {
-          icon: "🚫",
-          style: {
-            backgroundColor: "#D81222",
-            color: "#ffffff",
-            paddingBlock: 12,
-          },
-        });
+        toast.error(err.getFirstError?.() ?? "Failed to load partner.");
+      } finally {
+        setIsLoading(false);
       }
     };
-
-    if (router.query.id) {
-      fetchingSinglePartner();
-    }
+    load();
   }, [router.query.id]);
 
-  const handleUpdatePartner = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    setIsProcessing(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-
+    setIsProcessing(true);
+    setErrors({});
     try {
-      await new ValuePartnerModule().update(formData, +router.query.id!);
-
-      setValidationErrors({});
-      toast("Partner Updated Successfully", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-
-      router.reload();
+      await new ValuePartnerModule().update(new FormData(e.currentTarget), +router.query.id!);
+      toast.success("Partner updated.");
+      router.push("/value-partners");
     } catch (error) {
       const err = error as ApiError;
-      const errors = err.getValidationErrors() as PartnerValidationErrors | null;
-      setValidationErrors(errors ?? {});
-
-      toast(err.getFirstError(), {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      setErrors((err.getValidationErrors?.() as Errors) ?? {});
+      toast.error(err.getFirstError?.() ?? "Something went wrong.");
     } finally {
       setIsProcessing(false);
     }
   };
 
+  if (isLoading) return <LoadingSpinner fullPage />;
+
+  const inputClass = "w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary";
+
   return (
     <>
-      <Head>
-        <title>SPAS | Edit - Value Partner</title>
-      </Head>
+      <Head><title>SPAS | Edit Value Partner</title></Head>
 
-      <main>
-        <Link
-          href="/value-partners"
-          className="btn bg-primary rounded-lg text-white px-4 py-2"
-        >
-          Back
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-slate-800">Edit Value Partner</h1>
+        <p className="text-sm text-slate-500 mt-0.5">{partner.brand_name}</p>
+      </div>
 
-        <header className="my-8">
-          <h1 className="text-2xl">Edit Value Partner</h1>
-        </header>
-
-        <section className="">
-          <div className="container p-4 md:p-8">
-            <form onSubmit={(e) => handleUpdatePartner(e)}>
-              <div className="font-montserrat flex flex-col gap-y-8">
-                {/* Logo */}
-                <div>
-                  <label htmlFor="logo">Brand Logo</label>
-                  <Image
-                    src={singlePartner?.logo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singlePartner?.logo}` : '/no-image.png'}
-                    alt={singlePartner?.brand_name || 'value partner logo'}
-                    className="object-cover md:w-40 md:h-40 aspect-square"
-                  />
-                  <input
-                    className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                    name="logo"
-                    type="file"
-                  />
-                  {validationErrors.logo && (
-                    <small className="text-red-500">{validationErrors.logo[0]}</small>
-                  )}
-                </div>
-
-                {/* Brand name */}
-                <div>
-                  <label htmlFor="brand_name">Brand Name</label>
-                  <input
-                    className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                    name="brand_name"
-                    type="text"
-                    placeholder="Name..."
-                    defaultValue={singlePartner?.brand_name}
-                  />
-                  {validationErrors.brand_name && (
-                    <small className="text-red-500">{validationErrors.brand_name[0]}</small>
-                  )}
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label htmlFor="email">Email</label>
-                  <input
-                    className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                    name="email"
-                    type="text"
-                    placeholder="Email.."
-                    defaultValue={singlePartner?.email}
-                  />
-                  {validationErrors.email && (
-                    <small className="text-red-500">{validationErrors.email[0]}</small>
-                  )}
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label htmlFor="phone_number">Phone</label>
-                  <input
-                    className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                    name="phone_number"
-                    placeholder="Phone.."
-                    defaultValue={singlePartner?.phone_number}
-                  />
-                  {validationErrors.phone_number && (
-                    <small className="text-red-500">{validationErrors.phone_number[0]}</small>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
-                <button className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12">
-                  {isProcessing ? "Updating..." : "Update"}
-                </button>
-              </div>
-            </form>
+      <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 max-w-2xl">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Current Logo</label>
+            <ImageViewer
+              src={partner.logo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${partner.logo}` : "/no-image.png"}
+              alt={partner.brand_name ?? "Logo"}
+              className="w-24 h-24 rounded-xl object-cover border border-slate-200 mb-3"
+            />
+            <label className="block text-sm font-medium text-slate-700 mb-1">Replace Logo</label>
+            <FileInput name="logo" accept="image/*" />
+            {errors.logo && <p className="mt-1 text-xs text-red-500">{errors.logo[0]}</p>}
           </div>
-        </section>
-      </main>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Brand Name</label>
+            <input name="brand_name" type="text" defaultValue={partner.brand_name} className={inputClass} />
+            {errors.brand_name && <p className="mt-1 text-xs text-red-500">{errors.brand_name[0]}</p>}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <input name="email" type="email" defaultValue={partner.email} className={inputClass} />
+              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+              <input name="phone_number" defaultValue={partner.phone_number} className={inputClass} />
+              {errors.phone_number && <p className="mt-1 text-xs text-red-500">{errors.phone_number[0]}</p>}
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <Button type="submit" color="primary" size="sm" isLoading={isProcessing}>Update</Button>
+            <Button variant="flat" size="sm" onPress={() => router.push("/value-partners")} isDisabled={isProcessing}>Cancel</Button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }

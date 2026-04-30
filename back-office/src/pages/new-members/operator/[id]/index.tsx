@@ -1,41 +1,59 @@
-import Link from "next/link";
 import { JSX, useEffect, useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
+import Head from "next/head";
 import { Button } from "@nextui-org/react";
+import { useRouter } from "next/router";
 import OperatorModule from "@/modules/OperatorModule";
 import ApiError from "@/errors/ApiError";
 import { Operator } from "@/@types";
-import Head from "next/head";
-import Loading from "@/components/partials/Loading";
-import { useRouter } from "next/router";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import StatusBadge from "@/components/ui/StatusBadge";
+import ImageViewer from "@/components/ui/ImageViewer";
 import toast from "react-hot-toast";
-import ModalRejected from "@/components/modals/Rejected";
 
-export default function DetailMember(): JSX.Element {
-  const [singleOperator, setSingleOperator] = useState<Operator>({} as Operator);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isApproving, setIsApproving] = useState<boolean>(false);
-  const [isOpenRejected, setIsOpenRejected] = useState<boolean>(false);
+function InfoRow({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-sm text-slate-700">{value || "—"}</p>
+    </div>
+  );
+}
 
+export default function DetailOperator(): JSX.Element {
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [operator, setOperator] = useState<Operator>({} as Operator);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isRejectOpen, setIsRejectOpen] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "New Members", href: "/new-members" },
+      { label: "Operator Detail" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!router.query.id) return;
-
-    const fetchSingleOperator = async () => {
+    const load = async () => {
       setIsLoading(true);
       try {
         const res = await new OperatorModule().singleOperator(+router.query.id!);
-        setSingleOperator(res.data);
+        setOperator(res.data);
       } catch (error) {
-        const message = error instanceof ApiError ? error.getFirstError() : "Failed to load operator.";
-        toast.error(message);
+        const msg = error instanceof ApiError ? error.getFirstError() : "Failed to load operator.";
+        toast.error(msg);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchSingleOperator();
+    load();
   }, [router.query.id]);
 
   const handleApprove = async () => {
@@ -43,172 +61,116 @@ export default function DetailMember(): JSX.Element {
     try {
       const formData = new FormData();
       formData.append("status", "approve");
-      await new OperatorModule().update(formData, singleOperator.id);
+      await new OperatorModule().update(formData, operator.id);
 
       const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || "");
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-mail-operator/${singleOperator.id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-mail-operator/${operator.id}`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
 
-      toast.success("Operator has been approved.");
+      toast.success("Operator approved and notified by email.");
       router.push("/member-lists");
     } catch (error) {
-      const message = error instanceof ApiError ? error.getFirstError() : "Failed to approve operator.";
-      toast.error(message);
+      const msg = error instanceof ApiError ? error.getFirstError() : "Failed to approve.";
+      toast.error(msg);
     } finally {
       setIsApproving(false);
     }
   };
 
+  const handleReject = async () => {
+    setIsRejecting(true);
+    try {
+      const formData = new FormData();
+      formData.append("status", "reject");
+      await new OperatorModule().update(formData, operator.id);
+      toast.success("Operator rejected.");
+      router.push("/new-members");
+    } catch (error) {
+      const msg = error instanceof ApiError ? error.getFirstError() : "Failed to reject.";
+      toast.error(msg);
+    } finally {
+      setIsRejecting(false);
+      setIsRejectOpen(false);
+    }
+  };
+
+  if (isLoading) return <LoadingSpinner fullPage />;
+
   return (
     <>
-      <Head>
-        <title>SPAS | {singleOperator.company_name}</title>
-      </Head>
-      <main>
-        <header className="mb-8 md:mb-12">
-          <Link href="/new-members" className="flex gap-x-4 items-center w-max">
-            <div className="bg-secondary p-2 rounded-md">
-              <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
-            </div>
-            <span className="text-base md:text-2xl lg:text-3xl">
-              Back to New Member Lists
-            </span>
-          </Link>
-        </header>
+      <Head><title>SPAS | {operator.company_name}</title></Head>
 
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            <section className="container p-4 md:p-8">
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-12">
-                Detail Operator
-              </h1>
-
-              <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12">
-                <div className="md:w-1/2 md:space-y-8">
-                  <label>Logo</label>
-                  <div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={
-                        singleOperator.cover
-                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover.url}`
-                          : "/no-image.png"
-                      }
-                      alt={singleOperator.company_name}
-                      className="object-cover w-80"
-                    />
-                  </div>
-                </div>
-                <div className="md:w-1/2 md:space-y-8">
-                  <label>Payment Slip</label>
-                  <div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={
-                        singleOperator.payment_slip
-                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.payment_slip}`
-                          : "/no-image.png"
-                      }
-                      alt={singleOperator.company_name}
-                      className="object-cover w-80"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between flex-col md:flex-row md:gap-x-20">
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="space-y-2">
-                    <label>Company Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.company_name}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>UEN No</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.uen_no}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Email</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.user?.email}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Brand Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.brand_name}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact Company No</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.contact_no}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="flex flex-col gap-y-2">
-                    <label>Address</label>
-                    <textarea
-                      className="border-2 p-2 h-36"
-                      disabled
-                      defaultValue={singleOperator.address}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact Person</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.contact_person}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact Person No</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleOperator.contact_person_no}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="pb-12">
-              <div className="w-max mx-auto">
-                <div className="flex flex-col md:flex-row gap-x-10 gap-y-4">
-                  <Button
-                    onClick={() => setIsOpenRejected(true)}
-                    color="danger"
-                    size="lg"
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    onClick={handleApprove}
-                    isLoading={isApproving}
-                    isDisabled={isApproving}
-                    color="secondary"
-                    size="lg"
-                  >
-                    {isApproving ? "Approving..." : "Approve"}
-                  </Button>
-                </div>
-              </div>
-            </section>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-800">{operator.company_name}</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-slate-500">Operator Review</p>
+            <StatusBadge status={operator.status as "pending" | "approve" | "reject"} />
           </div>
-        )}
-      </main>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <Button size="sm" color="danger" variant="flat" onPress={() => setIsRejectOpen(true)}>
+            Reject
+          </Button>
+          <Button size="sm" color="primary" isLoading={isApproving} onPress={handleApprove}>
+            Approve
+          </Button>
+        </div>
+      </div>
 
-      <ModalRejected
-        isOpen={isOpenRejected}
-        setIsOpen={setIsOpenRejected}
-        operatorId={singleOperator.id ?? null}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Images */}
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-4">Documents</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Company Logo</p>
+              <ImageViewer
+                src={operator.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}` : "/no-image.png"}
+                alt="Logo"
+                className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+              />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Payment Slip</p>
+              <ImageViewer
+                src={operator.payment_slip ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.payment_slip}` : "/no-image.png"}
+                alt="Payment Slip"
+                className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Company Info */}
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-4">Company Information</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InfoRow label="Company Name" value={operator.company_name} />
+            <InfoRow label="Brand Name" value={operator.brand_name} />
+            <InfoRow label="UEN No" value={operator.uen_no} />
+            <InfoRow label="Email" value={operator.user?.email} />
+            <InfoRow label="Contact No" value={operator.contact_no} />
+            <InfoRow label="Contact Person" value={operator.contact_person} />
+            <InfoRow label="Contact Person No" value={operator.contact_person_no} />
+            <div className="sm:col-span-2">
+              <InfoRow label="Address" value={operator.address} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ConfirmModal
+        isOpen={isRejectOpen}
+        onClose={() => setIsRejectOpen(false)}
+        onConfirm={handleReject}
+        isLoading={isRejecting}
+        title="Reject Operator"
+        message="Are you sure you want to reject this operator registration?"
+        confirmLabel="Reject"
+        confirmColor="danger"
       />
     </>
   );

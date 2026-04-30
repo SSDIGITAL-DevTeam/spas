@@ -1,105 +1,92 @@
-import Head from "next/head";
 import { JSX, useEffect, useState } from "react";
-import Link from "next/link";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import { Button } from "@nextui-org/react";
 import PostModule from "@/modules/PostModule";
-import { Cover, Post, Tag, Category } from "@/@types";
-import Loading from "@/components/partials/Loading";
+import { Post, Category, Tag } from "@/@types";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { MdEdit } from "react-icons/md";
 
 export default function ViewPost(): JSX.Element {
-  // states
-  const [singlePost, setSinglePost] = useState<Post>({} as Post);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // router
   const router = useRouter();
-
-  const cover = singlePost.cover as Cover;
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [post, setPost] = useState<Post>({} as Post);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSinglePost = async () => {
-      setIsLoading(true);
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Posts", href: "/posts" },
+      { label: "View Post" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
+    if (!router.query.id) return;
+    const load = async () => {
+      setIsLoading(true);
       try {
         const res = await new PostModule().singlePost(+router.query.id!);
-        setSinglePost(res.data);
-
-        // console.log(res.data.categories);
-      } catch (error) {
+        setPost(res.data);
+      } catch {
+        // silently fail
       } finally {
         setIsLoading(false);
       }
     };
+    load();
+  }, [router.query.id]);
 
-    fetchSinglePost();
-  }, [router]);
+  if (isLoading) return <LoadingSpinner fullPage />;
 
   return (
     <>
-      <Head>
-        <title>SPAS | {singlePost.title}</title>
-      </Head>
+      <Head><title>SPAS | {post.title}</title></Head>
 
-      <main>
-        <Link
-          href="/posts"
-          className="btn bg-primary rounded-lg text-white px-4 py-2"
-        >
-          Back
-        </Link>
-
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <section className="mx-auto mt-8 flex max-w-2xl flex-col gap-y-8">
-            <header>
-              <h1 className="md:text-3xl">{singlePost.title}</h1>
-
-              <div className="mt-2 flex gap-x-2">
-                {singlePost.categories?.map(
-                  (category: Category, index: number) => (
-                    <div
-                      key={`categories-${index}`}
-                      className="rounded-lg bg-secondary/40 px-2 py-1"
-                    >
-                      <span>{category.name}</span>
-                    </div>
-                  )
-                )}
-              </div>
-            </header>
-
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="aspect-video w-full rounded-xl object-cover"
-              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${
-                singlePost.cover?.url ?? "/no-image.png"
-              }`}
-              alt="Asset Cover"
-            />
-
-            <article
-              className="prose min-w-full"
-              dangerouslySetInnerHTML={{
-                __html: singlePost.content,
-              }}
-            ></article>
-
-            <div className="mt-2 flex flex-col lg:flex-row gap-x-2">
-              <div className="grid grid-cols-4 gap-1">
-                {singlePost.tags?.map((tag: Tag, index: number) => (
-                  <div
-                    key={`tag-${index}`}
-                    className="rounded-lg bg-secondary/40 px-2 py-1"
-                  >
-                    <span>#{tag.name}</span>
-                  </div>
-                ))}
-              </div>
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-start justify-between gap-4 mb-6">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold text-slate-800">{post.title}</h1>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {post.categories?.map((cat: Category, i: number) => (
+                <span key={i} className="px-2 py-0.5 bg-secondary/10 text-secondary text-xs rounded-full">
+                  {cat.name}
+                </span>
+              ))}
             </div>
-          </section>
+          </div>
+          <Button as={Link} href={`/posts/edit/${post.id}`} size="sm" color="primary" startContent={<MdEdit className="w-4 h-4" />}>
+            Edit
+          </Button>
+        </div>
+
+        {post.cover?.url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+            alt={post.title}
+            className="w-full aspect-video object-cover rounded-xl border border-slate-200 mb-6"
+          />
         )}
-      </main>
+
+        <article
+          className="prose prose-slate max-w-none"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-slate-100">
+            {post.tags.map((tag: Tag, i: number) => (
+              <span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full">
+                #{tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 }

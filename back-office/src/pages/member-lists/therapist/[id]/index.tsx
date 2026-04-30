@@ -1,465 +1,210 @@
-import Link from "next/link";
-import { JSX, useState, useMemo, useEffect, FormEvent } from "react";
-import { FaChevronLeft, FaInfoCircle } from "react-icons/fa";
-import { Button, Image, Input } from "@nextui-org/react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import countryList from "react-select-country-list";
-import { Therapist } from "@/@types";
+import { JSX, useEffect, useMemo, useState, FormEvent } from "react";
 import Head from "next/head";
-import TherapistModule from "@/modules/TherapistModule";
+import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/router";
-import Loading from "@/components/partials/Loading";
-import toast from "react-hot-toast";
+import TherapistModule from "@/modules/TherapistModule";
 import ApiError from "@/errors/ApiError";
+import { Therapist } from "@/@types";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import FileInput from "@/components/ui/FileInput";
+import ImageViewer from "@/components/ui/ImageViewer";
+import toast from "react-hot-toast";
+import countryList from "react-select-country-list";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    name: string;
-    passport_finno: string;
-    date_of_birth: string;
-    sex: string;
-    contact_no: string;
-    nationality: string;
-    address: string;
-    professional_certs: string;
-    email: string;
-    name_cert: string;
-    issuing_organization: string;
-    date_of_issue: string;
-    expired_date: string;
-    credential_id: string;
-    url: string;
-  };
+type Errors = {
+  name?: string[];
+  passport_finno?: string[];
+  date_of_birth?: string[];
+  sex?: string[];
+  contact_no?: string[];
+  nationality?: string[];
+  address?: string[];
+  professional_certs?: string[];
+  email?: string[];
+  name_cert?: string[];
+  issuing_organization?: string[];
+  date_of_issue?: string[];
+  expired_date?: string[];
+  credential_id?: string[];
+  url?: string[];
 };
 
-export default function DetailMember(): JSX.Element {
-  const [singleTherapist, setSingleTherapist] = useState<Therapist>(
-    {} as Therapist
-  );
-
-  const [startDate, setStartDate] = useState(new Date());
-  const options = useMemo(() => countryList().getData(), []);
-  const [value, setValue] = useState("");
-
-  const changeHandler = (value: any) => {
-    setValue(value);
-  };
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
+export default function EditTherapist(): JSX.Element {
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [therapist, setTherapist] = useState<Therapist>({} as Therapist);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
+  const countries = useMemo(() => countryList().getData(), []);
 
   useEffect(() => {
-    const fetchSingleTherapist = async () => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Member Lists", href: "/member-lists" },
+      { label: "Edit Therapist" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!router.query.id) return;
+    const load = async () => {
       setIsLoading(true);
-
       try {
-        const res = await new TherapistModule().singleTherapist(
-          +router.query.id!
-        );
-        setSingleTherapist(res.data);
-        setIsLoading(true);
-
-        // console.log(setSingleTherapist);
-      } catch (error) {
+        const res = await new TherapistModule().singleTherapist(+router.query.id!);
+        setTherapist(res.data);
+      } catch {
+        toast.error("Failed to load therapist.");
       } finally {
         setIsLoading(false);
       }
     };
+    load();
+  }, [router.query.id]);
 
-    fetchSingleTherapist();
-  }, [router]);
-
-  // handle update operator
-  const handleCreateBlog = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    setIsProcessing(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
-
+    setIsProcessing(true);
+    setErrors({});
     try {
-      await new TherapistModule().update(formData, +router.query.id!);
-
-      toast("Operator Updated Successfully", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-
-      router.push(`/member-lists`);
+      await new TherapistModule().update(new FormData(e.currentTarget), +router.query.id!);
+      toast.success("Therapist updated successfully.");
+      router.push("/member-lists");
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
-
-      toast("Something Wrong", {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      setErrors((err.getValidationErrors?.() as Errors) ?? {});
+      toast.error(err.getFirstError?.() ?? "Something went wrong.");
     } finally {
       setIsProcessing(false);
     }
   };
 
+  if (isLoading) return <LoadingSpinner fullPage />;
+
+  const inputClass = "w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary";
+
   return (
     <>
-      <Head>
-        <title>SPAS | {singleTherapist.name}</title>
-      </Head>
-      <main>
-        <header className="mb-8 md:mb-12">
-          <Link
-            href={"/member-lists"}
-            className="flex gap-x-4 items-center w-max"
-          >
-            <div className="bg-secondary p-2 rounded-md">
-              <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
+      <Head><title>SPAS | Edit Therapist</title></Head>
+
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-slate-800">Edit Therapist</h1>
+        <p className="text-sm text-slate-500 mt-0.5">{therapist.name}</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Personal Info */}
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 space-y-4">
+            <h2 className="text-sm font-semibold text-slate-700">Personal Information</h2>
+
+            {/* Profile picture */}
+            <div>
+              <ImageViewer
+                src={therapist.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist.cover.url}` : "/no-image.png"}
+                alt={therapist.name ?? "Profile"}
+                className="w-24 h-24 rounded-full object-cover border border-slate-200 mb-2"
+              />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Replace Profile Photo</label>
+              <FileInput name="url" accept="image/*" />
+              {errors.url && <p className="mt-1 text-xs text-red-500">{errors.url[0]}</p>}
             </div>
-            <span className="text-base md:text-2xl lg:text-3xl">
-              Back to Member Lists
-            </span>
-          </Link>
-        </header>
 
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            <section className="container p-4 md:p-8">
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-12">
-                Detail Therapist
-              </h1>
-
-              <form onSubmit={(e) => handleCreateBlog(e)}>
-                <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12 md:gap-x-10">
-                  <div className="md:w-1/2 space-y-4 md:space-y-8">
-                    <h2 className="md:text-lg lg:tex-xl font-bold mb-4 md:mb-8">
-                      Personal Information
-                    </h2>
-
-                    <label htmlFor="">Profile Picture</label>
-
-                    <div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        key={singleTherapist.id}
-                        src={
-                          singleTherapist.cover
-                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.cover.url}`
-                            : "/no-image.png"
-                        }
-                        alt={singleTherapist.name}
-                        className="object-cover w-80"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <input type="file" className="" name="url" />
-                      <div className="flex items-center gap-x-4">
-                        <FaInfoCircle className="text-[#8D98AA]" />
-                        <p className="text-xs md:w-3/4">
-                          The image file must be at least 2 MB in size, with
-                          equal dimensions (e.g., square or a 1:1 aspect ratio)
-                        </p>
-                      </div>
-
-                      {validationErrors.errors?.url && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.url[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Full Name</label>
-
-                      <Input
-                        variant="bordered"
-                        name="name"
-                        defaultValue={singleTherapist.name}
-                      />
-
-                      {validationErrors.errors?.name && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.name[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Passport/Fin No.</label>
-
-                      <Input
-                        variant="bordered"
-                        name="passport_finno"
-                        defaultValue={singleTherapist.passport_finno}
-                      />
-
-                      {validationErrors.errors?.passport_finno && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors?.passport_finno[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Email</label>
-
-                      <Input
-                        variant="bordered"
-                        name="email"
-                        defaultValue={singleTherapist.user?.email}
-                      />
-
-                      {validationErrors.errors?.email && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors?.email[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Date of Birth</label>
-
-                      <input
-                        className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                        name="date_of_birth"
-                        type="date"
-                        placeholder="date_of_birth..."
-                        defaultValue={
-                          singleTherapist?.date_of_birth?.split(" ")[0]
-                        }
-                      />
-
-                      {validationErrors.errors?.date_of_birth && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors?.date_of_birth[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Sex</label>
-
-                      <Input
-                        variant="bordered"
-                        name="sex"
-                        defaultValue={singleTherapist.sex}
-                      />
-
-                      {validationErrors.errors?.sex && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors?.sex[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Contact No.</label>
-
-                      <Input
-                        variant="bordered"
-                        name="contact_no"
-                        defaultValue={singleTherapist.contact_no}
-                      />
-
-                      {validationErrors.errors?.contact_no && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors?.contact_no[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Nationality</label>
-
-                      <select
-                        className="z-20 w-full border-3 pl-2 py-1.5 rounded-md"
-                        onChange={changeHandler}
-                        name="nationality"
-                        defaultValue={singleTherapist.nationality || ""}
-                      >
-                        {singleTherapist.nationality ? (
-                          <option value={singleTherapist.nationality}>
-                            {singleTherapist.nationality}
-                          </option>
-                        ) : (
-                          <option value="" disabled>
-                            Select a country
-                          </option>
-                        )}
-                        {options.map((country) => (
-                          <option value={country.label} key={country.label}>
-                            {country.label}
-                          </option>
-                        ))}
-                      </select>
-
-                      {validationErrors.errors?.nationality && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors?.nationality[0]}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="md:w-1/2 space-y-4 md:space-y-8">
-                    <div className="md:space-y-8">
-                      <h2 className="md:text-lg lg:tex-xl font-bold mb-4 md:mb-8">
-                        Professional Certificate
-                      </h2>
-
-                      <label htmlFor="">Certificate Picture</label>
-
-                      <div>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          key={singleTherapist.id}
-                          src={
-                            singleTherapist.professional_certs
-                              ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.professional_certs}`
-                              : "/no-image.png"
-                          }
-                          alt={singleTherapist.name}
-                          className="object-cover w-80"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <input
-                          type="file"
-                          className=""
-                          name="professional_certs"
-                        />
-                        <div className="flex items-center gap-x-4">
-                          <FaInfoCircle className="text-[#8D98AA]" />
-                          <p className="text-xs md:w-3/4">
-                            The image file must be at least 2 MB in size, with
-                            equal dimensions (e.g., square or a 1:1 aspect
-                            ratio)
-                          </p>
-                        </div>
-
-                        {validationErrors.errors?.professional_certs && (
-                          <p className="text-ligh text-[#D81222] mt-2">
-                            {validationErrors.errors.professional_certs[0]}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Certificate Name</label>
-
-                      <Input
-                        variant="bordered"
-                        name="name_cert"
-                        defaultValue={singleTherapist.name_cert}
-                      />
-
-                      {validationErrors.errors?.name_cert && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.name_cert[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Issuing Organization</label>
-
-                      <Input
-                        variant="bordered"
-                        name="issuing_organization"
-                        defaultValue={singleTherapist.issuing_organization}
-                      />
-
-                      {validationErrors.errors?.issuing_organization && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.issuing_organization[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Issue Date</label>
-
-                      <input
-                        className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                        name="date_of_issue"
-                        type="date"
-                        placeholder="date_of_issue..."
-                        defaultValue={
-                          singleTherapist?.date_of_issue?.split(" ")[0]
-                        }
-                      />
-
-                      {validationErrors.errors?.date_of_issue && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.date_of_issue[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Expiration Date</label>
-
-                      <input
-                        className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                        name="expired_date"
-                        type="date"
-                        placeholder="expired_date..."
-                        defaultValue={
-                          singleTherapist?.expired_date?.split(" ")[0]
-                        }
-                      />
-
-                      {validationErrors.errors?.expired_date && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.expired_date[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="credentialId">Credential ID</label>
-
-                      <Input
-                        variant="bordered"
-                        name="credential_id"
-                        defaultValue={singleTherapist.credential_id}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
-                  <button className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12">
-                    {isProcessing ? "Updating..." : "Update"}
-                  </button>
-                </div>
-              </form>
-            </section>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                <Input variant="bordered" size="sm" name="name" defaultValue={therapist.name} />
+                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Passport/Fin No</label>
+                <Input variant="bordered" size="sm" name="passport_finno" defaultValue={therapist.passport_finno} />
+                {errors.passport_finno && <p className="mt-1 text-xs text-red-500">{errors.passport_finno[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                <Input variant="bordered" size="sm" name="email" defaultValue={therapist.user?.email} />
+                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
+                <input name="date_of_birth" type="date" defaultValue={therapist.date_of_birth?.split(" ")[0]} className={inputClass} />
+                {errors.date_of_birth && <p className="mt-1 text-xs text-red-500">{errors.date_of_birth[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Sex</label>
+                <Input variant="bordered" size="sm" name="sex" defaultValue={therapist.sex} />
+                {errors.sex && <p className="mt-1 text-xs text-red-500">{errors.sex[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Contact No</label>
+                <Input variant="bordered" size="sm" name="contact_no" defaultValue={therapist.contact_no} />
+                {errors.contact_no && <p className="mt-1 text-xs text-red-500">{errors.contact_no[0]}</p>}
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Nationality</label>
+                <select name="nationality" defaultValue={therapist.nationality || ""} className={inputClass}>
+                  <option value="" disabled>Select country</option>
+                  {countries.map((c) => (
+                    <option key={c.label} value={c.label}>{c.label}</option>
+                  ))}
+                </select>
+                {errors.nationality && <p className="mt-1 text-xs text-red-500">{errors.nationality[0]}</p>}
+              </div>
+            </div>
           </div>
-        )}
-      </main>
+
+          {/* Certificate */}
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 space-y-4">
+            <h2 className="text-sm font-semibold text-slate-700">Professional Certificate</h2>
+
+            <div>
+              <ImageViewer
+                src={therapist.professional_certs ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist.professional_certs}` : "/no-image.png"}
+                alt="Certificate"
+                className="w-full aspect-video object-cover rounded-lg border border-slate-200 mb-2"
+              />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Replace Certificate</label>
+              <FileInput name="professional_certs" accept="image/*" />
+              {errors.professional_certs && <p className="mt-1 text-xs text-red-500">{errors.professional_certs[0]}</p>}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Certificate Name</label>
+                <Input variant="bordered" size="sm" name="name_cert" defaultValue={therapist.name_cert} />
+                {errors.name_cert && <p className="mt-1 text-xs text-red-500">{errors.name_cert[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Issuing Organization</label>
+                <Input variant="bordered" size="sm" name="issuing_organization" defaultValue={therapist.issuing_organization} />
+                {errors.issuing_organization && <p className="mt-1 text-xs text-red-500">{errors.issuing_organization[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Issue Date</label>
+                <input name="date_of_issue" type="date" defaultValue={therapist.date_of_issue?.split(" ")[0]} className={inputClass} />
+                {errors.date_of_issue && <p className="mt-1 text-xs text-red-500">{errors.date_of_issue[0]}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Expiry Date</label>
+                <input name="expired_date" type="date" defaultValue={therapist.expired_date?.split(" ")[0]} className={inputClass} />
+                {errors.expired_date && <p className="mt-1 text-xs text-red-500">{errors.expired_date[0]}</p>}
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Credential ID</label>
+                <Input variant="bordered" size="sm" name="credential_id" defaultValue={therapist.credential_id} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-3 mt-6">
+          <Button type="submit" color="primary" size="sm" isLoading={isProcessing}>Update</Button>
+          <Button variant="flat" size="sm" onPress={() => router.push("/member-lists")} isDisabled={isProcessing}>Cancel</Button>
+        </div>
+      </form>
     </>
   );
 }

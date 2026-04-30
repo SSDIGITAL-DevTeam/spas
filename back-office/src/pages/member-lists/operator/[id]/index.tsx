@@ -1,319 +1,163 @@
-import Link from "next/link";
-import { FormEvent, JSX, useEffect, useState } from "react";
-import { FaCheckCircle, FaChevronLeft, FaInfoCircle } from "react-icons/fa";
-import { Button, Image, Input } from "@nextui-org/react";
+import { JSX, useEffect, useState, FormEvent } from "react";
 import Head from "next/head";
-import { Operator } from "@/@types";
-import Loading from "@/components/partials/Loading";
-import OperatorModule from "@/modules/OperatorModule";
+import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import OperatorModule from "@/modules/OperatorModule";
 import ApiError from "@/errors/ApiError";
+import { Operator } from "@/@types";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import FileInput from "@/components/ui/FileInput";
+import ImageViewer from "@/components/ui/ImageViewer";
+import toast from "react-hot-toast";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    company_name: string;
-    uen_no: string;
-    brand_name: string;
-    address: string;
-    contact_no: string;
-    contact_person: string;
-    contact_person_no: string;
-    email: string;
-    url: string;
-  };
+type Errors = {
+  company_name?: string[];
+  uen_no?: string[];
+  brand_name?: string[];
+  address?: string[];
+  contact_no?: string[];
+  contact_person?: string[];
+  contact_person_no?: string[];
+  email?: string[];
+  url?: string[];
 };
 
-export default function DetailMember(): JSX.Element {
-  const [singleOperator, setSingleOperator] = useState<Operator>(
-    {} as Operator
-  );
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
-
+export default function EditOperator(): JSX.Element {
   const router = useRouter();
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [operator, setOperator] = useState<Operator>({} as Operator);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
-    const fetchSingleOperator = async () => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Member Lists", href: "/member-lists" },
+      { label: "Edit Operator" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!router.query.id) return;
+    const load = async () => {
       setIsLoading(true);
-
       try {
-        const res = await new OperatorModule().singleOperator(
-          +router.query.id!
-        );
-        setSingleOperator(res.data);
-        setIsLoading(true);
-
-        // console.log(setSingleOperator);
-      } catch (error) {
+        const res = await new OperatorModule().singleOperator(+router.query.id!);
+        setOperator(res.data);
+      } catch {
+        toast.error("Failed to load operator.");
       } finally {
         setIsLoading(false);
       }
     };
+    load();
+  }, [router.query.id]);
 
-    fetchSingleOperator();
-  }, [router]);
-
-  // handle update operator
-  const handleCreateBlog = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    setIsProcessing(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
-
+    setIsProcessing(true);
+    setErrors({});
     try {
-      await new OperatorModule().update(formData, +router.query.id!);
-
-      toast("Operator Updated Successfully", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-
-      router.push(`/member-lists`);
+      await new OperatorModule().update(new FormData(e.currentTarget), +router.query.id!);
+      toast.success("Operator updated successfully.");
+      router.push("/member-lists");
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
-
-      toast("Something Wrong", {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      setErrors((err.getValidationErrors?.() as Errors) ?? {});
+      toast.error(err.getFirstError?.() ?? "Something went wrong.");
     } finally {
       setIsProcessing(false);
     }
   };
 
+  if (isLoading) return <LoadingSpinner fullPage />;
+
+  const inputClass = "w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary";
+
   return (
     <>
-      <Head>
-        <title>SPAS | {singleOperator.company_name}</title>
-      </Head>
+      <Head><title>SPAS | Edit Operator</title></Head>
 
-      <main>
-        <header className="mb-8 md:mb-12">
-          <Link
-            href={"/member-lists"}
-            className="flex gap-x-4 items-center w-max"
-          >
-            <div className="bg-secondary p-2 rounded-md">
-              <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-slate-800">Edit Operator</h1>
+        <p className="text-sm text-slate-500 mt-0.5">{operator.company_name}</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Logo upload */}
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-700 mb-4">Company Logo</h2>
+            <ImageViewer
+              src={operator.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}` : "/no-image.png"}
+              alt={operator.company_name ?? "Logo"}
+              className="w-full aspect-square object-cover rounded-lg border border-slate-200 mb-4"
+            />
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Replace Logo</label>
+              <FileInput name="url" accept="image/*" />
+              {errors.url && <p className="mt-1 text-xs text-red-500">{errors.url[0]}</p>}
             </div>
-            <span className="text-base md:text-2xl lg:text-3xl">
-              Back to Member Lists
-            </span>
-          </Link>
-        </header>
-
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            <section className="container p-4 md:p-8">
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-12">
-                Detail Operator
-              </h1>
-
-              <form onSubmit={(e) => handleCreateBlog(e)}>
-                <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12">
-                  <div className="md:w-1/2 space-y-4 md:space-y-8">
-                    <label htmlFor="">Logo</label>
-
-                    <div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        key={singleOperator.id}
-                        src={
-                          singleOperator.cover
-                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleOperator.cover.url}`
-                            : "/no-image.png"
-                        }
-                        alt={singleOperator.company_name}
-                        className="object-cover w-80"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <input type="file" className="" name="url" />
-                      <div className="flex items-center gap-x-4">
-                        <FaInfoCircle className="text-[#8D98AA]" />
-                        <p className="text-xs md:w-3/4">
-                          The image file must be at least 2 MB in size, with
-                          equal dimensions (e.g., square or a 1:1 aspect ratio)
-                        </p>
-                      </div>
-                    </div>
-
-                    {validationErrors.errors?.url && (
-                      <p className="text-ligh text-[#D81222] mt-2">
-                        {validationErrors.errors.url[0]}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex justify-between flex-col md:flex-row md:gap-x-20">
-                  <div className="md:w-1/2 space-y-4 md:space-y-8">
-                    <div className="space-y-2"> 
-                      <label htmlFor="">Company Name</label>
-
-                      <Input
-                        variant="bordered"
-                        name="company_name"
-                        defaultValue={
-                          singleOperator ? singleOperator.company_name : ""
-                        }
-                      />
-
-                      {validationErrors.errors?.company_name && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.company_name[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">UEN No</label>
-
-                      <Input
-                        variant="bordered"
-                        name="uen_no"
-                        defaultValue={singleOperator.uen_no}
-                      />
-
-                      {validationErrors.errors?.uen_no && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.uen_no[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Email</label>
-
-                      <Input
-                        variant="bordered"
-                        name="email"
-                        defaultValue={singleOperator.user?.email}
-                      />
-
-                      {validationErrors.errors?.email && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.email[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Brand Name</label>
-
-                      <Input
-                        variant="bordered"
-                        name="brand_name"
-                        defaultValue={singleOperator.brand_name}
-                      />
-
-                      {validationErrors.errors?.brand_name && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.brand_name[0]}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-y-2">
-                      <label htmlFor="">Address</label>
-
-                      <textarea
-                        className="border-2 p-2 h-36 rounded-2xl"
-                        name="address"
-                        defaultValue={singleOperator.address}
-                      ></textarea>
-
-                      {validationErrors.errors?.address && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.address[0]}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="md:w-1/2 space-y-4 md:space-y-8">
-                    <div className="space-y-2">
-                      <label htmlFor="">Contact Company No</label>
-
-                      <Input
-                        variant="bordered"
-                        name="contact_no"
-                        defaultValue={singleOperator.contact_no}
-                      />
-
-                      {validationErrors.errors?.contact_no && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.contact_no[0]}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="">Contact Person</label>
-
-                      <Input
-                        variant="bordered"
-                        name="contact_person"
-                        defaultValue={singleOperator.contact_person}
-                      />
-
-                      {validationErrors.errors?.contact_person && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.contact_person[0]}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="">Contact Person No</label>
-
-                      <Input
-                        variant="bordered"
-                        name="contact_person_no"
-                        defaultValue={singleOperator.contact_person_no}
-                      />
-
-                      {validationErrors.errors?.contact_person_no && (
-                        <p className="text-ligh text-[#D81222] mt-2">
-                          {validationErrors.errors.contact_person_no[0]}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
-                  <button className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12">
-                    {isProcessing ? "Updating..." : "Update"}
-                  </button>
-                </div>
-              </form>
-            </section>
           </div>
-        )}
-      </main>
+
+          {/* Fields */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-4">Company Information</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
+                  <Input variant="bordered" size="sm" name="company_name" defaultValue={operator.company_name} />
+                  {errors.company_name && <p className="mt-1 text-xs text-red-500">{errors.company_name[0]}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Brand Name</label>
+                  <Input variant="bordered" size="sm" name="brand_name" defaultValue={operator.brand_name} />
+                  {errors.brand_name && <p className="mt-1 text-xs text-red-500">{errors.brand_name[0]}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">UEN No</label>
+                  <Input variant="bordered" size="sm" name="uen_no" defaultValue={operator.uen_no} />
+                  {errors.uen_no && <p className="mt-1 text-xs text-red-500">{errors.uen_no[0]}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                  <Input variant="bordered" size="sm" name="email" defaultValue={operator.user?.email} />
+                  {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email[0]}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Contact No</label>
+                  <Input variant="bordered" size="sm" name="contact_no" defaultValue={operator.contact_no} />
+                  {errors.contact_no && <p className="mt-1 text-xs text-red-500">{errors.contact_no[0]}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Contact Person</label>
+                  <Input variant="bordered" size="sm" name="contact_person" defaultValue={operator.contact_person} />
+                  {errors.contact_person && <p className="mt-1 text-xs text-red-500">{errors.contact_person[0]}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Contact Person No</label>
+                  <Input variant="bordered" size="sm" name="contact_person_no" defaultValue={operator.contact_person_no} />
+                  {errors.contact_person_no && <p className="mt-1 text-xs text-red-500">{errors.contact_person_no[0]}</p>}
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Address</label>
+                  <textarea name="address" rows={3} defaultValue={operator.address} className={`${inputClass} resize-none`} />
+                  {errors.address && <p className="mt-1 text-xs text-red-500">{errors.address[0]}</p>}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button type="submit" color="primary" size="sm" isLoading={isProcessing}>Update</Button>
+              <Button variant="flat" size="sm" onPress={() => router.push("/member-lists")} isDisabled={isProcessing}>Cancel</Button>
+            </div>
+          </div>
+        </div>
+      </form>
     </>
   );
 }

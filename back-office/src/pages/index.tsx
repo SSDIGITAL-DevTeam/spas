@@ -3,26 +3,55 @@ import Head from "next/head";
 import Link from "next/link";
 import { usePosts } from "@/hooks/usePosts";
 import { useEvent } from "@/hooks/useEvent";
-import { usePage } from "@/hooks/usePage";
-import Loading from "@/components/partials/Loading";
-import { Input } from "@nextui-org/react";
+import { useOperator } from "@/hooks/useOperator";
+import { useTherapist } from "@/hooks/useTherapist";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import { MdArticle, MdEvent, MdPeople, MdPersonAdd } from "react-icons/md";
 
-export default function Dashboard() {
-  // fetch posts
-  const { posts, isPostsLoading, fetchPosts } = usePosts();
+type StatCardProps = {
+  label: string;
+  value: number | undefined;
+  icon: React.ElementType;
+  href: string;
+  color: string;
+};
 
-  // fetch event
-  const { events, isEventLoading, fetchEvent } = useEvent();
+function StatCard({ label, value, icon: Icon, href, color }: StatCardProps) {
+  return (
+    <Link href={href}>
+      <div className={`bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition-shadow`}>
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+          <Icon className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <p className="text-2xl font-bold text-slate-800">{value ?? "—"}</p>
+          <p className="text-sm text-slate-500">{label}</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
-  // fetch page
-  const { pages, isPageLoading, fetchPage } = usePage();
+export default function Dashboard(): JSX.Element {
+  const { setBreadcrumbs } = useBreadcrumb();
+
+  const { posts, fetchPosts } = usePosts();
+  const { events, fetchEvent } = useEvent();
+  const { operator, fetchOperator } = useOperator();
+  const { therapist, fetchTherapist } = useTherapist();
 
   useEffect(() => {
+    setBreadcrumbs([{ label: "Dashboard" }]);
     fetchPosts();
     fetchEvent();
-    fetchPage();
+    fetchOperator();
+    fetchTherapist();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const pendingOperators = operator?.data?.filter((o) => o.status === "pending").length ?? 0;
+  const pendingTherapists = therapist?.data?.filter((t) => t.status === "pending").length ?? 0;
+  const pendingTotal = pendingOperators + pendingTherapists;
 
   return (
     <>
@@ -30,62 +59,105 @@ export default function Dashboard() {
         <title>SPAS | Dashboard</title>
       </Head>
 
-      <header className="flex justify-between">
-        <div>
-          <h1 className="text-4xl">DASHBOARD</h1>
-
-          <p>Welcome To Dashboard</p>
+      <div>
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold text-slate-800">Dashboard</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Welcome back, Admin</p>
         </div>
 
-        <div className="hidden md:block">
-          <p className="text-base">Admin</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+          <StatCard
+            label="Total Posts"
+            value={posts?.meta?.total}
+            icon={MdArticle}
+            href="/posts"
+            color="bg-primary"
+          />
+          <StatCard
+            label="Total Events"
+            value={events?.meta?.total}
+            icon={MdEvent}
+            href="/events"
+            color="bg-secondary"
+          />
+          <StatCard
+            label="Active Members"
+            value={(operator?.data?.filter((o) => o.status === "approve").length ?? 0) + (therapist?.data?.filter((t) => t.status === "approve").length ?? 0)}
+            icon={MdPeople}
+            href="/member-lists"
+            color="bg-emerald-500"
+          />
+          <StatCard
+            label="Pending Approval"
+            value={pendingTotal}
+            icon={MdPersonAdd}
+            href="/new-members"
+            color="bg-amber-500"
+          />
         </div>
-      </header>
 
-      <form>
-        <div className="w-60 pb-5">
-          <Input name="search" placeholder="Search..." variant="bordered" />
-        </div>
-      </form>
-
-      <main>
-        <section className="overflow-x-auto pt-8">
-          <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-            <Link href={`/posts`}>
-              <div className="rounded-xl bg-secondary text-white p-8 text-center font-semibold">
-                <p className="text-6xl md:text-8xl">
-                  {isPostsLoading && !posts?.data && <Loading />}
-                  {posts?.data?.length}
-                </p>
-
-                <p>Blogs</p>
-              </div>
-            </Link>
-
-            <Link href={`/pages`}>
-              <div className="rounded-xl bg-secondary text-white p-8 text-center font-semibold">
-                <p className="text-6xl md:text-8xl">
-                  {isPageLoading && !pages?.data && <Loading />}
-                  {pages?.data?.length}
-                </p>
-
-                <p>Pages</p>
-              </div>
-            </Link>
-
-            <Link href={`/events`}>
-              <div className="rounded-xl bg-secondary text-white p-8 text-center font-semibold">
-                <p className="text-6xl md:text-8xl">
-                  {isEventLoading && !events?.data && <Loading />}
-                  {events?.data?.length}
-                </p>
-
-                <p>Events</p>
-              </div>
-            </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pending Operators */}
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <h2 className="text-sm font-semibold text-slate-700">Pending Operators</h2>
+              <Link href="/new-members" className="text-xs text-primary hover:underline">View all</Link>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {operator?.data?.filter((o) => o.status === "pending").slice(0, 5).map((op) => (
+                <div key={op.id} className="flex items-center gap-3 px-5 py-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={op.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${op.cover.url}` : "/no-image.png"}
+                    alt={op.company_name}
+                    className="w-8 h-8 rounded-lg object-cover shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-slate-700 truncate">{op.company_name}</p>
+                    <p className="text-xs text-slate-500 truncate">{op.contact_no}</p>
+                  </div>
+                  <Link href={`/new-members/operator/${op.id}`} className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors shrink-0">
+                    Review
+                  </Link>
+                </div>
+              ))}
+              {pendingOperators === 0 && (
+                <p className="text-sm text-slate-400 text-center py-6">No pending operators</p>
+              )}
+            </div>
           </div>
-        </section>
-      </main>
+
+          {/* Pending Therapists */}
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <h2 className="text-sm font-semibold text-slate-700">Pending Therapists</h2>
+              <Link href="/new-members" className="text-xs text-primary hover:underline">View all</Link>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {therapist?.data?.filter((t) => t.status === "pending").slice(0, 5).map((th) => (
+                <div key={th.id} className="flex items-center gap-3 px-5 py-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={th.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${th.cover.url}` : "/no-image.png"}
+                    alt={th.name}
+                    className="w-8 h-8 rounded-full object-cover shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-slate-700 truncate">{th.name}</p>
+                    <p className="text-xs text-slate-500 truncate">{th.contact_no}</p>
+                  </div>
+                  <Link href={`/new-members/therapist/${th.id}`} className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors shrink-0">
+                    Review
+                  </Link>
+                </div>
+              ))}
+              {pendingTherapists === 0 && (
+                <p className="text-sm text-slate-400 text-center py-6">No pending therapists</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

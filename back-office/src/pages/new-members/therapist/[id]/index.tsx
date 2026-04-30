@@ -1,41 +1,59 @@
-import Link from "next/link";
 import { JSX, useEffect, useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
+import Head from "next/head";
 import { Button } from "@nextui-org/react";
-import Loading from "@/components/partials/Loading";
+import { useRouter } from "next/router";
 import TherapistModule from "@/modules/TherapistModule";
 import ApiError from "@/errors/ApiError";
 import { Therapist } from "@/@types";
-import { useRouter } from "next/router";
-import Head from "next/head";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import StatusBadge from "@/components/ui/StatusBadge";
+import ImageViewer from "@/components/ui/ImageViewer";
 import toast from "react-hot-toast";
-import TherapistRejected from "@/components/modals/RejectTherapist";
 
-export default function DetailMember(): JSX.Element {
-  const [singleTherapist, setSingleTherapist] = useState<Therapist>({} as Therapist);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isApproving, setIsApproving] = useState<boolean>(false);
-  const [isOpenRejected, setIsOpenRejected] = useState<boolean>(false);
+function InfoRow({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-sm text-slate-700">{value || "—"}</p>
+    </div>
+  );
+}
 
+export default function DetailTherapist(): JSX.Element {
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [therapist, setTherapist] = useState<Therapist>({} as Therapist);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isRejectOpen, setIsRejectOpen] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "New Members", href: "/new-members" },
+      { label: "Therapist Detail" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!router.query.id) return;
-
-    const fetchSingleTherapist = async () => {
+    const load = async () => {
       setIsLoading(true);
       try {
         const res = await new TherapistModule().singleTherapist(+router.query.id!);
-        setSingleTherapist(res.data);
+        setTherapist(res.data);
       } catch (error) {
-        const message = error instanceof ApiError ? error.getFirstError() : "Failed to load therapist.";
-        toast.error(message);
+        const msg = error instanceof ApiError ? error.getFirstError() : "Failed to load therapist.";
+        toast.error(msg);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchSingleTherapist();
+    load();
   }, [router.query.id]);
 
   const handleApprove = async () => {
@@ -43,195 +61,122 @@ export default function DetailMember(): JSX.Element {
     try {
       const formData = new FormData();
       formData.append("status", "approve");
-      await new TherapistModule().update(formData, singleTherapist.id);
+      await new TherapistModule().update(formData, therapist.id);
 
       const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || "");
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-mail-therapist/${singleTherapist.id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/send-mail-therapist/${therapist.id}`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
 
-      toast.success("Therapist has been approved.");
+      toast.success("Therapist approved and notified by email.");
       router.push("/member-lists");
     } catch (error) {
-      const message = error instanceof ApiError ? error.getFirstError() : "Failed to approve therapist.";
-      toast.error(message);
+      const msg = error instanceof ApiError ? error.getFirstError() : "Failed to approve.";
+      toast.error(msg);
     } finally {
       setIsApproving(false);
     }
   };
 
+  const handleReject = async () => {
+    setIsRejecting(true);
+    try {
+      const formData = new FormData();
+      formData.append("status", "reject");
+      await new TherapistModule().update(formData, therapist.id);
+      toast.success("Therapist rejected.");
+      router.push("/new-members");
+    } catch (error) {
+      const msg = error instanceof ApiError ? error.getFirstError() : "Failed to reject.";
+      toast.error(msg);
+    } finally {
+      setIsRejecting(false);
+      setIsRejectOpen(false);
+    }
+  };
+
+  if (isLoading) return <LoadingSpinner fullPage />;
+
   return (
     <>
-      <Head>
-        <title>SPAS | {singleTherapist.name}</title>
-      </Head>
-      <main>
-        <header className="mb-8 md:mb-12">
-          <Link href="/new-members" className="flex gap-x-4 items-center w-max">
-            <div className="bg-secondary p-2 rounded-md">
-              <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
-            </div>
-            <span className="text-base md:text-2xl lg:text-3xl">
-              Back to New Member Lists
-            </span>
-          </Link>
-        </header>
+      <Head><title>SPAS | {therapist.name}</title></Head>
 
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            <section className="container p-4 md:p-8">
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-12">
-                Detail Therapist
-              </h1>
-
-              <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12 md:gap-x-10">
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="md:space-y-8">
-                    <h2 className="md:text-lg font-bold mb-4 md:mb-8">Personal Information</h2>
-                    <label>Profile Picture</label>
-                    <div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={
-                          singleTherapist.cover
-                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.cover.url}`
-                            : "/no-image.png"
-                        }
-                        alt={singleTherapist.name}
-                        className="object-cover w-80"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label>Full Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.name}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Passport/Fin No.</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.passport_finno}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Email</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.user?.email}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Date of Birth</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.date_of_birth}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Sex</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.sex}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact No.</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.contact_no}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Nationality</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.nationality}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="md:space-y-8">
-                    <h2 className="md:text-lg font-bold mb-4 md:mb-8">Professional Certificate</h2>
-                    <label>Certificate</label>
-                    <div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={
-                          singleTherapist.professional_certs
-                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleTherapist.professional_certs}`
-                            : "/no-image.png"
-                        }
-                        alt={singleTherapist.name}
-                        className="object-cover w-80"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label>Certificate Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.name_cert}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Issuing Organization</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.issuing_organization}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Issue Date</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.date_of_issue}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Expiration Date</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.expired_date}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Credential ID</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleTherapist.credential_id}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="pb-12">
-              <div className="w-max mx-auto">
-                <div className="flex flex-col md:flex-row gap-x-10 gap-y-4">
-                  <Button
-                    onClick={() => setIsOpenRejected(true)}
-                    color="danger"
-                    size="lg"
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    onClick={handleApprove}
-                    isLoading={isApproving}
-                    isDisabled={isApproving}
-                    color="secondary"
-                    size="lg"
-                  >
-                    {isApproving ? "Approving..." : "Approve"}
-                  </Button>
-                </div>
-              </div>
-            </section>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-800">{therapist.name}</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-slate-500">Therapist Review</p>
+            <StatusBadge status={therapist.status as "pending" | "approve" | "reject"} />
           </div>
-        )}
-      </main>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <Button size="sm" color="danger" variant="flat" onPress={() => setIsRejectOpen(true)}>Reject</Button>
+          <Button size="sm" color="primary" isLoading={isApproving} onPress={handleApprove}>Approve</Button>
+        </div>
+      </div>
 
-      <TherapistRejected
-        isOpen={isOpenRejected}
-        setIsOpen={setIsOpenRejected}
-        therapistId={singleTherapist.id ?? null}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Documents */}
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-4">Documents</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Profile Photo</p>
+              <ImageViewer
+                src={therapist.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist.cover.url}` : "/no-image.png"}
+                alt="Profile"
+                className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+              />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Certificate</p>
+              <ImageViewer
+                src={therapist.professional_certs ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist.professional_certs}` : "/no-image.png"}
+                alt="Certificate"
+                className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-700 mb-4">Personal Information</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="Full Name" value={therapist.name} />
+              <InfoRow label="Email" value={therapist.user?.email} />
+              <InfoRow label="Passport/Fin No" value={therapist.passport_finno} />
+              <InfoRow label="Date of Birth" value={therapist.date_of_birth} />
+              <InfoRow label="Sex" value={therapist.sex} />
+              <InfoRow label="Contact No" value={therapist.contact_no} />
+              <InfoRow label="Nationality" value={therapist.nationality} />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-700 mb-4">Certificate Details</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="Certificate Name" value={therapist.name_cert} />
+              <InfoRow label="Issuing Organization" value={therapist.issuing_organization} />
+              <InfoRow label="Issue Date" value={therapist.date_of_issue} />
+              <InfoRow label="Expiry Date" value={therapist.expired_date} />
+              <InfoRow label="Credential ID" value={therapist.credential_id} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ConfirmModal
+        isOpen={isRejectOpen}
+        onClose={() => setIsRejectOpen(false)}
+        onConfirm={handleReject}
+        isLoading={isRejecting}
+        title="Reject Therapist"
+        message="Are you sure you want to reject this therapist registration?"
+        confirmLabel="Reject"
+        confirmColor="danger"
       />
     </>
   );

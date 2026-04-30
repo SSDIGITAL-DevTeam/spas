@@ -1,190 +1,150 @@
 import { JSX, useEffect, useState } from "react";
-import Image from "next/image";
 import Head from "next/head";
-import Link from "next/link";
-import Loading from "@/components/partials/Loading";
-import AssetEdit from "@/assets/svg/asset-edit.svg";
-import AssetDelete from "@/assets/svg/asset-delete.svg";
-import ApiError from "@/errors/ApiError";
-import Modal from "@/components/partials/Modal";
-import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import { ValuePartner } from "@/@types";
 import ValuePartnerModule from "@/modules/ValuePartnerModule";
 import { useValuePartner } from "@/hooks/useValuePartner";
-import { Input } from "@nextui-org/react";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import PageHeader from "@/components/ui/PageHeader";
+import DataTable from "@/components/ui/DataTable";
+import TablePagination from "@/components/ui/TablePagination";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import EmptyState from "@/components/ui/EmptyState";
+import ApiError from "@/errors/ApiError";
+import toast from "react-hot-toast";
+import { Input, Button } from "@nextui-org/react";
+import Link from "next/link";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 export default function ValuePartners(): JSX.Element {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedPartnerId, setSelectedPartnerId] = useState<number>(0);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const { setBreadcrumbs } = useBreadcrumb();
 
-  const router = useRouter();
+  const [deleteId, setDeleteId] = useState<number>(0);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
 
-  const { valuePartners, isValuePartnerLoading, fetchValuePartner } =
-    useValuePartner();
+  const { valuePartners, isValuePartnerLoading, fetchValuePartner } = useValuePartner();
 
   useEffect(() => {
+    setBreadcrumbs([{ label: "Dashboard", href: "/" }, { label: "Value Partners" }]);
     fetchValuePartner();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSearchChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    await fetchValuePartner("1", query);
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+    await fetchValuePartner("1", q);
   };
 
-  const handleDeleteValuePartner = async (id: number): Promise<void> => {
+  const handlePageChange = async (p: number) => {
+    setPage(p);
+    await fetchValuePartner(p.toString(), searchQuery);
+  };
+
+  const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await new ValuePartnerModule().destroy(id);
-      toast("Value Partner Deleted", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      await new ValuePartnerModule().destroy(deleteId);
+      toast.success("Value partner deleted.");
+      await fetchValuePartner(page.toString(), searchQuery);
     } catch (error) {
       const err = error as ApiError;
-      toast(err.getFirstError(), {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      toast.error(err.getFirstError?.() ?? "Failed to delete.");
     } finally {
-      setIsOpen(false);
       setIsDeleting(false);
-      router.reload();
+      setIsDeleteOpen(false);
     }
   };
 
+  const columns = [
+    { header: "Logo", className: "w-20" },
+    { header: "Brand Name" },
+    { header: "Category" },
+    { header: "Email" },
+    { header: "Actions", className: "w-28 text-center" },
+  ];
+
   return (
     <>
-      <Head>
-        <title>SPAS | Value Partner</title>
-      </Head>
+      <Head><title>SPAS | Value Partners</title></Head>
 
-      <main>
-        <header className="mb-4 flex flex-col items-start justify-between md:flex-row md:items-center gap-y-4">
-          <div>
-            <h2 className="mb-4 text-4xl">Value Partners</h2>
-            <p>You can add, update and delete Value Partner here</p>
-          </div>
+      <PageHeader
+        title="Value Partners"
+        description="Manage brand partners"
+        action={{ label: "Add Partner", href: "/value-partners/create" }}
+      />
 
-          <Link
-            href={`/value-partners/create`}
-            className="bg-secondary hover:bg-primary rounded-lg text-white p-2"
-          >
-            Add New
-          </Link>
-        </header>
+      <div className="mb-4 w-64">
+        <Input
+          placeholder="Search partners..."
+          variant="bordered"
+          size="sm"
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+      </div>
 
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className="w-60 pb-5">
-            <Input
-              name="search"
-              placeholder="Search..."
-              variant="bordered"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </div>
-        </form>
-
-        <section>
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-              <thead className="lg:text-base text-center text-white uppercase bg-secondary">
-                <tr>
-                  <th scope="col" className="px-6 py-3">Logo</th>
-                  <th scope="col" className="px-6 py-3">Brand Name</th>
-                  <th scope="col" className="px-6 py-3">Email</th>
-                  <th scope="col" className="px-6 py-3">Category</th>
-                  <th scope="col" className="px-6 py-3">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colSpan={5}>{isValuePartnerLoading && <Loading />}</td>
-                </tr>
-                {valuePartners?.data.map((partner: ValuePartner) => (
-                  <tr
-                    className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
-                    key={partner.id}
+      <DataTable columns={columns} isLoading={isValuePartnerLoading}>
+        {valuePartners?.data?.length === 0 ? (
+          <EmptyState message="No value partners found." />
+        ) : (
+          valuePartners?.data?.map((partner: ValuePartner) => (
+            <tr key={partner.id} className="hover:bg-slate-50 transition-colors">
+              <td className="px-4 py-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={partner.logo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${partner.logo}` : "/no-image.png"}
+                  alt={partner.brand_name}
+                  className="w-10 h-10 rounded-lg object-cover"
+                />
+              </td>
+              <td className="px-4 py-3 text-sm font-medium text-slate-700">{partner.brand_name}</td>
+              <td className="px-4 py-3 text-sm text-slate-500">{partner.category_partner?.name ?? "—"}</td>
+              <td className="px-4 py-3 text-sm text-slate-500">{partner.email}</td>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-center gap-2">
+                  <Button
+                    as={Link}
+                    href={`/value-partners/partner/${partner.id}`}
+                    isIconOnly
+                    size="sm"
+                    variant="flat"
+                    color="primary"
+                    aria-label="Edit"
                   >
-                    <td className="text-center p-4">
-                      {partner.logo && (
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${partner.logo}`}
-                          alt={partner.brand_name}
-                          className="w-12 h-12 object-cover rounded mx-auto"
-                        />
-                      )}
-                    </td>
-                    <td className="text-center px-6 py-4">{partner.brand_name}</td>
-                    <td className="text-center px-6 py-4">{partner.email}</td>
-                    <td className="text-center px-6 py-4">
-                      {partner.category_partner?.name ?? '-'}
-                    </td>
-                    <td>
-                      <div className="flex gap-x-2 p-2 justify-center">
-                        <Link href={`/value-partners/partner/${partner.id}`}>
-                          <Image
-                            className="w-10 cursor-pointer rounded-lg bg-primary p-2.5"
-                            src={AssetEdit}
-                            alt="Edit"
-                          />
-                        </Link>
+                    <MdEdit className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="flat"
+                    color="danger"
+                    aria-label="Delete"
+                    onPress={() => { setDeleteId(partner.id); setIsDeleteOpen(true); }}
+                  >
+                    <MdDelete className="w-4 h-4" />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))
+        )}
+      </DataTable>
 
-                        <Image
-                          onClick={() => {
-                            setSelectedPartnerId(partner.id);
-                            setIsOpen(true);
-                          }}
-                          className="w-10 cursor-pointer rounded-lg bg-red-600 p-2.5"
-                          src={AssetDelete}
-                          alt="Delete"
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+      {valuePartners?.meta && (
+        <TablePagination meta={valuePartners.meta} onPageChange={handlePageChange} />
+      )}
 
-        <section>
-          <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-            <div className="relative flex flex-col items-center gap-y-8 p-8 text-center font-bold text-white">
-              <p className="text-xl">
-                Are you sure you want to delete <br /> this Value Partner?
-              </p>
-              <div className="flex gap-x-4">
-                <button
-                  onClick={() => handleDeleteValuePartner(selectedPartnerId)}
-                  disabled={isDeleting}
-                  className="btn bg-secondary px-8 disabled:opacity-50"
-                >
-                  {isDeleting ? "Deleting..." : "Yes"}
-                </button>
-                <button onClick={() => setIsOpen(false)} className="btn">
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </Modal>
-        </section>
-      </main>
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDelete}
+        isLoading={isDeleting}
+        title="Delete Value Partner"
+        message="Are you sure you want to delete this value partner?"
+      />
     </>
   );
 }

@@ -1,31 +1,22 @@
-import TinyMceEditor from "@/components/partials/TinyMceEditor";
-import ApiError from "@/errors/ApiError";
-import { useCategory } from "@/hooks/useCategory";
-import { Category } from "@/@types";
-import PostModule from "@/modules/PostModule";
+import { JSX, useEffect, useState, FormEvent, useRef, ChangeEvent, KeyboardEvent } from "react";
 import Head from "next/head";
-import Link from "next/link";
-import Spin from "@/assets/svg/spin.svg";
 import { useRouter } from "next/router";
-import {
-  ChangeEvent,
-  FormEvent,
-  JSX,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Button } from "@nextui-org/react";
+import ApiError from "@/errors/ApiError";
+import PostModule from "@/modules/PostModule";
+import { useCategory } from "@/hooks/useCategory";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import { Category } from "@/@types";
+import TinyMceEditor from "@/components/partials/TinyMceEditor";
 import toast from "react-hot-toast";
-import Image from "next/image";
+import { MdClose, MdCloudUpload } from "react-icons/md";
 
-type PostValidationErrors = {
+type Errors = {
   title?: string[];
   slug?: string[];
-  status?: string[];
-  url?: string[];
   content?: string[];
   categories?: string[];
+  url?: string[];
   tags?: string[];
   key?: string[];
   value?: string[];
@@ -33,376 +24,206 @@ type PostValidationErrors = {
 };
 
 export default function CreatePost(): JSX.Element {
-  // router
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
+  const [postTags, setPostTags] = useState<string[]>([]);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [slug, setSlug] = useState("");
 
-  const apikey = "hm18uevth18hvt5w813bfoup4hmy5wlosl1swwdtfjyb5g4u";
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const tagInputRef = useRef<HTMLInputElement | null>(null);
 
-  // states
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [isCoverUploaded, setIsCoverUploaded] = useState<boolean>(false);
-  const [postTags, setPostTags] = useState([] as string[]);
-  const [validationErrors, setValidationErrors] = useState<PostValidationErrors>({});
-
-  // fetch posts
-  const { categories, isCategoryLoading, fetchCategory } = useCategory();
+  const { categories, fetchCategory } = useCategory();
 
   useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Posts", href: "/posts" },
+      { label: "New Post" },
+    ]);
     fetchCategory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // refs
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const tagInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleUpload = (e: ChangeEvent<HTMLInputElement>): void => {
-    const image: File | null | undefined = e.currentTarget.files?.item(0);
-
-    if (image) {
-      setIsCoverUploaded(true);
-      imageRef.current!.src = URL.createObjectURL(image);
-      imageRef.current?.setAttribute("alt", "Blog Cover");
-
-      return;
-    }
-    setIsCoverUploaded(false);
-    imageRef.current?.removeAttribute("src");
-    imageRef.current?.removeAttribute("alt");
+  const handleCoverUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.item(0);
+    if (file) setCoverPreview(URL.createObjectURL(file));
+    else setCoverPreview(null);
   };
 
-  // add tags
-  const addTag = (e: KeyboardEvent<HTMLInputElement>): void => {
+  const addTag = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const tag = e.currentTarget.value.trim();
-
-      if (tag) {
-        setPostTags([...postTags, tag]);
-      }
-
+      if (tag) setPostTags((prev) => [...prev, tag]);
       e.currentTarget.value = "";
     }
   };
 
-  // remove tags
-  const removeTag = (tag: string): void => {
-    setPostTags([...postTags.filter((item: string) => item !== tag)]);
+  const removeTag = (tag: string) => setPostTags((prev) => prev.filter((t) => t !== tag));
+
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const title = e.currentTarget.value;
+    const generated = title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
+    setSlug(generated);
   };
 
-  // handle create blog
-  const handleCreateBlog = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    setIsProcessing(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsProcessing(true);
+    setErrors({});
+    const formData = new FormData(e.currentTarget);
+    const submit = e.nativeEvent as SubmitEvent;
+    const btn = submit.submitter as HTMLButtonElement;
+    formData.append("status", btn.value);
 
-    const form: HTMLFormElement = e.currentTarget;
-    const formData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
-
-    formData.append("status", status.value);
-
-    // Ambil teks yang belum di-Enter juga
-    const pendingTag = tagInputRef.current?.value.trim();
-    const allTags = pendingTag ? [...postTags, pendingTag] : postTags;
-    allTags.forEach((tag: string, i: number) =>
-      formData.append(`tags[${i}][name]`, tag)
-    );
-
-    //  console.log(postTags);
+    const pending = tagInputRef.current?.value.trim();
+    const allTags = pending ? [...postTags, pending] : postTags;
+    allTags.forEach((tag, i) => formData.append(`tags[${i}][name]`, tag));
 
     try {
       await new PostModule().store(formData);
-
-      toast("Post Created Successfully", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-
-      router.push(`/posts?status=PUBLISHED`);
+      toast.success("Post created.");
+      router.push("/posts");
     } catch (error) {
       const err = error as ApiError;
-      const errors = err.getValidationErrors() as PostValidationErrors | null;
-      setValidationErrors(errors ?? {});
-
-      toast(err.getFirstError(), {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      setErrors((err.getValidationErrors?.() as Errors) ?? {});
+      toast.error(err.getFirstError?.() ?? "Something went wrong.");
     } finally {
       setIsProcessing(false);
     }
   };
 
+  const inputClass = "w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary";
+
   return (
     <>
-      <Head>
-        <title>SPAS | Create</title>
-      </Head>
+      <Head><title>SPAS | New Post</title></Head>
 
-      <main>
-        <Link
-          href="/posts"
-          className="btn bg-primary rounded-lg text-white px-4 py-2"
-        >
-          Back
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-slate-800">New Post</h1>
+        <p className="text-sm text-slate-500 mt-0.5">Create a new blog post</p>
+      </div>
 
-        <header className="my-8">
-          <h1 className="text-2xl">New Blog</h1>
-        </header>
-
-        <section className="mx-auto max-w-3xl">
-          <form onSubmit={(e) => handleCreateBlog(e)}>
-            <div className="font-montserrat flex flex-col gap-y-8">
-              {/* title */}
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Main content */}
+          <div className="xl:col-span-2 space-y-5">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 space-y-5">
               <div>
-                <label htmlFor="title">Title</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="title"
-                  type="text"
-                  placeholder="Title..."
-                />
-
-                {validationErrors?.title && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.title[0]}
-                  </p>
-                )}
+                <label className="block text-sm font-medium text-slate-700 mb-1">Title <span className="text-red-500">*</span></label>
+                <input name="title" type="text" placeholder="Post title..." className={inputClass} onChange={handleTitleChange} />
+                {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title[0]}</p>}
               </div>
 
-              {/* slug */}
               <div>
-                <label htmlFor="slug">Slug</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="slug"
-                  type="text"
-                  placeholder="Slug..."
-                />
-
-                {validationErrors?.slug && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.slug[0]}
-                  </p>
-                )}
+                <label className="block text-sm font-medium text-slate-700 mb-1">Slug</label>
+                <input name="slug" type="text" value={slug} readOnly className={`${inputClass} bg-slate-50 text-slate-500 cursor-not-allowed`} />
+                {errors.slug && <p className="mt-1 text-xs text-red-500">{errors.slug[0]}</p>}
               </div>
 
-              {/* blog content */}
-              <div className="min-h-[380px] overflow-hidden space-y-2">
-                <label htmlFor="content">Content</label>
-                {/* CK Editor */}
+              <div className="min-h-[380px]">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Content <span className="text-red-500">*</span></label>
                 <TinyMceEditor id="content" textareaName="content" />
-
-                {validationErrors?.content && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.content[0]}
-                  </p>
-                )}
+                {errors.content && <p className="mt-1 text-xs text-red-500">{errors.content[0]}</p>}
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="categories">Categories</label>
-                <div className="flex mt-2">
-                  <div className="flex items-center gap-5">
-                    {categories?.data.map(
-                      (category: Category, index: number) => (
-                        <div className="ap-5" key={category.id}>
-                          <input
-                            id={`category-checkbox-${index}`}
-                            type="checkbox"
-                            value={category.id}
-                            name={`categories[${index}][category_id]`}
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label
-                            htmlFor={`category-checkbox-${index}`}
-                            className="ml-2 text-sm font-medium text-black"
-                          >
-                            {category.name}
-                          </label>
-                        </div>
-                      )
-                    )}
-                  </div>
+            {/* Meta SEO */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 space-y-4">
+              <h2 className="text-sm font-semibold text-slate-700">SEO Meta</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Attribute</label>
+                  <input name="key" type="text" placeholder="e.g. name" className={inputClass} />
                 </div>
-
-                {validationErrors?.categories && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.categories[0]}
-                  </p>
-                )}
-              </div>
-
-              {/* cover */}
-              <div className="flex flex-col items-center rounded-xl border p-12 font-medium">
-                <label htmlFor="cover" className="flex flex-col gap-y-8">
-                  <div
-                    className={`${isCoverUploaded ? "hidden" : "block"}`}
-                  ></div>
-
-                  {/* preview cover */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    className={`${
-                      isCoverUploaded ? "" : "hidden"
-                    } mx-auto aspect-video max-w-[300px] object-cover`}
-                    ref={imageRef}
-                    alt=""
-                  />
-
-                  <p className="mx-auto">Click the button to upload an image</p>
-
-                  <div className="flex items-center justify-center gap-x-8">
-                    <span className="cursor-pointer rounded-lg bg-primary px-8 py-2.5 text-white hover:bg-red-800">
-                      {isCoverUploaded ? "Change Cover" : "Upload"}
-                    </span>
-
-                    <span className={`${isCoverUploaded ? "hidden" : "block"}`}>
-                      It appears no file is selected
-                    </span>
-                  </div>
-                </label>
-
-                <input
-                  className="hidden"
-                  type="file"
-                  name="url"
-                  id="cover"
-                  onChange={(e) => handleUpload(e)}
-                />
-              </div>
-
-              {validationErrors?.url && (
-                <p className="text-[#D81222] mt-2">
-                  {validationErrors.url[0]}
-                </p>
-              )}
-
-              {/* tags */}
-              <div className="flex flex-col gap-y-4">
-                <label htmlFor="tags">Tags</label>
-                <input
-                  ref={tagInputRef}
-                  className="form-input px-4 py-3 border-2 rounded-lg"
-                  type="text"
-                  placeholder="Press enter to add new tag..."
-                  onKeyDown={(e): void => addTag(e)}
-                />
-
-                {/* preview tags */}
-                <div className="flex gap-x-2">
-                  {postTags?.map((tag: string, index: number) => (
-                    <div key={`tag-${index}`} className="relative">
-                      <small
-                        onClick={() => removeTag(tag)}
-                        className="cursor-pointer rounded-full bg-primary px-3 py-1 text-white"
-                      >
-                        {tag}{" "}
-                        <span className="font-semibold text-red-500">x</span>
-                      </small>
-                    </div>
-                  ))}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Value</label>
+                  <input name="value" type="text" placeholder="e.g. description" className={inputClass} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Content</label>
+                  <input name="content1" type="text" placeholder="Meta content..." className={inputClass} />
                 </div>
               </div>
-              <h1 className="text-2xl">Additional Meta</h1>
-              <div>
-                <label htmlFor="key">Attribute</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="key"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Attribute..."
-                />
-                <p className="mt-1">
-                  The key that the meta tag should use as attribute name, such
-                  as name, property or custom attribute.
-                </p>
+            </div>
+          </div>
 
-                {validationErrors?.key && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.key[0]}
-                  </p>
+          {/* Sidebar */}
+          <div className="space-y-5">
+            {/* Cover */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-3">Cover Image</h2>
+              <label htmlFor="cover" className="cursor-pointer block">
+                {coverPreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={coverPreview} alt="Cover preview" className="w-full aspect-video object-cover rounded-lg border border-slate-200" />
+                ) : (
+                  <div className="w-full aspect-video rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-2 hover:border-primary transition-colors">
+                    <MdCloudUpload className="w-8 h-8 text-slate-400" />
+                    <p className="text-xs text-slate-500">Click to upload cover</p>
+                  </div>
                 )}
-              </div>
-              <div>
-                <label htmlFor="value">Value</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="value"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Value..."
-                />
-                <p className="mt-1">
-                  The value that the meta tag should use as value of the
-                  attribute, such as title, description, og:image, etc.
-                </p>
-                {validationErrors?.value && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.value[0]}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="content1">Content Meta</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="content1"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Content..."
-                />
-                <p className="mt-1">
-                  The content that the meta tag should use.
-                </p>
+              </label>
+              <input id="cover" type="file" name="url" className="hidden" accept="image/*" onChange={handleCoverUpload} />
+              {errors.url && <p className="mt-1 text-xs text-red-500">{errors.url[0]}</p>}
+            </div>
 
-                {validationErrors?.content1 && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.content1[0]}
-                  </p>
-                )}
+            {/* Categories */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-3">Categories</h2>
+              <div className="space-y-2">
+                {categories?.data.map((cat: Category, i: number) => (
+                  <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={cat.id}
+                      name={`categories[${i}][category_id]`}
+                      className="rounded border-slate-300 text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-slate-700">{cat.name}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.categories && <p className="mt-1 text-xs text-red-500">{errors.categories[0]}</p>}
+            </div>
+
+            {/* Tags */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-3">Tags</h2>
+              <input
+                ref={tagInputRef}
+                type="text"
+                placeholder="Press Enter to add tag..."
+                className={inputClass}
+                onKeyDown={addTag}
+              />
+              <div className="flex flex-wrap gap-2 mt-3">
+                {postTags.map((tag, i) => (
+                  <span key={i} className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
+                      <MdClose className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
               </div>
             </div>
 
-            <div className="mt-12 flex justify-center gap-x-12 font-medium">
-              <button
-                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
-                name="status"
-                value="2"
-              >
-                Draft
-              </button>
-
-              <button
-                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
-                name="status"
-                value="4"
-              >
-                {isProcessing ? "Publish..." : "Save & Publish"}
-              </button>
+            {/* Actions */}
+            <div className="flex gap-3">
+              <Button type="submit" name="status" value="2" variant="flat" size="sm" isDisabled={isProcessing}>
+                Save Draft
+              </Button>
+              <Button type="submit" name="status" value="4" color="primary" size="sm" isLoading={isProcessing}>
+                Publish
+              </Button>
             </div>
-          </form>
-          {/* loading overlay */}
-          {isProcessing && (
-            <div className="absolute flex items-end justify-center inset-0 h-full bg-white/60 z-10">
-              <Image className="mb-72" src={Spin} alt="loading" />
-            </div>
-          )}
-        </section>
-      </main>
+          </div>
+        </div>
+      </form>
     </>
   );
 }

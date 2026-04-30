@@ -1,41 +1,55 @@
-import Link from "next/link";
 import { JSX, useEffect, useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
+import Head from "next/head";
 import { Button } from "@nextui-org/react";
-import Loading from "@/components/partials/Loading";
+import { useRouter } from "next/router";
 import ApiError from "@/errors/ApiError";
 import { RequestUpdate } from "@/@types";
-import { useRouter } from "next/router";
-import Head from "next/head";
-import toast from "react-hot-toast";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ImageViewer from "@/components/ui/ImageViewer";
 import RequestUpdateModule from "@/modules/RequestUpdateModule";
+import toast from "react-hot-toast";
 
-export default function DetailRequestUpdateTherapist(): JSX.Element {
-  const [singleRequestUpdate, setSingleRequestUpdate] = useState<RequestUpdate>(
-    {} as RequestUpdate
+function InfoRow({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-sm text-slate-700">{value || "—"}</p>
+    </div>
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isApproving, setIsApproving] = useState<boolean>(false);
+}
 
+export default function DetailRequestTherapist(): JSX.Element {
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [request, setRequest] = useState<RequestUpdate>({} as RequestUpdate);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Request Update", href: "/member-request" },
+      { label: "Therapist Request" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!router.query.id) return;
-
-    const fetchSingleRequestUpdate = async () => {
+    const load = async () => {
       setIsLoading(true);
       try {
         const res = await new RequestUpdateModule().single(+router.query.id!);
-        setSingleRequestUpdate(res.data);
+        setRequest(res.data);
       } catch (error) {
-        const message = error instanceof ApiError ? error.getFirstError() : "Failed to load request.";
-        toast.error(message);
+        const msg = error instanceof ApiError ? error.getFirstError() : "Failed to load request.";
+        toast.error(msg);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchSingleRequestUpdate();
+    load();
   }, [router.query.id]);
 
   const handleApprove = async () => {
@@ -49,182 +63,89 @@ export default function DetailRequestUpdateTherapist(): JSX.Element {
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         }
       );
-
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.message || "Approval failed.");
       }
-
       toast.success("Therapist request approved.");
       router.push("/member-request");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to approve request.";
-      toast.error(message);
+      toast.error(error instanceof Error ? error.message : "Failed to approve.");
     } finally {
       setIsApproving(false);
     }
   };
 
+  if (isLoading) return <LoadingSpinner fullPage />;
+
   return (
     <>
-      <Head>
-        <title>SPAS | {singleRequestUpdate.name}</title>
-      </Head>
-      <main>
-        <header className="mb-8 md:mb-12">
-          <Link href="/member-request" className="flex gap-x-4 items-center w-max">
-            <div className="bg-secondary p-2 rounded-md">
-              <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
+      <Head><title>SPAS | Therapist Update Request</title></Head>
+
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-800">Therapist Update Request</h1>
+          <p className="text-sm text-slate-500 mt-0.5">{request.name}</p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <Button size="sm" color="danger" variant="flat" onPress={() => toast.error("Reject not yet implemented.")}>
+            Reject
+          </Button>
+          <Button size="sm" color="primary" isLoading={isApproving} onPress={handleApprove}>
+            Approve
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Documents */}
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-4">Documents</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs font-medium text-slate-400 uppercase mb-2">Profile Photo</p>
+              <ImageViewer
+                src={request.url_logo_therapist ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${request.url_logo_therapist}` : "/no-image.png"}
+                alt={request.name ?? "Profile"}
+                className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+              />
             </div>
-            <span className="text-base md:text-2xl lg:text-3xl">
-              Back to Member Request
-            </span>
-          </Link>
-        </header>
-
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            <section className="container p-4 md:p-8">
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-12">
-                Therapist Update Request
-              </h1>
-
-              <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12 md:gap-x-10">
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="md:space-y-8">
-                    <h2 className="md:text-lg font-bold mb-4 md:mb-8">Personal Information</h2>
-                    <label>Profile Picture</label>
-                    <div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={
-                          singleRequestUpdate.url_logo_therapist
-                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleRequestUpdate.url_logo_therapist}`
-                            : "/no-image.png"
-                        }
-                        alt={singleRequestUpdate.name}
-                        className="object-cover w-80"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label>Full Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.name}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Passport/Fin No.</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.passport_finno}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Date of Birth</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.date_of_birth}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Sex</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.sex}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact No.</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.contact_no}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Nationality</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.nationality}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="md:space-y-8">
-                    <h2 className="md:text-lg font-bold mb-4 md:mb-8">Professional Certificate</h2>
-                    <label>Certificate</label>
-                    <div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={
-                          singleRequestUpdate.professional_certs
-                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleRequestUpdate.professional_certs}`
-                            : "/no-image.png"
-                        }
-                        alt={singleRequestUpdate.name}
-                        className="object-cover w-80"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label>Certificate Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.name_cert}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Issuing Organization</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.issuing_organization}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Issue Date</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.date_of_issue}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Expiration Date</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.expired_date}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Credential ID</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.credential_id}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="pb-12">
-              <div className="w-max mx-auto">
-                <div className="flex flex-col md:flex-row gap-x-10 gap-y-4">
-                  <Button
-                    onClick={() => toast.error("Reject feature not yet implemented.")}
-                    color="danger"
-                    size="lg"
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    onClick={handleApprove}
-                    isLoading={isApproving}
-                    isDisabled={isApproving}
-                    color="secondary"
-                    size="lg"
-                  >
-                    {isApproving ? "Approving..." : "Approve"}
-                  </Button>
-                </div>
-              </div>
-            </section>
+            <div>
+              <p className="text-xs font-medium text-slate-400 uppercase mb-2">Certificate</p>
+              <ImageViewer
+                src={request.professional_certs ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${request.professional_certs}` : "/no-image.png"}
+                alt="Certificate"
+                className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+              />
+            </div>
           </div>
-        )}
-      </main>
+        </div>
+
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-700 mb-4">Personal Information</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="Full Name" value={request.name} />
+              <InfoRow label="Passport/Fin No" value={request.passport_finno} />
+              <InfoRow label="Date of Birth" value={request.date_of_birth} />
+              <InfoRow label="Sex" value={request.sex} />
+              <InfoRow label="Contact No" value={request.contact_no} />
+              <InfoRow label="Nationality" value={request.nationality} />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-700 mb-4">Certificate Details</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="Certificate Name" value={request.name_cert} />
+              <InfoRow label="Issuing Organization" value={request.issuing_organization} />
+              <InfoRow label="Issue Date" value={request.date_of_issue} />
+              <InfoRow label="Expiry Date" value={request.expired_date} />
+              <InfoRow label="Credential ID" value={request.credential_id} />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

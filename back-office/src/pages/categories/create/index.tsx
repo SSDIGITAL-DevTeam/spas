@@ -1,73 +1,41 @@
+import { JSX, useEffect, useState, FormEvent } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
 import ApiError from "@/errors/ApiError";
 import CategoryModule from "@/modules/CategoryModule";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FormEvent, JSX, useRef, useState } from "react";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import { Button } from "@nextui-org/react";
 import toast from "react-hot-toast";
 
-type ValidationErrors = {
-  status: boolean;
-  errors: {
-    name: string;
-  };
-};
+type Errors = { name?: string[] };
 
-export default function CreatePost(): JSX.Element {
-  // router
+export default function CreateCategory(): JSX.Element {
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
-  // states
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [validationErrors, setValidationErrors] = useState(
-    {} as ValidationErrors
-  );
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Categories", href: "/categories" },
+      { label: "New Category" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // refs
-  const imageRef = useRef<HTMLImageElement | null>(null);
-
-  // handle create category
-  const handleCreateBlog = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    setIsProcessing(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
-
-    // console.log(postTags);
-
+    setIsProcessing(true);
+    setErrors({});
     try {
-      await new CategoryModule().store(formData);
-
-      toast("Category Created Successfully", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-
-      router.push(`/categories`);
+      await new CategoryModule().store(new FormData(e.currentTarget));
+      toast.success("Category created.");
+      router.push("/categories");
     } catch (error) {
       const err = error as ApiError;
-      const validationErrors = err.data as ValidationErrors;
-      setValidationErrors(validationErrors);
-
-      // console.log(err.data);
-
-      toast("Something Wrong", {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      setErrors((err.getValidationErrors?.() as Errors) ?? {});
+      toast.error(err.getFirstError?.() ?? "Something went wrong.");
     } finally {
       setIsProcessing(false);
     }
@@ -75,55 +43,38 @@ export default function CreatePost(): JSX.Element {
 
   return (
     <>
-      <Head>
-        <title>SPAS | Create</title>
-      </Head>
+      <Head><title>SPAS | New Category</title></Head>
 
-      <main>
-        <Link
-          href="/categories"
-          className="btn bg-primary rounded-lg text-white px-4 py-2"
-        >
-          Back
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-slate-800">New Category</h1>
+        <p className="text-sm text-slate-500 mt-0.5">Add a new blog category</p>
+      </div>
 
-        <header className="my-8">
-          <h1 className="text-2xl">New Category</h1>
-        </header>
+      <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 max-w-lg">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Category Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="name"
+              type="text"
+              placeholder="e.g. Wellness"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            />
+            {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name[0]}</p>}
+          </div>
 
-        <section className="mx-auto max-w-3xl">
-          <form onSubmit={(e) => handleCreateBlog(e)}>
-            <div className="font-montserrat flex flex-col gap-y-8">
-              {/* title */}
-              <div>
-                <label htmlFor="name">Categories Name</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="name"
-                  type="text"
-                  placeholder="Name..."
-                />
-
-                {validationErrors.errors?.name && (
-                  <p className="text-ligh text-[#D81222] mt-2">
-                    {validationErrors.errors.name[0]}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-12 flex justify-center gap-x-12 font-medium">
-              <button
-                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
-                name="status"
-                value="PUBLISHED"
-              >
-                {isProcessing ? "Save..." : "Save"}
-              </button>
-            </div>
-          </form>
-        </section>
-      </main>
+          <div className="flex gap-3 pt-2">
+            <Button type="submit" color="primary" size="sm" isLoading={isProcessing}>
+              Save Category
+            </Button>
+            <Button variant="flat" size="sm" onPress={() => router.push("/categories")} isDisabled={isProcessing}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }

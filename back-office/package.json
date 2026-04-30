@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "node server.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "node scripts/patch-react-aria.js"
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.9",

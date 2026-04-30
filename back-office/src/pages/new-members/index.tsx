@@ -1,224 +1,156 @@
 import { JSX, useEffect, useState } from "react";
-import { Tabs, Tab, Button } from "@nextui-org/react";
-import Link from "next/link";
 import Head from "next/head";
+import { Tabs, Tab, Button, Input } from "@nextui-org/react";
+import Link from "next/link";
 import { useOperator } from "@/hooks/useOperator";
-import Loading from "@/components/partials/Loading";
 import { useTherapist } from "@/hooks/useTherapist";
-import { Input } from "@nextui-org/react";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import PageHeader from "@/components/ui/PageHeader";
+import DataTable from "@/components/ui/DataTable";
+import EmptyState from "@/components/ui/EmptyState";
+import StatusBadge from "@/components/ui/StatusBadge";
+import { MdSearch } from "react-icons/md";
 
 export default function NewMembers(): JSX.Element {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const handleSearchChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    await fetchOperator("1", query);
-    await fetchTherapist("1", query);
-  };
-
-  const handleSearchSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    await fetchOperator("1", searchQuery);
-    await fetchTherapist("1", searchQuery);
-  };
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { operator, isOperatorLoading, fetchOperator } = useOperator();
-
   const { therapist, isTherapistLoading, fetchTherapist } = useTherapist();
 
   useEffect(() => {
+    setBreadcrumbs([{ label: "Dashboard", href: "/" }, { label: "New Members" }]);
     fetchOperator();
     fetchTherapist();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function getLastPageNumber(page: string | null | undefined) {
-    if (!page) {
-      return 1; // More concise check for null or undefined
-    }
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+    await fetchOperator("1", q);
+    await fetchTherapist("1", q);
+  };
 
-    try {
-      const url = new URL(page);
-      const params = new URLSearchParams(url.search);
-      const pageNumbers = params.getAll("page").map(Number);
-      return Math.max(...pageNumbers, 1);
-    } catch (error) {
-      console.error("Error parsing URL:", error);
-      return 1;
-    }
-  }
+  const pendingOperators = operator?.data?.filter((o) => o.status === "pending") ?? [];
+  const pendingTherapists = therapist?.data?.filter((t) => t.status === "pending") ?? [];
+
+  const operatorColumns = [
+    { header: "Logo", className: "w-16" },
+    { header: "Company Name" },
+    { header: "Email" },
+    { header: "Contact" },
+    { header: "Status", className: "w-28" },
+    { header: "Actions", className: "w-24 text-center" },
+  ];
+
+  const therapistColumns = [
+    { header: "Photo", className: "w-16" },
+    { header: "Full Name" },
+    { header: "Email" },
+    { header: "Contact" },
+    { header: "Status", className: "w-28" },
+    { header: "Actions", className: "w-24 text-center" },
+  ];
 
   return (
     <>
-      <Head>
-        <title>SPAS | New Members</title>
-      </Head>
-      <main>
-        <div className="container p-4 md:p-8">
-          <h1 className="text-lg md:text-2xl lg:text-4xl font-semibold mb-8 md:mb-12">
-            New Members
-          </h1>
+      <Head><title>SPAS | New Members</title></Head>
 
-          <form onSubmit={handleSearchSubmit}>
-            <div className="w-60 pb-5">
-              <Input
-                name="search"
-                placeholder="Search..."
-                variant="bordered"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-          </form>
+      <PageHeader title="New Members" description="Review and approve new member registrations" />
 
-          <div className="flex w-full flex-col space-y-4 md:space-y-8">
-            <Tabs aria-label="Options" color="secondary" className="mx-auto">
-              <Tab key="operators" title="Spa Operators" className="relative">
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="lg:text-base text-center text-white uppercase bg-secondary">
-                      <tr>
-                        <th scope="col" className="px-6 py-3">
-                          Logo
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Company Name
-                        </th>
-                        <th scope="col" className=" px-6 py-3">
-                          Contact
-                        </th>
-                        <th scope="col" className=" px-6 py-3">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
+      <div className="mb-5 w-64">
+        <Input
+          placeholder="Search..."
+          variant="bordered"
+          size="sm"
+          value={searchQuery}
+          onChange={handleSearch}
+          startContent={<MdSearch className="text-slate-400 w-4 h-4" />}
+        />
+      </div>
 
-                    <tbody>
-                      <tr>
-                        <td colSpan={5}>{isOperatorLoading && <Loading />}</td>
-                      </tr>
-                      {operator?.data
-                        .filter((operator) => operator.status === "pending")
-                        .map((operators, index) => (
-                          <tr
-                            key={operators.id}
-                            className="bg-white text-md text-black hover:bg-slate-50 h-max"
-                          >
-                            <td className="flex justify-center p-4">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                key={operators.id}
-                                src={
-                                  operators.cover
-                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operators.cover.url}`
-                                    : "/no-image.png"
-                                }
-                                alt={operators.company_name}
-                                className="object-cover md:w-20 md:h-20 aspect-square"
-                              />
-                            </td>
-                            <td className="text-center">
-                              {operators.company_name}
-                            </td>
-                            <td className="text-center">
-                              {operators.contact_no}
-                            </td>
-                            <td className="">
-                              <div className="w-max mx-auto">
-                                <Button
-                                  as={Link}
-                                  href={`/new-members/operator/${operators.id}`}
-                                  radius="sm"
-                                  color="secondary"
-                                  className=""
-                                >
-                                  Detail
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Tab>
-
-              <Tab key="therapist" title="Spa Therapists">
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="lg:text-base text-center text-white uppercase bg-secondary">
-                      <tr>
-                        <th scope="col" className="px-6 py-3">
-                          Profile Picture
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Full Name
-                        </th>
-                        <th scope="col" className=" px-6 py-3">
-                          Contact
-                        </th>
-                        <th scope="col" className=" px-6 py-3">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr>
-                        <td colSpan={5}>{isTherapistLoading && <Loading />}</td>
-                      </tr>
-                      {therapist?.data
-                        .filter((therapist) => therapist.status === "pending")
-                        .map((therapists, index) => (
-                          <tr
-                            key={therapists.id}
-                            className="bg-white text-md text-black hover:bg-slate-50 h-max"
-                          >
-                            <td className="flex justify-center p-4">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                key={therapists.id}
-                                src={
-                                  therapists.cover
-                                    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapists.cover.url}`
-                                    : "/no-image.png"
-                                }
-                                alt={therapists.name}
-                                className="object-cover md:w-20 md:h-20 aspect-square"
-                              />
-                            </td>
-                            <td className="text-center">{therapists.name}</td>
-                            <td className="text-center">
-                              {therapists.contact_no}
-                            </td>
-                            <td className="">
-                              <div className="w-max mx-auto">
-                                <Button
-                                  as={Link}
-                                  href={`/new-members/therapist/${therapists.id}`}
-                                  radius="sm"
-                                  color="secondary"
-                                  className=""
-                                >
-                                  Detail
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Tab>
-            </Tabs>
+      <Tabs color="primary" variant="underlined" aria-label="Member tabs">
+        <Tab key="operators" title={`Spa Operators (${pendingOperators.length})`}>
+          <div className="mt-3">
+            <DataTable columns={operatorColumns} isLoading={isOperatorLoading}>
+              {pendingOperators.length === 0 ? (
+                <EmptyState message="No pending operators." />
+              ) : (
+                pendingOperators.map((op) => (
+                  <tr key={op.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={op.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${op.cover.url}` : "/no-image.png"}
+                        alt={op.company_name}
+                        className="w-10 h-10 rounded-lg object-cover"
+                      />
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-slate-700">{op.company_name}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500">{op.user?.email}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500">{op.contact_no}</td>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={op.status as "pending" | "approve" | "reject"} />
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Button
+                        as={Link}
+                        href={`/new-members/operator/${op.id}`}
+                        size="sm"
+                        color="primary"
+                        variant="flat"
+                      >
+                        Review
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </DataTable>
           </div>
-        </div>
-      </main>
+        </Tab>
+
+        <Tab key="therapists" title={`Spa Therapists (${pendingTherapists.length})`}>
+          <div className="mt-3">
+            <DataTable columns={therapistColumns} isLoading={isTherapistLoading}>
+              {pendingTherapists.length === 0 ? (
+                <EmptyState message="No pending therapists." />
+              ) : (
+                pendingTherapists.map((th) => (
+                  <tr key={th.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={th.cover ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${th.cover.url}` : "/no-image.png"}
+                        alt={th.name}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-slate-700">{th.name}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500">{th.user?.email}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500">{th.contact_no}</td>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={th.status as "pending" | "approve" | "reject"} />
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Button
+                        as={Link}
+                        href={`/new-members/therapist/${th.id}`}
+                        size="sm"
+                        color="primary"
+                        variant="flat"
+                      >
+                        Review
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </DataTable>
+          </div>
+        </Tab>
+      </Tabs>
     </>
   );
 }

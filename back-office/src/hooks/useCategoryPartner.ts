@@ -14,17 +14,16 @@ export function useCategoryPartner() {
   );
 
   const fetchCategoryPartner = async (
-    page: string = '1', 
+    page: string = '1',
     searchQuery: string = ''
   ): Promise<void> => {
     setIsCategoryPartnerLoading(true);
-
     try {
-      const categoryPartModule = new CategoryPartnerModule();
-      const res = await categoryPartModule.all(page, searchQuery);
+      const res = await new CategoryPartnerModule().all(page, searchQuery);
       setCategoryPartners(res);
     } catch (error) {
       setCategoryPartnerError(error as ApiError);
+      throw error;
     } finally {
       setIsCategoryPartnerLoading(false);
     }

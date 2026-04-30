@@ -18,28 +18,16 @@ export default class CategoryPartnerModule {
     page: string = "1",
     searchQuery: string = ''
   ): Promise<DataWithPagination<CategoryPartner>> {
-     // Validasi parameter
-    if (!/^\d+$/.test(page)) {
-        throw new Error('Invalid page number');
-    }
-
     try {
       let url = `${this.url}?page=${page}`;
       if (searchQuery) {
-          url += `&search=${encodeURIComponent(searchQuery)}`;
+        url += `&search=${encodeURIComponent(searchQuery)}`;
       }
-
-      // Logging URL request
-      // console.log(`Request URL: ${url}`);
-
       return await ApiModule.makeRequestTo<DataWithPagination<CategoryPartner>>(url).with({
-          headers: this.defaultHeaders,
-        });
+        headers: this.defaultHeaders,
+      });
     } catch (err: any) {
-        // Logging error
-        console.error('Error fetching data:', err);
-
-        throw new Error(`Failed to fetch data: ${err.message}`);
+      throw err satisfies ApiError;
     }
   }
 

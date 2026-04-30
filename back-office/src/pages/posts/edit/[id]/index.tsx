@@ -1,351 +1,217 @@
-import { Cover, Post, Tag, Category } from "@/@types";
-import Loading from "@/components/partials/Loading";
-import TinyMceEditor from "@/components/partials/TinyMceEditor";
-import ApiError from "@/errors/ApiError";
-import { useCategory } from "@/hooks/useCategory";
-import PostModule from "@/modules/PostModule";
+import { JSX, useEffect, useState, FormEvent, useRef, ChangeEvent, KeyboardEvent } from "react";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  ChangeEvent,
-  FormEvent,
-  JSX,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Button } from "@nextui-org/react";
+import ApiError from "@/errors/ApiError";
+import PostModule from "@/modules/PostModule";
+import { useCategory } from "@/hooks/useCategory";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import { Category, Post, Tag } from "@/@types";
+import TinyMceEditor from "@/components/partials/TinyMceEditor";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
+import { MdClose, MdCloudUpload } from "react-icons/md";
 
-type PostValidationErrors = {
+type Errors = {
   title?: string[];
-  url?: string[];
-  status?: string[];
+  slug?: string[];
   content?: string[];
   categories?: string[];
+  url?: string[];
   tags?: string[];
 };
 
 export default function EditPost(): JSX.Element {
-  // router
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [post, setPost] = useState<Post>({} as Post);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
+  const [postTags, setPostTags] = useState<string[]>([]);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [slug, setSlug] = useState("");
 
-  // states
-  const [singlePost, setSinglePost] = useState<Post>({} as Post);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [isCoverUploaded, setIsCoverUploaded] = useState<boolean>(false);
-  const [postTags, setPostTags] = useState([] as string[]);
-  const [validationErrors, setValidationErrors] = useState<PostValidationErrors>({});
-
-  // fetch posts
-  const { categories, isCategoryLoading, fetchCategory } = useCategory();
+  const tagInputRef = useRef<HTMLInputElement | null>(null);
+  const { categories, fetchCategory } = useCategory();
 
   useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Posts", href: "/posts" },
+      { label: "Edit Post" },
+    ]);
     fetchCategory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const cover = singlePost.cover as Cover;
-
   useEffect(() => {
-    const fetchSinglePost = async () => {
+    if (!router.query.id) return;
+    const load = async () => {
+      setIsLoading(true);
       try {
         const res = await new PostModule().singlePost(+router.query.id!);
-        setSinglePost(res.data);
-
+        setPost(res.data);
+        if (res.data.slug) setSlug(res.data.slug);
         if (res.data.tags) {
-          setPostTags(
-            res.data.tags?.map((tag: Tag, _index: number) => tag.name)
-          );
+          setPostTags(res.data.tags.map((t: Tag) => t.name));
         }
       } catch (error) {
         const err = error as ApiError;
-        toast(err.getFirstError(), {
-          icon: "🚫",
-          style: { backgroundColor: "#D81222", color: "#ffffff", paddingBlock: 12 },
-        });
+        toast.error(err.getFirstError?.() ?? "Failed to load post.");
+      } finally {
+        setIsLoading(false);
       }
     };
+    load();
+  }, [router.query.id]);
 
-    fetchSinglePost();
-  }, [router]);
-
-  // refs
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const tagInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleUpload = (e: ChangeEvent<HTMLInputElement>): void => {
-    const image: File | null | undefined = e.currentTarget.files?.item(0);
-
-    if (image) {
-      setIsCoverUploaded(true);
-      imageRef.current!.src = URL.createObjectURL(image);
-      imageRef.current?.setAttribute("alt", "Blog Cover");
-
-      return;
-    }
-    setIsCoverUploaded(false);
-    imageRef.current?.removeAttribute("src");
-    imageRef.current?.removeAttribute("alt");
+  const handleCoverUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.item(0);
+    if (file) setCoverPreview(URL.createObjectURL(file));
   };
 
-  // add tags
-  const addTag = (e: KeyboardEvent<HTMLInputElement>): void => {
+  const addTag = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const tag = e.currentTarget.value.trim();
-
-      if (tag) {
-        setPostTags([...postTags, tag]);
-      }
-
+      if (tag) setPostTags((prev) => [...prev, tag]);
       e.currentTarget.value = "";
     }
   };
 
-  // remove tags
-  const removeTag = (tag: string): void => {
-    setPostTags([...postTags.filter((item: string) => item !== tag)]);
+  const removeTag = (tag: string) => setPostTags((prev) => prev.filter((t) => t !== tag));
+
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const title = e.currentTarget.value;
+    const generated = title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
+    setSlug(generated);
   };
 
-  // handle create blog
-  const handleCreateBlog = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    setIsProcessing(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsProcessing(true);
+    setErrors({});
+    const formData = new FormData(e.currentTarget);
+    const submit = e.nativeEvent as SubmitEvent;
+    const btn = submit.submitter as HTMLButtonElement;
+    formData.append("status", btn.value);
 
-    const form: HTMLFormElement = e.currentTarget;
-    const formData: FormData = new FormData(form);
-    const submit: SubmitEvent = e.nativeEvent as SubmitEvent;
-    const status: HTMLButtonElement = submit.submitter as HTMLButtonElement;
-
-    formData.append("status", status.value);
-
-    // Ambil teks yang belum di-Enter juga
-    const pendingTag = tagInputRef.current?.value.trim();
-    const allTags = pendingTag ? [...postTags, pendingTag] : postTags;
-    allTags.forEach((tag: string, i: number) =>
-      formData.append(`tags[${i}][name]`, tag)
-    );
+    const pending = tagInputRef.current?.value.trim();
+    const allTags = pending ? [...postTags, pending] : postTags;
+    allTags.forEach((tag, i) => formData.append(`tags[${i}][name]`, tag));
 
     try {
       await new PostModule().update(formData, +router.query.id!);
-
-      toast("Post Updated Successfully", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-
-      router.push(`/posts/view/${singlePost.id}`);
+      toast.success("Post updated.");
+      router.push(`/posts/view/${post.id}`);
     } catch (error) {
       const err = error as ApiError;
-      const errors = err.getValidationErrors() as PostValidationErrors | null;
-      setValidationErrors(errors ?? {});
-
-      toast(err.getFirstError(), {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
+      setErrors((err.getValidationErrors?.() as Errors) ?? {});
+      toast.error(err.getFirstError?.() ?? "Something went wrong.");
     } finally {
       setIsProcessing(false);
     }
   };
 
+  if (isLoading) return <LoadingSpinner fullPage />;
+
+  const inputClass = "w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary";
+  const existingCover = post.cover?.url ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}` : null;
+
   return (
     <>
-      <Head>
-        <title>SPAS | Edit - {singlePost.title}</title>
-      </Head>
+      <Head><title>SPAS | Edit Post</title></Head>
 
-      <main>
-        <Link
-          href="/posts"
-          className="btn bg-primary rounded-lg text-white px-4 py-2"
-        >
-          Back
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-slate-800">Edit Post</h1>
+        <p className="text-sm text-slate-500 mt-0.5 truncate">{post.title}</p>
+      </div>
 
-        <header className="my-8">
-          <h1 className="text-2xl">Edit Blog</h1>
-        </header>
-
-        <section className="mx-auto max-w-3xl">
-          <form onSubmit={(e) => handleCreateBlog(e)}>
-            <div className="font-montserrat flex flex-col gap-y-8">
-              {/* title */}
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Main */}
+          <div className="xl:col-span-2 space-y-5">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 space-y-5">
               <div>
-                <label htmlFor="title">Title</label>
-                <input
-                  className="form-input mt-2 block w-full px-4 py-3 border-2 rounded-lg"
-                  name="title"
-                  type="text"
-                  placeholder="Title..."
-                  defaultValue={singlePost.title}
-                />
-
-                {validationErrors?.title && (
-                  <small className="text-red-500">
-                    {validationErrors.title[0]}
-                  </small>
-                )}
-              </div>
-
-              {/* blog content */}
-              <div className="min-h-[380px] overflow-hidden space-y-2">
-                <label htmlFor="content">Content</label>
-                {/* CK Editor */}
-                <TinyMceEditor
-                  textareaName="content"
-                  initialValue={singlePost.content}
-                />
-
-                {validationErrors?.content && (
-                  <small className="text-red-500">
-                    {validationErrors.content[0]}
-                  </small>
-                )}
+                <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+                <input name="title" type="text" defaultValue={post.title} className={inputClass} onChange={handleTitleChange} />
+                {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title[0]}</p>}
               </div>
 
               <div>
-                <label htmlFor="categories">Categories</label>
-                <div className="flex mt-2">
-                  <div className="flex items-center">
-                    {categories?.data.map(
-                      (category: Category, index: number) => (
-                        <div className="gap-5" key={category.id}>
-                          <input
-                            id="inline-checkbox"
-                            type="checkbox"
-                            value={category.id}
-                            name={`categories[${index}][category_id]`}
-                            defaultChecked={singlePost.categories
-                              ?.map((category) => category.name)
-                              .includes(category.name)}
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label className="ms-2 text-sm font-medium text-black w-max">
-                            {category.name}
-                          </label>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {validationErrors?.categories && (
-                  <p className="text-[#D81222] mt-2">
-                    {validationErrors.categories[0]}
-                  </p>
-                )}
+                <label className="block text-sm font-medium text-slate-700 mb-1">Slug</label>
+                <input name="slug" type="text" value={slug} readOnly className={`${inputClass} bg-slate-50 text-slate-500 cursor-not-allowed`} />
+                {errors.slug && <p className="mt-1 text-xs text-red-500">{errors.slug[0]}</p>}
               </div>
 
-              {/* cover */}
-              <div className="flex flex-col items-center rounded-xl border px-8 pb-8 font-medium">
-                <label htmlFor="cover" className="flex flex-col gap-y-8">
-                  <div
-                    className={`${isCoverUploaded ? "hidden" : "block"}`}
-                  ></div>
-
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    className="mx-auto aspect-video rounded-lg object-cover"
-                    ref={imageRef}
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singlePost.cover?.url}`}
-                    alt="cover"
-                  />
-
-                  <p className="mx-auto text-center">
-                    Click the button to upload an image
-                  </p>
-
-                  <div className="flex items-center justify-center gap-x-8">
-                    <span className="cursor-pointer rounded-lg bg-primary px-8 py-2.5 text-white hover:bg-red-800">
-                      {isCoverUploaded ? "Change Cover" : "Upload"}
-                    </span>
-
-                    <span
-                      className={`${
-                        isCoverUploaded || imageRef.current ? "hidden" : "block"
-                      }`}
-                    >
-                      It appears no file is selected
-                    </span>
-                  </div>
-                </label>
-
-                <input
-                  className="hidden"
-                  type="file"
-                  name="url"
-                  id="cover"
-                  onChange={(e) => handleUpload(e)}
-                />
+              <div className="min-h-[380px]">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Content</label>
+                <TinyMceEditor textareaName="content" initialValue={post.content} />
+                {errors.content && <p className="mt-1 text-xs text-red-500">{errors.content[0]}</p>}
               </div>
+            </div>
+          </div>
 
-              {validationErrors?.url && (
-                <small className="-mt-8 text-red-500">
-                  {validationErrors.url[0]}
-                </small>
-              )}
-
-              {/* tags */}
-              <div className="flex flex-col gap-y-4">
-                <label htmlFor="tags">Tags</label>
-                <input
-                  ref={tagInputRef}
-                  className="form-input block w-full px-4 py-3 border-2 rounded-lg"
-                  type="text"
-                  placeholder="Press enter to add new tag..."
-                  onKeyDown={(e): void => addTag(e)}
+          {/* Sidebar */}
+          <div className="space-y-5">
+            {/* Cover */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-3">Cover Image</h2>
+              <label htmlFor="cover-edit" className="cursor-pointer block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={coverPreview ?? existingCover ?? "/no-image.png"}
+                  alt="Cover"
+                  className="w-full aspect-video object-cover rounded-lg border border-slate-200"
                 />
+                <p className="text-xs text-slate-500 mt-2 text-center">Click to change cover</p>
+              </label>
+              <input id="cover-edit" type="file" name="url" className="hidden" accept="image/*" onChange={handleCoverUpload} />
+              {errors.url && <p className="mt-1 text-xs text-red-500">{errors.url[0]}</p>}
+            </div>
 
-                {/* preview tags */}
-                <div className="flex gap-x-2">
-                  {postTags?.map((tag: string, index: number) => (
-                    <div key={`tag-${index}`} className="relative">
-                      <small
-                        onClick={() => removeTag(tag)}
-                        className="cursor-pointer rounded-full bg-primary px-3 py-1 text-white"
-                      >
-                        {tag}{" "}
-                        <span className="font-semibold text-red-500">x</span>
-                      </small>
-                    </div>
-                  ))}
-                </div>
+            {/* Categories */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-3">Categories</h2>
+              <div className="space-y-2">
+                {categories?.data.map((cat: Category, i: number) => (
+                  <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={cat.id}
+                      name={`categories[${i}][category_id]`}
+                      defaultChecked={post.categories?.some((c) => c.name === cat.name)}
+                      className="rounded border-slate-300 text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-slate-700">{cat.name}</span>
+                  </label>
+                ))}
               </div>
             </div>
 
-            <div className="mt-12 flex flex-col justify-center gap-x-12 gap-y-4 font-medium md:flex-row">
-              <button
-                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-14"
-                name="status"
-                value="2"
-              >
-                Draft
-              </button>
-
-              <button
-                className="hover:bg-primary hover:text-white transition-all py-1.5 rounded-lg border-2 px-12"
-                name="status"
-                value="4"
-              >
-                {isProcessing ? "Updating..." : "Update & Publish"}
-              </button>
+            {/* Tags */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-700 mb-3">Tags</h2>
+              <input ref={tagInputRef} type="text" placeholder="Press Enter to add..." className={inputClass} onKeyDown={addTag} />
+              <div className="flex flex-wrap gap-2 mt-3">
+                {postTags.map((tag, i) => (
+                  <span key={i} className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)}><MdClose className="w-3 h-3" /></button>
+                  </span>
+                ))}
+              </div>
             </div>
-          </form>
-        </section>
-      </main>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <Button type="submit" name="status" value="2" variant="flat" size="sm" isDisabled={isProcessing}>Save Draft</Button>
+              <Button type="submit" name="status" value="4" color="primary" size="sm" isLoading={isProcessing}>Update & Publish</Button>
+            </div>
+          </div>
+        </div>
+      </form>
     </>
   );
 }

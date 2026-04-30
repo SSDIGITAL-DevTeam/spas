@@ -1,394 +1,150 @@
-import { JSX, SetStateAction, useEffect, useReducer, useState } from "react";
-import { Tabs, Tab, Input } from "@nextui-org/react";
-import Image from "next/image";
+import { JSX, useEffect, useState } from "react";
 import Head from "next/head";
-import { Cover, DataWithPagination, Post, Pagination } from "@/@types";
-import { usePosts } from "@/hooks/usePosts";
-import Loading from "@/components/partials/Loading";
-import AssetView from "@/assets/svg/asset-view.svg";
-import AssetEdit from "@/assets/svg/asset-edit.svg";
-import AssetDelete from "@/assets/svg/asset-delete.svg";
+import { Tabs, Tab, Button, Input } from "@nextui-org/react";
 import Link from "next/link";
-import PostModule from "@/modules/PostModule";
+import { Post } from "@/@types";
+import { usePosts } from "@/hooks/usePosts";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import PageHeader from "@/components/ui/PageHeader";
+import DataTable from "@/components/ui/DataTable";
+import TablePagination from "@/components/ui/TablePagination";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import EmptyState from "@/components/ui/EmptyState";
 import ApiError from "@/errors/ApiError";
+import PostModule from "@/modules/PostModule";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
-import Modal from "@/components/partials/Modal";
 import { PostStatusEnum } from "@/enums";
+import { MdEdit, MdDelete, MdVisibility, MdSearch } from "react-icons/md";
+
+function StatusPill({ status }: { status: string }) {
+  const isPublished = status === "4";
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${isPublished ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+      {isPublished ? "Published" : "Draft"}
+    </span>
+  );
+}
 
 export default function Posts(): JSX.Element {
-  // states
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [postId, setPostId] = useState<number>(0);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [deleteId, setDeleteId] = useState(0);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
 
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const handleSearchChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    await fetchPosts("1", PostStatusEnum.PUBLISHED, query);
-  };
-
-  const handleSearchSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    await fetchPosts("1", PostStatusEnum.PUBLISHED, searchQuery);
-  };
-
-  // router
-  const router = useRouter();
-
-  // fetch posts
   const { posts, isPostsLoading, fetchPosts } = usePosts();
 
-  // handle delete blog
-  const handleDeleteBlog = async (id: number): Promise<void> => {
-    setIsDeleting(true);
-    try {
-      await new PostModule().destroy(id);
-      // toast
-      toast("Post Deleted", {
-        icon: "✅",
-        style: {
-          backgroundColor: "#F4B202",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-    } catch (error) {
-      const err = error as ApiError;
-      toast(err.getFirstError(), {
-        icon: "🚫",
-        style: {
-          backgroundColor: "#D81222",
-          color: "#ffffff",
-          paddingBlock: 12,
-        },
-      });
-    } finally {
-      setIsOpen(false);
-      setIsDeleting(false);
-      router.reload();
-    }
-  };
-
   useEffect(() => {
+    setBreadcrumbs([{ label: "Dashboard", href: "/" }, { label: "Posts" }]);
     fetchPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // get last data after ?page=
-  function getLastPageNumber(page: string | null | undefined) {
-    if (page === null || page === undefined) {
-      return 1; // nilai default jika page adalah null atau undefined
-    }
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+    await fetchPosts("1", PostStatusEnum.PUBLISHED, q);
+  };
 
+  const handlePageChange = async (p: number) => {
+    setPage(p);
+    await fetchPosts(p.toString(), PostStatusEnum.PUBLISHED, searchQuery);
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
     try {
-      const url = new URL(page);
-      const params = new URLSearchParams(url.search);
-      const pageNumbers = params.getAll("page").map(Number);
-      return Math.max(...pageNumbers, 1);
+      await new PostModule().destroy(deleteId);
+      toast.success("Post deleted.");
+      await fetchPosts(page.toString(), PostStatusEnum.PUBLISHED, searchQuery);
     } catch (error) {
-      console.error("Error parsing URL:", error);
-      return 1;
+      const err = error as ApiError;
+      toast.error(err.getFirstError?.() ?? "Failed to delete.");
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteOpen(false);
     }
-  }
+  };
+
+  const columns = [
+    { header: "Title" },
+    { header: "Slug" },
+    { header: "Status", className: "w-28" },
+    { header: "Actions", className: "w-32 text-center" },
+  ];
+
+  const renderRows = (statusFilter: string) => {
+    const filtered = posts?.data?.filter((p) => p.status === statusFilter) ?? [];
+    if (filtered.length === 0) return <EmptyState message="No posts found." />;
+    return filtered.map((post: Post) => (
+      <tr key={post.id} className="hover:bg-slate-50 transition-colors">
+        <td className="px-4 py-3 text-sm font-medium text-slate-700 max-w-xs truncate">{post.title}</td>
+        <td className="px-4 py-3 text-sm text-slate-500 max-w-xs truncate">{post.slug}</td>
+        <td className="px-4 py-3"><StatusPill status={post.status} /></td>
+        <td className="px-4 py-3">
+          <div className="flex items-center justify-center gap-2">
+            <Button as={Link} href={`/posts/view/${post.id}`} isIconOnly size="sm" variant="flat" color="default" aria-label="View">
+              <MdVisibility className="w-4 h-4" />
+            </Button>
+            <Button as={Link} href={`/posts/edit/${post.id}`} isIconOnly size="sm" variant="flat" color="primary" aria-label="Edit">
+              <MdEdit className="w-4 h-4" />
+            </Button>
+            <Button isIconOnly size="sm" variant="flat" color="danger" aria-label="Delete" onPress={() => { setDeleteId(post.id); setIsDeleteOpen(true); }}>
+              <MdDelete className="w-4 h-4" />
+            </Button>
+          </div>
+        </td>
+      </tr>
+    ));
+  };
 
   return (
     <>
-      <Head>
-        <title>SPAS | Blog</title>
-      </Head>
+      <Head><title>SPAS | Posts</title></Head>
 
-      <main>
-        <header className="mb-4 flex flex-col items-start justify-between md:flex-row md:items-center gap-y-4">
-          <div>
-            <h2 className="mb-4 text-4xl">Blogs</h2>
+      <PageHeader title="Posts" description="Manage blog posts" action={{ label: "New Post", href: "/posts/create" }} />
 
-            <p>You can add, update and delete blog here</p>
+      <div className="mb-5 w-64">
+        <Input
+          placeholder="Search posts..."
+          variant="bordered"
+          size="sm"
+          value={searchQuery}
+          onChange={handleSearch}
+          startContent={<MdSearch className="text-slate-400 w-4 h-4" />}
+        />
+      </div>
+
+      <Tabs color="primary" variant="underlined" aria-label="Post tabs">
+        <Tab key="published" title="Published">
+          <div className="mt-3">
+            <DataTable columns={columns} isLoading={isPostsLoading}>
+              {renderRows("4")}
+            </DataTable>
           </div>
-
-          <Link
-            href={`/posts/create`}
-            className="bg-secondary hover:bg-primary rounded-lg text-white p-2"
-          >
-            Add New
-          </Link>
-        </header>
-
-        <form onSubmit={handleSearchSubmit}>
-          <div className="w-60 pb-5">
-            <Input
-              name="search"
-              placeholder="Search..."
-              variant="bordered"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
+        </Tab>
+        <Tab key="draft" title="Drafts">
+          <div className="mt-3">
+            <DataTable columns={columns} isLoading={isPostsLoading}>
+              {renderRows("2")}
+            </DataTable>
           </div>
-        </form>
+        </Tab>
+      </Tabs>
 
-        <section>
-          <div className="grid gap-4 md:gap-8">
-            {posts?.data?.length === 0 && (
-              <div>
-                <p>Blog is empty</p>
-              </div>
-            )}
+      {posts?.meta && (
+        <TablePagination meta={posts.meta} onPageChange={handlePageChange} />
+      )}
 
-            <div className="flex w-full flex-col space-y-4 md:space-y-8">
-              <Tabs aria-label="Options" color="secondary" className="mx-auto">
-                <Tab key="operators" title="PUBLISHED" className="relative">
-                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="lg:text-base text-center text-white uppercase bg-secondary">
-                      <tr>
-                        <th scope="col" className="px-6 py-3">
-                          Title
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Slug
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Status
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr>
-                        <td colSpan={5}>{isPostsLoading && <Loading />}</td>
-                      </tr>
-                      {posts?.data
-                        .filter((posts) => posts.status === "4")
-                        .map((post, index) => (
-                          <tr
-                            className="bg-white text-md text-black  hover:bg-secondary hover:text-white h-max"
-                            key={post.id}
-                          >
-                            <td className="text-left p-6">
-                              <Link href={`/posts/view/${post.id}`}>
-                                {post.title}
-                              </Link>
-                            </td>
-                            <td className="text-center p-6">{post.slug}</td>
-                            <td className="text-center">
-                              <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
-                                {post.status === "4"
-                                  ? "PUBLISHED"
-                                  : post.status === "2"
-                                  ? "DRAFTED"
-                                  : "Unknown"}
-                              </p>
-                            </td>
-                            <td>
-                              <div className="flex gap-x-2 p-2 w-max">
-                                <Link href={`/posts/view/${post.id}`}>
-                                  <Image
-                                    className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5 object-cover"
-                                    src={AssetView}
-                                    alt="Asset View"
-                                  />
-                                </Link>
-
-                                <Link href={`/posts/edit/${post.id}`}>
-                                  <Image
-                                    className="w-10 cursor-pointer rounded-lg bg-primary p-2.5"
-                                    src={AssetEdit}
-                                    alt="Asset View"
-                                  />
-                                </Link>
-
-                                <Image
-                                  onClick={() => {
-                                    setPostId(post.id);
-                                    setIsOpen(true);
-                                  }}
-                                  className="w-10 cursor-pointer rounded-lg bg-red-600 p-2.5"
-                                  src={AssetDelete}
-                                  alt="Asset View"
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </Tab>
-
-                <Tab key="therapist" title="DRAFT">
-                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="lg:text-base text-center text-white uppercase bg-secondary">
-                      <tr>
-                        <th scope="col" className="px-6 py-3">
-                          Title
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Slug
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Status
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr>
-                        <td colSpan={5}>{isPostsLoading && <Loading />}</td>
-                      </tr>
-                      {posts?.data
-                        .filter((posts) => posts.status === "2")
-                        .map((post, index) => (
-                          <tr
-                            className="bg-white text-md text-black hover:bg-secondary hover:text-white h-max"
-                            key={post.id}
-                          >
-                            <td className="text-left p-6">
-                              <Link href={`/posts/view/${post.id}`}>
-                                {post.title}
-                              </Link>
-                            </td>
-                            <td className="text-center p-6">{post.slug}</td>
-                            <td className="text-center">
-                              <p className="bg-[#e7e4e4] w-max mx-auto py-1 px-2 text-secondary text-sm rounded-lg capitalize">
-                                {post.status === "4"
-                                  ? "PUBLISHED"
-                                  : post.status === "2"
-                                  ? "DRAFTED"
-                                  : "Unknown"}
-                              </p>
-                            </td>
-                            <td>
-                              <div className="flex gap-x-2 p-2 w-max">
-                                <Link href={`/posts/view/${post.id}`}>
-                                  <Image
-                                    className="w-10 cursor-pointer rounded-lg bg-secondary p-2.5 object-cover"
-                                    src={AssetView}
-                                    alt="Asset View"
-                                  />
-                                </Link>
-
-                                <Link href={`/posts/edit/${post.id}`}>
-                                  <Image
-                                    className="w-10 cursor-pointer rounded-lg bg-primary p-2.5"
-                                    src={AssetEdit}
-                                    alt="Asset View"
-                                  />
-                                </Link>
-
-                                <Image
-                                  onClick={() => {
-                                    setPostId(post.id);
-                                    setIsOpen(true);
-                                  }}
-                                  className="w-10 cursor-pointer rounded-lg bg-red-600 p-2.5"
-                                  src={AssetDelete}
-                                  alt="Asset View"
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </Tab>
-              </Tabs>
-            </div>
-            <div className="mt-12 flex flex-col md:flex-row w-full gap-x-2 justify-between items-center gap-y-4">
-              <div>
-                <span className="font-normal text-sm">
-                  Showing {posts?.meta.from} to {posts?.meta.to} of{" "}
-                  {posts?.meta.total} entries
-                </span>
-              </div>
-              <div className="flex gap-x-2">
-                {posts?.meta?.links.map(
-                  (pagination: Pagination, index: number) => {
-                    const lastPageNumber = getLastPageNumber(pagination.url);
-                    return (
-                      <div
-                        key={index}
-                        className={`${
-                          pagination.active
-                            ? "bg-primary text-white"
-                            : "bg-tertiary text-white hover:bg-primary"
-                        } ${
-                          !pagination.url
-                            ? "bg-tertiary/40 text-black/30 cursor-not-allowed"
-                            : ""
-                        } flex gap-x-2 rounded-lg px-3 py-1.5 text-sm`}
-                      >
-                        <Link
-                          onClick={() => {
-                            fetchPosts(lastPageNumber.toString());
-                          }}
-                          href={`?status=${PostStatusEnum.PUBLISHED.toString()}&page=${lastPageNumber}`}
-                          className={`${
-                            !pagination.url
-                              ? "pointer-events-none cursor-not-allowed"
-                              : ""
-                          }`}
-                        >
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: pagination.label,
-                            }}
-                          />
-                        </Link>
-                      </div>
-                    );
-                  }
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-            <div
-              className={`${
-                false ? "pointer-events-none" : ""
-              } relative flex flex-col items-center gap-y-8 p-8 text-center font-bold text-white`}
-            >
-              <p className="text-xl">
-                Are you sure you want to delete <br /> this blog?
-              </p>
-              <div className="flex gap-x-4">
-                <button
-                  onClick={() => handleDeleteBlog(postId)}
-                  disabled={isDeleting}
-                  className="btn bg-secondary px-8 disabled:opacity-50"
-                >
-                  {isDeleting ? "Deleting..." : "Yes"}
-                </button>
-
-                <button onClick={() => setIsOpen(false)} className="btn">
-                  Cancel
-                </button>
-              </div>
-              {/* {isDeleting && (
-                        <div className='bg-white/60 flex items-center absolute inset-0 z-40'>
-                            <Image
-                                className='mx-auto w-16'
-                                src={Spin}
-                                alt='loading'
-                            />
-                        </div>
-                    )} */}
-            </div>
-          </Modal>
-        </section>
-      </main>
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDelete}
+        isLoading={isDeleting}
+        title="Delete Post"
+        message="Are you sure you want to delete this post?"
+      />
     </>
   );
 }

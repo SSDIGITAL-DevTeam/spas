@@ -1,41 +1,55 @@
-import Link from "next/link";
 import { JSX, useEffect, useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
+import Head from "next/head";
 import { Button } from "@nextui-org/react";
+import { useRouter } from "next/router";
 import ApiError from "@/errors/ApiError";
 import { RequestUpdate } from "@/@types";
-import Head from "next/head";
-import Loading from "@/components/partials/Loading";
-import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import { useBreadcrumb } from "@/context/BreadcrumbContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ImageViewer from "@/components/ui/ImageViewer";
 import RequestUpdateModule from "@/modules/RequestUpdateModule";
+import toast from "react-hot-toast";
 
-export default function DetailRequestUpdate(): JSX.Element {
-  const [singleRequestUpdate, setSingleRequestUpdate] = useState<RequestUpdate>(
-    {} as RequestUpdate
+function InfoRow({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-sm text-slate-700">{value || "—"}</p>
+    </div>
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isApproving, setIsApproving] = useState<boolean>(false);
+}
 
+export default function DetailRequestOperator(): JSX.Element {
   const router = useRouter();
+  const { setBreadcrumbs } = useBreadcrumb();
+  const [request, setRequest] = useState<RequestUpdate>({} as RequestUpdate);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/" },
+      { label: "Request Update", href: "/member-request" },
+      { label: "Operator Request" },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!router.query.id) return;
-
-    const fetchSingleRequestUpdate = async () => {
+    const load = async () => {
       setIsLoading(true);
       try {
         const res = await new RequestUpdateModule().single(+router.query.id!);
-        setSingleRequestUpdate(res.data);
+        setRequest(res.data);
       } catch (error) {
-        const message = error instanceof ApiError ? error.getFirstError() : "Failed to load request.";
-        toast.error(message);
+        const msg = error instanceof ApiError ? error.getFirstError() : "Failed to load request.";
+        toast.error(msg);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchSingleRequestUpdate();
+    load();
   }, [router.query.id]);
 
   const handleApprove = async () => {
@@ -49,144 +63,65 @@ export default function DetailRequestUpdate(): JSX.Element {
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         }
       );
-
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.message || "Approval failed.");
       }
-
       toast.success("Operator request approved.");
       router.push("/member-request");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to approve request.";
-      toast.error(message);
+      toast.error(error instanceof Error ? error.message : "Failed to approve.");
     } finally {
       setIsApproving(false);
     }
   };
 
+  if (isLoading) return <LoadingSpinner fullPage />;
+
   return (
     <>
-      <Head>
-        <title>SPAS | {singleRequestUpdate.company_name}</title>
-      </Head>
-      <main>
-        <header className="mb-8 md:mb-12">
-          <Link href="/member-request" className="flex gap-x-4 items-center w-max">
-            <div className="bg-secondary p-2 rounded-md">
-              <FaChevronLeft className="w-4 h-4 md:w-8 md:h-8 text-white" />
+      <Head><title>SPAS | Operator Update Request</title></Head>
+
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-800">Operator Update Request</h1>
+          <p className="text-sm text-slate-500 mt-0.5">{request.company_name}</p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <Button size="sm" color="danger" variant="flat" onPress={() => toast.error("Reject not yet implemented.")}>
+            Reject
+          </Button>
+          <Button size="sm" color="primary" isLoading={isApproving} onPress={handleApprove}>
+            Approve
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-4">Company Logo</h2>
+          <ImageViewer
+            src={request.url_logo_operator ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${request.url_logo_operator}` : "/no-image.png"}
+            alt={request.company_name ?? "Logo"}
+            className="w-full aspect-square object-cover rounded-lg border border-slate-200"
+          />
+        </div>
+
+        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-semibold text-slate-700 mb-4">Updated Information</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InfoRow label="Company Name" value={request.company_name} />
+            <InfoRow label="Brand Name" value={request.brand_name} />
+            <InfoRow label="UEN No" value={request.uen_no} />
+            <InfoRow label="Contact No" value={request.contact_no} />
+            <InfoRow label="Contact Person" value={request.contact_person} />
+            <InfoRow label="Contact Person No" value={request.contact_person_no} />
+            <div className="sm:col-span-2">
+              <InfoRow label="Address" value={request.address} />
             </div>
-            <span className="text-base md:text-2xl lg:text-3xl">
-              Back to Member Request
-            </span>
-          </Link>
-        </header>
-
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            <section className="container p-4 md:p-8">
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-8 md:mb-12">
-                Operator Update Request
-              </h1>
-
-              <div className="flex flex-col md:flex-row justify-between mb-8 md:mb-12">
-                <div className="md:w-1/2 md:space-y-8">
-                  <label>Logo</label>
-                  <div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={
-                        singleRequestUpdate.url_logo_operator
-                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${singleRequestUpdate.url_logo_operator}`
-                          : "/no-image.png"
-                      }
-                      alt={singleRequestUpdate.company_name}
-                      className="object-cover w-80"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between flex-col md:flex-row md:gap-x-20">
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="space-y-2">
-                    <label>Company Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.company_name}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>UEN No</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.uen_no}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Brand Name</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.brand_name}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact Company No</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.contact_no}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="md:w-1/2 space-y-4 md:space-y-8">
-                  <div className="flex flex-col gap-y-2">
-                    <label>Address</label>
-                    <textarea
-                      className="border-2 p-2 h-36"
-                      disabled
-                      defaultValue={singleRequestUpdate.address}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact Person</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.contact_person}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label>Contact Person No</label>
-                    <div className="border-2 p-2">
-                      <span className="pl-2">{singleRequestUpdate.contact_person_no}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="pb-12">
-              <div className="w-max mx-auto">
-                <div className="flex flex-col md:flex-row gap-x-10 gap-y-4">
-                  <Button
-                    onClick={() => toast.error("Reject feature not yet implemented.")}
-                    color="danger"
-                    size="lg"
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    onClick={handleApprove}
-                    isLoading={isApproving}
-                    isDisabled={isApproving}
-                    color="secondary"
-                    size="lg"
-                  >
-                    {isApproving ? "Approving..." : "Approve"}
-                  </Button>
-                </div>
-              </div>
-            </section>
           </div>
-        )}
-      </main>
+        </div>
+      </div>
     </>
   );
 }
