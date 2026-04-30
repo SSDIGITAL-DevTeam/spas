@@ -27,11 +27,17 @@ class EventFactory extends Factory
             'Skincare Innovations Conference'
         ];
 
+        $descriptions = [
+            "Join industry leaders and wellness enthusiasts for an immersive experience dedicated to rejuvenation and holistic health. Discover new techniques, network with top spa professionals, and explore the latest innovations in wellness tech and organic skincare.",
+            "Elevate your practice and personal wellness journey with our expert-led sessions. This exclusive event features interactive workshops, keynote speeches from renowned therapists, and exclusive product demonstrations designed to inspire and educate.",
+            "Take a step back from the daily grind and immerse yourself in a transformative environment. Attendees will participate in hands-on demonstrations, learn about sustainable spa practices, and connect with a community of mindful professionals."
+        ];
+
         $name = fake()->randomElement($events) . ' ' . fake()->year();
 
         return [
             'name' => $name,
-            'description' => "Join us for the " . $name . ". " . fake()->paragraph(3) . " Don't miss out on this exclusive opportunity to improve your wellness journey and connect with top spa professionals.",
+            'description' => "Welcome to the " . $name . ". " . fake()->randomElement($descriptions),
             'start_date' => fake()->dateTimeBetween('+1 week', '+1 month'),
             'end_date' => fake()->dateTimeBetween('+1 month', '+2 months')
         ];

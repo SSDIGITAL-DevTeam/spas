@@ -44,6 +44,8 @@ class StoreTherapistRequest extends FormRequest
             'issuing_organization' => ['required'],
             'expired_date' => ['required', 'date'],
             'credential_id' => ['required', 'numeric'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password_confirmation' => ['required', 'string'],
         ];
     }
 
@@ -75,6 +77,10 @@ class StoreTherapistRequest extends FormRequest
             'email.required' => 'Email address is required.',
             'email.email' => 'Please provide a valid email address.',
             'email.unique' => 'This email address is already in use.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'password_confirmation.required' => 'Please confirm your password.',
         ];
     }
 }

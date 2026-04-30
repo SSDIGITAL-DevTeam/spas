@@ -18,7 +18,7 @@ class ApproveTherapist extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $newPassword, public User $user)
+    public function __construct(public User $user)
     {
         //
     }
@@ -34,7 +34,7 @@ class ApproveTherapist extends Mailable
                 address: config('mail.from.address'),
                 name: sprintf('SPAS Information - %s', config('app.name')),
             ),
-            subject: sprintf('%s Your login detail', config('app.name')),
+            subject: sprintf('%s Your registration has been approved', config('app.name')),
         );
     }
 

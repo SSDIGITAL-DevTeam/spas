@@ -28,12 +28,18 @@ class PostFactory extends Factory
             'Why Regular Spa Visits Are Good for Mental Health'
         ];
 
+        $contents = [
+            "Finding time to unwind is essential in today's fast-paced world. By incorporating regular massage therapy and mindfulness practices into your routine, you can significantly reduce stress levels, improve circulation, and promote better sleep. Dive into our comprehensive guide to creating a sanctuary of calm within your own home, utilizing essential oils like lavender and eucalyptus for deep relaxation.",
+            "Proper skincare goes beyond surface-level treatments; it is a profound reflection of your overall health. From understanding the benefits of deep-tissue exfoliation to learning the secrets of ancient hydrotherapy techniques, treating your body with care yields restorative results. Learn how top professionals curate personalized wellness regimens for lasting vitality, inner peace, and a radiant glow.",
+            "Holistic healing is about addressing the mind, body, and spirit as one connected system. Whether it is through focused reflexology that targets specific pressure points or immersive sound therapy, taking dedicated time out for self-care cannot be overstated. Explore practical, everyday techniques to bring the restorative power of a luxury spa retreat directly into your daily lifestyle."
+        ];
+
         $title = fake()->randomElement($titles);
 
         return [
             'title' => $title,
             'slug' => Str::slug($title . '-' . fake()->numberBetween(100, 999)),
-            'content' => "In this post, we explore why wellness is vital for your daily life. " . fake()->paragraph(4) . "\n\n" . fake()->paragraph(4),
+            'content' => fake()->randomElement($contents),
             'status' => fake()->randomElement(['2', '4']),
             'published_at' => fake()->dateTimeThisYear,
         ];

@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import { JSX, useEffect, useState } from "react";
-import { Card, CardBody, Image, CardFooter } from "@nextui-org/react";
 import axios from "axios";
 import Head from "next/head";
 import { CiImageOn } from "react-icons/ci";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { FaArrowRight } from "react-icons/fa6";
 
 type Partner = {
   id: number;
@@ -19,185 +21,204 @@ type ValuePartner = {
   phone_number: string;
 };
 
-export default function EventMedia(): JSX.Element {
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+};
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
+
+export default function ValuePartners(): JSX.Element {
   const [role, setRole] = useState<string>("");
-  const [partners, setPartners] = useState<[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
-
-  const me = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`
-            )}`,
-          },
-        }
-      );
-
-      setRole(response.data.data.role);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
 
   useEffect(() => {
+    const me = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`)}`,
+          },
+        });
+        setRole(response.data.data.role);
+      } catch { /* not logged in */ }
+    };
     me();
   }, []);
 
-  const getValuePartners = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/partners`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`
-            )}`,
-          },
-        }
-      );
-      setPartners(response.data.data);
-    } catch (error) {}
-  };
-
   useEffect(() => {
+    const getValuePartners = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/partners`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`)}`,
+          },
+        });
+        const data: Partner[] = response.data.data;
+        setPartners(data);
+        if (data.length > 0) setSelectedCategoryId(data[0].id);
+      } catch { /* unauthorized */ }
+    };
     getValuePartners();
   }, []);
+
+  const activePartner = partners.find((p) => p.id === selectedCategoryId);
 
   return (
     <>
       <Head>
-        <title>SPAS | Value Partner</title>
+        <title>SPAS | Value Partners</title>
         <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
-
         <meta name="title" content="SPAS | Value Partners" />
-
-        <meta
-          name="description"
-          content="Expand your knowledge with our latest information and upcoming events about beauty, spas, and wellness."
-        />
-
-        <meta name="keywords" content="spa, services, event and media" />
-
+        <meta name="description" content="Explore numerous opportunities with our partners. Get the best quality at the best price for your business." />
+        <meta name="keywords" content="spa, services, value partners" />
         <meta name="robots" content="index, follow" />
-
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
-
-        <meta property="og:title" content="SPAS | Event & Media" />
-
-        <meta
-          property="og:description"
-          content="Expand your knowledge with our latest information and upcoming events about beauty, spas, and wellness."
-        />
-
+        <meta property="og:title" content="SPAS | Value Partners" />
+        <meta property="og:description" content="Explore numerous opportunities with our partners. Get the best quality at the best price for your business." />
         <meta property="og:type" content="website" />
-
-        <meta
-          property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
-        />
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`} />
       </Head>
+
+      {/* ── HERO ── */}
+      <header className="relative overflow-hidden pt-20">
+        <div className="relative bg-[url('/asset-hero.webp')] bg-center bg-cover min-h-72">
+          <div className="absolute inset-0 bg-secondary/70" />
+          <div className="relative z-10 container mx-auto px-4 lg:px-8 py-28">
+            <motion.span
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="inline-block bg-white/15 text-white text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 mb-4"
+            >
+              Exclusive Benefits
+            </motion.span>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl md:text-5xl font-bold text-white"
+            >
+              Value Partners
+            </motion.h1>
+          </div>
+        </div>
+      </header>
+
       {role !== "operator" ? (
         <main>
-          <section className="pb-18 lg:pb-0 ">
-            <div className="container p-4 md:p-8">
-              <div className="md:w-3/4 mx-auto min-h-screen flex flex-col items-center justify-center">
-                <div className="flex flex-col items-center">
-                  <h2 className="md:text-lg text-center">
-                    Are you ready to explore numerous opportunities with our
-                    partners? You'll get the best quality at the best price for
-                    your business. So, what are you waiting for? Register as a
-                    member now!
-                  </h2>
-                  <Link
-                    href={"/join-us/spa-operator"}
-                    className="mx-auto md:mx-0 w-max"
-                  >
-                    <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                      JOIN SPAS
+          <section className="py-20 lg:py-28 bg-white">
+            <div className="container mx-auto px-4 lg:px-8">
+              <motion.div
+                initial="hidden"
+                animate="show"
+                variants={stagger}
+                className="max-w-2xl mx-auto text-center space-y-8"
+              >
+                <motion.div variants={fadeUp} className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+                  <CiImageOn className="w-10 h-10 text-primary" />
+                </motion.div>
+                <motion.h2 variants={fadeUp} className="section-heading">
+                  Members-Only Access
+                </motion.h2>
+                <motion.p variants={fadeUp} className="section-subheading text-lg">
+                  Are you ready to explore numerous opportunities with our partners? You&rsquo;ll get the best quality at the best price for your business. So, what are you waiting for? Register as a member now!
+                </motion.p>
+                <motion.div variants={fadeUp}>
+                  <Link href="/join-us/spa-operator">
+                    <span className="inline-flex items-center gap-x-2 btn-1">
+                      JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </Link>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
           </section>
         </main>
       ) : (
         <main>
-          <section
-            className={`pb-18 lg:pb-0  mb-16 md:mb-20 ${
-              partners.length === 0 ? "pt-0" : "pt-32"
-            }`}
-          >
-            <div className="container p-4 md:p-8">
-              {partners.length === 0 ? (
-                <div className="min-h-screen w-full flex flex-col items-center justify-center">
-                  <div className="text-center w-full flex flex-col items-center justify-center gap-y-2">
-                    <p className="text-4xl font-semibold">Opps..</p>
-                    <p>No Partners currently found</p>
+          {partners.length === 0 ? (
+            <section className="py-20 min-h-[60vh] flex items-center bg-white">
+              <div className="container mx-auto px-4 lg:px-8 text-center">
+                <p className="text-2xl font-semibold text-slate-700 mb-2">No Partners Found</p>
+                <p className="text-slate-500">Partner listings will appear here once available.</p>
+              </div>
+            </section>
+          ) : (
+            <>
+              {/* ── CATEGORY TABS ── */}
+              <section className="py-6 bg-white border-b border-slate-100 sticky top-16 z-10">
+                <div className="container mx-auto px-4 lg:px-8">
+                  <div className="flex gap-3 overflow-x-auto pb-1">
+                    {partners.map((partner) => (
+                      <button
+                        key={partner.id}
+                        onClick={() => setSelectedCategoryId(partner.id)}
+                        className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${
+                          partner.id === selectedCategoryId
+                            ? "bg-primary border-primary text-white shadow-sm"
+                            : "border-slate-200 text-slate-600 hover:border-primary hover:text-primary bg-white"
+                        }`}
+                      >
+                        {partner.name}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ) : (
-                <>
-                  <div className="mb-8 lg:mb-24">
-                    <div className="flex justify-between gap-x-8 whitespace-nowrap overflow-scroll md:overflow-auto mb-4 p-5 bg-[#F5F5F5] rounded-lg shadow-xl">
-                      {partners.map((partner: Partner) => (
-                        <button
-                          key={partner.id}
-                          className={`p-3  font-bold py-2 px-4 duration-100 rounded-lg text-black border-2 hover:bg-primary hover:text-white transition-all ease-out
-                    ${
-                      partner.id == selectedCategoryId
-                        ? "bg-primary text-white"
-                        : ""
-                    }`}
-                          onClick={() => setSelectedCategoryId(partner.id)}
-                        >
-                          {partner.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              </section>
 
-                  <div className="grid md:grid-cols-4 gap-x-10 gap-y-4 md:gap-y-10">
-                    {partners
-                      .filter(
-                        (partner: Partner) => partner.id == selectedCategoryId
-                      )
-                      .map((partner: Partner) =>
-                        partner.value_partner.map(
-                          (valuePartner: ValuePartner) => (
-                            <Card key={valuePartner.id}>
-                              <CardBody className=" aspect-square w-full">
-                                {!valuePartner.logo.length ? (
-                                  <CiImageOn className="md:w-60 md:h-64" />
-                                ) : (
-                                  <Image
-                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${valuePartner.logo}`}
-                                    isBlurred
-                                    radius="sm"
-                                    removeWrapper
-                                    className="object-cover w-full h-full aspect-square mx-auto "
-                                  />
-                                )}
-                              </CardBody>
-                              <CardFooter className="text-lg md:text-xl flex items-center justify-center">
-                                <h2 className="text-center">
-                                  {valuePartner.brand_name}
-                                </h2>
-                              </CardFooter>
-                            </Card>
-                          )
-                        )
-                      )}
-                  </div>
-                </>
-              )}
-            </div>
-          </section>
+              {/* ── PARTNER GRID ── */}
+              <section className="py-16 lg:py-24 bg-slate-50">
+                <div className="container mx-auto px-4 lg:px-8">
+                  <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, amount: 0.1 }}
+                    variants={stagger}
+                  >
+                    <motion.h2 variants={fadeUp} className="section-heading text-center mb-14">
+                      {activePartner?.name}
+                    </motion.h2>
+
+                    {activePartner?.value_partner?.length === 0 ? (
+                      <div className="text-center py-16 text-slate-400">
+                        <p className="text-lg font-semibold mb-1">No partners in this category yet</p>
+                      </div>
+                    ) : (
+                      <motion.div
+                        variants={stagger}
+                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                      >
+                        {activePartner?.value_partner?.map((vp) => (
+                          <motion.div
+                            key={vp.id}
+                            variants={fadeUp}
+                            className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                          >
+                            <div className="aspect-square overflow-hidden bg-slate-50 flex items-center justify-center p-4">
+                              {!vp.logo?.length ? (
+                                <CiImageOn className="w-16 h-16 text-slate-300" />
+                              ) : (
+                                <img
+                                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${vp.logo}`}
+                                  alt={vp.brand_name}
+                                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                />
+                              )}
+                            </div>
+                            <div className="p-4 text-center border-t border-slate-100">
+                              <h3 className="font-semibold text-slate-800 text-sm">{vp.brand_name}</h3>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </motion.div>
+                </div>
+              </section>
+            </>
+          )}
         </main>
       )}
     </>

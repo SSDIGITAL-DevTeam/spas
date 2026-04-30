@@ -91,7 +91,7 @@ export default function SpaOperators() {
       <main>
         <div className="bg-[url('/hero-sign-in.webp')] bg-center lg:bg-cover bg-no-repeat h-screen">
           <div className="md:w-1/3 mx-auto">
-            <div className="bg-white/70 h-screen md:py-10 space-y-4 md:space-y-10">
+            <div className="bg-white/90 backdrop-blur-sm h-screen md:py-10 space-y-4 md:space-y-10">
               <form onSubmit={handleSubmit} className="container p-4 md:p-8">
                 <div className="flex flex-col items-center gap-y-10">
                   <Link href={"/"} className="">
@@ -155,30 +155,18 @@ export default function SpaOperators() {
                       isDisabled={isLoading}
                       className="w-full bg-secondary text-white"
                     >
-                      {isLoading ? "Signing in..." : "Submit"}
+                      {isLoading ? "Signing in..." : "Sign In"}
                     </Button>
                   </div>
 
-                  <div className="flex flex-col items-center gap-y-2">
-                    <h3> Don&apos;t have an account?</h3>
-                    <h3>Register as: </h3>
-                    <div className="flex flex-col items-center">
-                      <div>
-                        <Link
-                          href={"/join-us/spa-operator"}
-                          className="text-secondary font-bold "
-                        >
-                          Spa Operator{" "}
-                        </Link>
-                        <span>or </span>
-                        <Link
-                          href={"/join-us/spa-therapist"}
-                          className="text-secondary font-bold "
-                        >
-                          Spa Therapist
-                        </Link>
-                      </div>
-                    </div>
+                  <div className="flex flex-col items-center gap-y-3">
+                    <p className="text-slate-600 text-sm">Don&apos;t have an account?</p>
+                    <Link
+                      href="/join-us"
+                      className="text-secondary font-semibold text-sm hover:underline"
+                    >
+                      Register here
+                    </Link>
                   </div>
                   {/* <Link
                     href="/join-us"

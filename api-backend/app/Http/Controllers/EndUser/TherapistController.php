@@ -56,7 +56,7 @@ class TherapistController extends Controller
             $therapistData->user()->create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => \Illuminate\Support\Str::random(64),
+                'password' => $request->password,
                 'role' => UserStatus::Therapist,
             ]);
 

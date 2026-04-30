@@ -9,12 +9,9 @@ use App\Mail\RejectOperator;
 use App\Mail\RejectTherapist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SendMailPassword;
 use App\Models\Operator;
 use App\Models\Therapist;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class SendMailPasswordController extends Controller
 {
@@ -26,14 +23,7 @@ class SendMailPasswordController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $newPassword = Str::random(8);
-
-        $user->update([
-            'password' => $newPassword,
-        ]);
-
-        // Mail::to('lawakclub17@gmail.com')->send(new ApproveOperator($newPassword, $user));
-        Mail::to($user->email)->send(new ApproveOperator($newPassword, $user));
+        Mail::to($user->email)->send(new ApproveOperator($user));
 
         return response()->json([
             'status' => 'success',
@@ -49,14 +39,7 @@ class SendMailPasswordController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $newPassword = Str::random(8);
-
-        $user->update([
-            'password' => $newPassword,
-        ]);
-
-        // Mail::to('lawakclub17@gmail.com')->send(new ApproveTherapist($newPassword, $user));
-        Mail::to($user->email)->send(new ApproveTherapist($newPassword, $user));
+        Mail::to($user->email)->send(new ApproveTherapist($user));
 
         return response()->json([
             'status' => 'success',

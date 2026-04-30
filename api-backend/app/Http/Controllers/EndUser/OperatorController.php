@@ -58,7 +58,7 @@ class OperatorController extends Controller
             $operatorData->user()->create([
                 'name' => $request->company_name,
                 'email' => $request->email,
-                'password' => \Illuminate\Support\Str::random(64),
+                'password' => $request->password,
                 'role' => UserStatus::Operator,
             ]);
 

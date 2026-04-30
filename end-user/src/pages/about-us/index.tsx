@@ -7,20 +7,58 @@ import AssetMission1 from "@/assets/about-assets/asset-mission1.webp";
 import AssetMission2 from "@/assets/about-assets/asset-mission2.webp";
 import AssetMission3 from "@/assets/about-assets/asset-mission3.webp";
 import AssetMission4 from "@/assets/about-assets/asset-mission4.webp";
-import AssetMember1 from "@/assets/about-assets/asset-member1.webp";
-import AssetMember2 from "@/assets/about-assets/asset-member2.webp";
-import AssetMember3 from "@/assets/about-assets/asset-member3.webp";
-import AssetMember4 from "@/assets/about-assets/asset-member4.webp";
-import AssetMember5 from "@/assets/about-assets/asset-member5.webp";
+import { motion } from "framer-motion";
 
-//Swiper
-import { register } from "swiper/element/bundle";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import "swiper/css/pagination";
-import "swiper/css";
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+};
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
 
-register();
+const missions = [
+  {
+    img: AssetMission1,
+    title: "Fostering Collaboration",
+    body: "We believe that collaboration is the cornerstone of success. We strive to create an environment where diverse minds come together and share ideas.",
+  },
+  {
+    img: AssetMission2,
+    title: "Empowering Growth",
+    body: "We are dedicated to empowering every individual associated with SPAS to reach their full potential through mentorship and skill development programs.",
+  },
+  {
+    img: AssetMission3,
+    title: "Enabling Innovation",
+    body: "SPAS thrives on the spirit of continuous improvement and exploration. We encourage bold ideas, embrace change, and turn innovative concepts into reality.",
+  },
+  {
+    img: AssetMission4,
+    title: "Give Recognition",
+    body: "We celebrate achievements, big and small, to create a culture where everyone feels appreciated. Your hard work and dedication do not go unnoticed.",
+  },
+];
+
+const values = [
+  {
+    title: "Superior Standards",
+    body: "Upholding unparalleled excellence, we are dedicated to maintaining superior standards in every aspect of our work, ensuring a commitment to quality that exceeds expectations.",
+  },
+  {
+    title: "Practice Professionalism",
+    body: "Embodying a culture of utmost professionalism, we consistently adhere to ethical conduct, reliability, and a results-driven approach, fostering trust and confidence in all our interactions.",
+  },
+  {
+    title: "Ace All Achievements",
+    body: "With a relentless pursuit of excellence, we strive to ace every endeavor, turning challenges into triumphs through innovation, determination, and a passion for continuous improvement.",
+  },
+  {
+    title: "Service with Smiles",
+    body: "Infusing warmth into every interaction, we deliver service with genuine smiles, creating positive experiences and lasting connections that go beyond meeting expectations.",
+  },
+];
 
 export default function AboutUs(): JSX.Element {
   return (
@@ -29,310 +67,190 @@ export default function AboutUs(): JSX.Element {
         <title>SPAS | About Us</title>
         <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
-
         <meta name="title" content="SPAS | About Us" />
-
-        <meta
-          name="description"
-          content="SPAS is a large community that connects passionate professionals to shape the future of beauty, spa, and wellness in Singapore."
-        />
-
+        <meta name="description" content="SPAS is a large community that connects passionate professionals to shape the future of beauty, spa, and wellness in Singapore." />
         <meta name="keywords" content="spa, services, about-us" />
-
         <meta name="robots" content="index, follow" />
-
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
-
         <meta property="og:title" content="SPAS | About Us" />
-
-        <meta
-          property="og:description"
-          content="SPAS is a large community that connects passionate professionals to shape the future of beauty, spa, and wellness in Singapore."
-        />
-
+        <meta property="og:description" content="SPAS is a large community that connects passionate professionals to shape the future of beauty, spa, and wellness in Singapore." />
         <meta property="og:type" content="website" />
-
-        <meta
-          property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
-        />
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`} />
       </Head>
 
       <main>
-        <header className="pb-14 lg:pb-24 pt-32">
-          <div className="container">
-            <div className="bg-[url('/asset-hero.webp')] bg-center bg-cover md:h-max rounded-2xl">
-              <div className="text-white text-center py-20 md:py-52 space-y-8">
-                <h1 className="text-3xl md:text-5xl font-bold">Who We Are</h1>
-                <p className="md:w-3/5 mx-auto px-4 md:px-0">
-                  At SPAS, we're more than just a network - we're a community of
-                  passionate professionals shaping the future of Beauty, Spa,
-                  and Wellness in Singapore.
-                </p>
-              </div>
+        {/* ── HERO ── */}
+        <header className="pt-20 lg:pt-24">
+          <div className="relative bg-[url('/asset-hero.webp')] bg-center bg-cover">
+            <div className="absolute inset-0 bg-secondary/70" />
+            <div className="relative z-10 text-white text-center py-28 md:py-40 space-y-6 px-4">
+              <motion.span
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-block bg-white/15 text-white text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20"
+              >
+                About SPAS
+              </motion.span>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-3xl md:text-5xl font-bold"
+              >
+                Who We Are
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="md:w-3/5 mx-auto text-white/85 leading-relaxed text-lg"
+              >
+                At SPAS, we&rsquo;re more than just a network - we&rsquo;re a community of passionate
+                professionals shaping the future of Beauty, Spa, and Wellness in Singapore.
+              </motion.p>
             </div>
           </div>
         </header>
 
-        {/* Our Visions */}
-        <section className="pb-14 lg:pb-24">
-          <div className="container">
-            <h2 className="text-black text-2xl md:text-4xl font-bold text-center mb-16">
-              Our Visions
-            </h2>
-
-            <div className="flex flex-col md:flex-row gap-x-20 gap-y-10">
-              <div className="space-y-4">
-                <div>
-                  <FaRegCircleCheck className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold">Uniting World-class Spa Operators</h3>
-                <p className=" text-justify">
-                  We believe in the power of collaboration. By bringing together
-                  spa and wellness professionals, stakeholders, and consumers,
-                  we create an environment where ideas flow freely, partnerships
-                  flourish, and the collective wisdom of the community becomes a
-                  driving force for progress.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <IoMailOpenOutline className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold">
-                  Delivering World-class Spa Professionals
-                </h3>
-                <p className="text-justify">
-                  Your growth is our priority. Whether you're a seasoned owner
-                  or a budding therapist, SPAS is designed to be the catalyst
-                  for your professional journey. We empower Spa Therapists to be
-                  World-class Spa Professionals through delivering world-class
-                  Spa Experiences
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Missions */}
-        <section className="pb-14 lg:pb-24">
-          <div className="container">
-            <h2 className="text-black text-2xl md:text-4xl font-bold text-center mb-16">
-              Our Missions
-            </h2>
-
-            <div className="flex flex-col md:flex-row justify-between gap-x-10 gap-y-10">
-              <div className="relative">
-                <img
-                  src={AssetMission1.src}
-                  alt="Mission 1"
-                  className="object-cover rounded-md w-full"
-                />
-                <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
-                  <span className="text-black font-bold">
-                    Fostering Collaboration
-                  </span>
-                  <p className="text-black text-xs">
-                    We believe that collaboration is the cornerstone of success.
-                    We strive to create an environment where diverse minds come
-                    together and share ideas.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <img
-                  src={AssetMission2.src}
-                  alt="Mission 1"
-                  className="object-cover rounded-md w-full"
-                />
-                <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
-                  <span className="text-black font-bold">
-                    Empowering Growth
-                  </span>
-                  <p className="text-black text-xs">
-                    We are dedicated to empowering every individual associated
-                    with SPAS to reach their full potential through mentorship
-                    and skill development programs.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <img
-                  src={AssetMission3.src}
-                  alt="Mission 1"
-                  className="object-cover rounded-md w-full"
-                />
-                <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
-                  <span className="text-black font-bold">
-                    Enabling Innovation
-                  </span>
-                  <p className="text-black text-xs">
-                    SPAS thrives on the spirit of continuous improvement and
-                    exploration. We encourage bold ideas, embrace change, and
-                    turn innovative concepts into reality.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <img
-                  src={AssetMission4.src}
-                  alt="Mission 1"
-                  className="object-cover rounded-md w-full"
-                />
-                <div className="bg-white/80 absolute bottom-5 left-3 w-11/12 space-y-4 p-2 rounded-md">
-                  <span className="text-black font-bold">Give Recognition</span>
-                  <p className="text-black text-xs">
-                    We celebrate achievements, big and small, to create a
-                    culture where everyone feels appreciated. Your hard work and
-                    dedication do not go unnoticed.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Values */}
-        <section className="pb-14 lg:pb-24">
-          <div className="bg-[url('/asset-about-bg.webp')] bg-cover">
-            <div className="container py-20 ">
-              <div className="mb-20">
-                <div className="text-center space-y-4">
-                  <h2 className="text-white text-2xl md:text-4xl font-bold">
-                    Our Values
-                  </h2>
-                  <p className="text-white md:w-1/3 mx-auto">
-                    Take advantage of SWAS' marketing and promotional
-                    initiatives for increased visibility.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-10">
-                <div className="bg-white p-4 md:p-10 rounded-md">
-                  <div className="text-secondary">
-                    <p className="mb-8 text-sm md:text-base">
-                      Upholding unparalleled excellence, we are dedicated to
-                      maintaining superior standards in every aspect of our
-                      work, ensuring a commitment to quality that exceeds
-                      expectations.
-                    </p>
-                    <span className="font-bold md:text-lg">
-                      Superior Standards
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-white p-4 md:p-10 rounded-md">
-                  <div className="text-secondary">
-                    <p className="mb-8 text-sm md:text-base">
-                      Embodying a culture of utmost professionalism, we
-                      consistently adhere to ethical conduct, reliability, and a
-                      results-driven approach, fostering trust and confidence in
-                      all our interactions.
-                    </p>
-                    <span className="font-bold md:text-lg">
-                      Practice Professionalism
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-white p-4 md:p-10 rounded-md">
-                  <div className="text-secondary">
-                    <p className="mb-8 text-sm md:text-base">
-                      With a relentless pursuit of excellence, we strive to ace
-                      every endeavor, turning challenges into triumphs through
-                      innovation, determination, and a passion for continuous
-                      improvement
-                    </p>
-                    <span className="font-bold md:text-lg">
-                      Ace All Achievements
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-white p-4 md:p-10 rounded-md">
-                  <div className="text-secondary">
-                    <p className="mb-8 text-sm md:text-base">
-                      Infusing warmth into every interaction, we deliver service
-                      with genuine smiles, creating positive experiences and
-                      lasting connections that go beyond meeting expectations.
-                    </p>
-                    <span className="font-bold md:text-lg">
-                      Service with Smiles
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Member */}
-        {/* <section className="pb-14 lg:pb-40">
-          <div className="container">
-            <h2 className="text-black text-2xl md:text-4xl font-bold text-center mb-16">
-              Our Member
-            </h2>
-
-            <Swiper
-              pagination={{
-                dynamicBullets: true,
-              }}
-              slidesPerView={1}
-              modules={[Pagination]}
-              className="mySwiper"
-              breakpoints={{
-                640: { slidesPerView: 3 },
-              }}
-              autoplay={{ delay: 2000 }}
+        {/* ── OUR VISIONS ── */}
+        <section className="py-20 lg:py-28 bg-white">
+          <div className="container mx-auto px-4 lg:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={stagger}
             >
-              <SwiperSlide className="ml-20 md:ml-0 md:mr-16 mr-4">
-                <img
-                  src={AssetMember1.src}
-                  alt="Pablo Blau"
-                  className="object-cover w-1/2"
-                />
-              </SwiperSlide>
+              <motion.h2
+                variants={fadeUp}
+                className="section-heading text-center mb-14"
+              >
+                Our Visions
+              </motion.h2>
 
-              <SwiperSlide className="pt-10 md:mr-16">
-                <img
-                  src={AssetMember2.src}
-                  alt="The Thai Spa"
-                  className="object-cover w-1/2"
-                />
-              </SwiperSlide>
+              <motion.div
+                variants={stagger}
+                className="grid grid-cols-1 md:grid-cols-2 gap-8"
+              >
+                <motion.div
+                  variants={fadeUp}
+                  className="flex gap-x-5 p-8 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <FaRegCircleCheck className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-slate-900">Uniting World-class Spa Operators</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed">
+                      We believe in the power of collaboration. By bringing together spa and wellness
+                      professionals, stakeholders, and consumers, we create an environment where ideas
+                      flow freely, partnerships flourish, and the collective wisdom of the community
+                      becomes a driving force for progress.
+                    </p>
+                  </div>
+                </motion.div>
 
-              <SwiperSlide className="pt-10 mr-4 md:mr-16">
-                <img
-                  src={AssetMember3.src}
-                  alt="Ikeda Spa"
-                  className="object-cover w-1/2"
-                />
-              </SwiperSlide>
-
-              <SwiperSlide className="pt-10">
-                <img
-                  src={AssetMember4.src}
-                  alt="Spa"
-                  className="object-cover"
-                />
-              </SwiperSlide>
-
-              <SwiperSlide className="pt-10 -ml-14">
-                <img
-                  src={AssetMember5.src}
-                  alt="Chi Spa"
-                  className="object-cover w-3/4"
-                />
-              </SwiperSlide>
-            </Swiper>
+                <motion.div
+                  variants={fadeUp}
+                  className="flex gap-x-5 p-8 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <IoMailOpenOutline className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-slate-900">Delivering World-class Spa Professionals</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed">
+                      Your growth is our priority. Whether you&rsquo;re a seasoned owner or a budding therapist,
+                      SPAS is designed to be the catalyst for your professional journey. We empower Spa
+                      Therapists to be World-class Spa Professionals through delivering world-class Spa Experiences.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </div>
-        </section> */}
+        </section>
+
+        {/* ── OUR MISSIONS ── */}
+        <section className="py-20 lg:py-28 bg-slate-50">
+          <div className="container mx-auto px-4 lg:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+            >
+              <motion.h2 variants={fadeUp} className="section-heading text-center mb-14">
+                Our Missions
+              </motion.h2>
+
+              <motion.div
+                variants={stagger}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              >
+                {missions.map((m) => (
+                  <motion.div
+                    key={m.title}
+                    variants={fadeUp}
+                    className="group relative overflow-hidden rounded-2xl"
+                  >
+                    <img
+                      src={m.img.src}
+                      alt={m.title}
+                      className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2">
+                      <span className="font-bold text-white text-sm">{m.title}</span>
+                      <p className="text-white/80 text-xs leading-relaxed line-clamp-3">{m.body}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── OUR VALUES ── */}
+        <section className="py-20 lg:py-28">
+          <div className="bg-[url('/asset-about-bg.webp')] bg-cover bg-center">
+            <div className="bg-secondary/75">
+              <div className="container mx-auto px-4 lg:px-8 py-20">
+                <motion.div
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={stagger}
+                >
+                  <motion.div variants={fadeUp} className="text-center space-y-4 mb-14">
+                    <h2 className="text-white text-3xl md:text-4xl font-bold">Our Values</h2>
+                    <p className="text-white/70 md:w-1/3 mx-auto">
+                      Take advantage of SPAS&rsquo; marketing and promotional initiatives for increased visibility.
+                    </p>
+                  </motion.div>
+
+                  <motion.div
+                    variants={stagger}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  >
+                    {values.map((v) => (
+                      <motion.div
+                        key={v.title}
+                        variants={fadeUp}
+                        className="bg-white/95 rounded-2xl p-8 hover:shadow-xl transition-shadow"
+                      >
+                        <p className="text-slate-600 text-sm leading-relaxed mb-5">{v.body}</p>
+                        <div className="w-10 h-0.5 bg-primary mb-3" />
+                        <span className="font-bold text-secondary text-lg">{v.title}</span>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );
