@@ -89,7 +89,7 @@ export default function BlogDetail({ slug }: { slug: string }): JSX.Element {
                 </motion.h1>
 
                 {/* Categories */}
-                {singlePost.categories?.length > 0 && (
+                {singlePost.categories && singlePost.categories.length > 0 && (
                   <motion.div variants={fadeUp} className="flex flex-wrap gap-2">
                     {singlePost.categories.map((cat: Category) => (
                       <span key={cat.id} className="bg-primary/10 text-primary text-xs px-3 py-1 rounded-full font-medium">
@@ -111,7 +111,7 @@ export default function BlogDetail({ slug }: { slug: string }): JSX.Element {
                 <motion.hr variants={fadeUp} className="border-slate-100 mt-8" />
 
                 {/* Tags */}
-                {singlePost.tags?.length > 0 && (
+                {singlePost.tags && singlePost.tags.length > 0 && (
                   <motion.div variants={fadeUp} className="flex flex-wrap gap-2">
                     {singlePost.tags.map((tag: Tag, i: number) => (
                       <span
