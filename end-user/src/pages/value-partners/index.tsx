@@ -9,10 +9,17 @@ import { FaArrowRight } from "react-icons/fa6";
 import PageHero from "@/components/ui/PageHero";
 
 type Partner = {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   value_partner: ValuePartner[];
+};
+type PartnerResponse = {
+  id: number | string;
+  name: string;
+  slug: string;
+  value_partner?: ValuePartner[] | { data?: ValuePartner[] };
+  valuePartners?: ValuePartner[] | { data?: ValuePartner[] };
 };
 type ValuePartner = {
   id: number;
@@ -28,42 +35,86 @@ const fadeUp = {
 };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 
+const getCollectionData = <T,>(collection?: T[] | { data?: T[] }): T[] => {
+  if (Array.isArray(collection)) return collection;
+  if (Array.isArray(collection?.data)) return collection.data;
+  return [];
+};
+
+const getLogoUrl = (logo?: string): string => {
+  if (!logo) return "";
+  if (/^https?:\/\//i.test(logo)) return logo;
+  return `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${logo}`;
+};
+
 export default function ValuePartners(): JSX.Element {
   const [role, setRole] = useState<string>("");
   const [partners, setPartners] = useState<Partner[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [isCheckingAccess, setIsCheckingAccess] = useState<boolean>(true);
+  const [isLoadingPartners, setIsLoadingPartners] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
-    if (!token) return;
+    if (!token) {
+      setIsCheckingAccess(false);
+      return;
+    }
+
     const me = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRole(response.data.data.role ?? "");
-      } catch { /* invalid token */ }
+      } catch {
+        setRole("");
+      } finally {
+        setIsCheckingAccess(false);
+      }
     };
     me();
   }, []);
 
   useEffect(() => {
     const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
-    if (!token) return;
+    if (!token || role !== "operator") {
+      setPartners([]);
+      setSelectedCategoryId("");
+      return;
+    }
+
     const getValuePartners = async () => {
+      setIsLoadingPartners(true);
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/partners`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data: Partner[] = response.data.data;
+
+        const data = getCollectionData<PartnerResponse>(response.data?.data).map((partner) => ({
+          id: String(partner.id),
+          name: partner.name,
+          slug: partner.slug,
+          value_partner: getCollectionData<ValuePartner>(partner.value_partner ?? partner.valuePartners),
+        }));
+
         setPartners(data);
-        if (data.length > 0) setSelectedCategoryId(data[0].id);
-      } catch { /* unauthorized */ }
+        setSelectedCategoryId((currentCategoryId) => {
+          if (data.some((partner) => partner.id === currentCategoryId)) return currentCategoryId;
+          return data[0]?.id ?? "";
+        });
+      } catch {
+        setPartners([]);
+        setSelectedCategoryId("");
+      } finally {
+        setIsLoadingPartners(false);
+      }
     };
     getValuePartners();
-  }, []);
+  }, [role]);
 
-  const activePartner = partners.find((p) => p.id === selectedCategoryId);
+  const activePartner = partners.find((p) => p.id === selectedCategoryId) ?? partners[0];
+  const activeValuePartners = activePartner?.value_partner ?? [];
 
   return (
     <>
@@ -90,7 +141,16 @@ export default function ValuePartners(): JSX.Element {
         imagePath="/asset-hero.webp"
       />
 
-      {role !== "operator" ? (
+      {isCheckingAccess ? (
+        <main>
+          <section className="py-20 min-h-[60vh] flex items-center bg-white">
+            <div className="container mx-auto px-4 lg:px-8 text-center">
+              <p className="text-2xl font-semibold text-slate-700 mb-2">Loading benefits</p>
+              <p className="text-slate-500">Please wait while we check your member access.</p>
+            </div>
+          </section>
+        </main>
+      ) : role !== "operator" ? (
         <main>
           <section className="py-20 lg:py-28 bg-white">
             <div className="container mx-auto px-4 lg:px-8">
@@ -122,7 +182,14 @@ export default function ValuePartners(): JSX.Element {
         </main>
       ) : (
         <main>
-          {partners.length === 0 ? (
+          {isLoadingPartners ? (
+            <section className="py-20 min-h-[60vh] flex items-center bg-white">
+              <div className="container mx-auto px-4 lg:px-8 text-center">
+                <p className="text-2xl font-semibold text-slate-700 mb-2">Loading partners</p>
+                <p className="text-slate-500">Partner listings will appear in a moment.</p>
+              </div>
+            </section>
+          ) : partners.length === 0 ? (
             <section className="py-20 min-h-[60vh] flex items-center bg-white">
               <div className="container mx-auto px-4 lg:px-8 text-center">
                 <p className="text-2xl font-semibold text-slate-700 mb-2">No Partners Found</p>
@@ -138,6 +205,7 @@ export default function ValuePartners(): JSX.Element {
                     {partners.map((partner) => (
                       <button
                         key={partner.id}
+                        type="button"
                         onClick={() => setSelectedCategoryId(partner.id)}
                         className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${
                           partner.id === selectedCategoryId
@@ -156,16 +224,16 @@ export default function ValuePartners(): JSX.Element {
               <section className="py-16 lg:py-24 bg-slate-50">
                 <div className="container mx-auto px-4 lg:px-8">
                   <motion.div
+                    key={activePartner?.id ?? "empty"}
                     initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, amount: 0.1 }}
+                    animate="show"
                     variants={stagger}
                   >
                     <motion.h2 variants={fadeUp} className="section-heading text-center mb-14">
                       {activePartner?.name}
                     </motion.h2>
 
-                    {activePartner?.value_partner?.length === 0 ? (
+                    {activeValuePartners.length === 0 ? (
                       <div className="text-center py-16 text-slate-400">
                         <p className="text-lg font-semibold mb-1">No partners in this category yet</p>
                       </div>
@@ -174,7 +242,7 @@ export default function ValuePartners(): JSX.Element {
                         variants={stagger}
                         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
                       >
-                        {activePartner?.value_partner?.map((vp) => (
+                        {activeValuePartners.map((vp) => (
                           <motion.div
                             key={vp.id}
                             variants={fadeUp}
@@ -185,7 +253,7 @@ export default function ValuePartners(): JSX.Element {
                                 <CiImageOn className="w-16 h-16 text-slate-300" />
                               ) : (
                                 <img
-                                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${vp.logo}`}
+                                  src={getLogoUrl(vp.logo)}
                                   alt={vp.brand_name}
                                   className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                                 />
