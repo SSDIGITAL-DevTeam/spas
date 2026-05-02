@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { JSX, useRef, useState, ChangeEvent } from "react";
 import { MdCloudUpload } from "react-icons/md";
 
@@ -8,15 +9,31 @@ type Props = {
   error?: string;
   accept?: string;
   hint?: string;
+  previewSrc?: string;
+  previewAlt?: string;
+  previewClassName?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function FormFileInput({ label, name, required, error, accept, hint }: Props): JSX.Element {
+export default function FormFileInput({
+  label,
+  name,
+  required,
+  error,
+  accept,
+  hint,
+  previewSrc,
+  previewAlt,
+  previewClassName,
+  onChange,
+}: Props): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setFileName(file ? file.name : "");
+    onChange?.(e);
   };
 
   return (
@@ -48,6 +65,15 @@ export default function FormFileInput({ label, name, required, error, accept, hi
       </div>
       {hint && (
         <p className="text-xs text-slate-400">{hint}</p>
+      )}
+      {previewSrc && (
+        <div className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+          <img
+            src={previewSrc}
+            alt={previewAlt ?? label}
+            className={previewClassName ?? "h-40 w-full bg-white object-contain p-2"}
+          />
+        </div>
       )}
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>

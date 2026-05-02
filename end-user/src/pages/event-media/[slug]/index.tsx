@@ -50,7 +50,7 @@ export default function BlogDetail({ slug }: { slug: string }): JSX.Element {
           <Loading />
         </div>
       ) : (
-        <main className="pt-20">
+        <main className="pt-32">
           {/* ── COVER IMAGE ── */}
           <div className="relative">
             <img

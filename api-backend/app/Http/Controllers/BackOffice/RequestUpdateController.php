@@ -8,6 +8,7 @@ use App\Http\Resources\RequestUpdate\RequestUpdateResource;
 use App\Models\Operator;
 use App\Models\RequestUpdate;
 use App\Models\Therapist;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +18,7 @@ class RequestUpdateController extends Controller
     {
         return RequestUpdateCollection::make(
             RequestUpdate::latest()
+                ->with(['operator.cover', 'therapist.cover'])
                 ->filterRequest(
                     request(['search'])
                 )
@@ -27,25 +29,18 @@ class RequestUpdateController extends Controller
 
     public function show(RequestUpdate $request_update): RequestUpdateResource
     {
-        return RequestUpdateResource::make($request_update);
+        return RequestUpdateResource::make($request_update->loadMissing(['operator.cover', 'therapist.cover']));
     }
 
-    public function updateOperator(Request $request, RequestUpdate $request_update): RequestUpdateResource
+    public function updateOperator(Request $request, RequestUpdate $request_update): JsonResponse
     {
-        $request_update->update(['status' => 'approve']);
-
-        $url_logo_operator = null;
-        if ($request->hasFile('url_logo_operator') && $request->file('url_logo_operator')->isValid()) {
-            $url_logo_operator = $request->file('url_logo_operator')->store('operator-logo', 'public');
-        }
-
-        $dataRequest = RequestUpdate::where('operator_id', $request_update->operator_id)
-            ->where('status', 'approve')
-            ->latest()
-            ->firstOrFail();
-
         try {
             DB::beginTransaction();
+
+            $dataRequest = RequestUpdate::whereKey($request_update->id)
+                ->where('status', 'pending')
+                ->lockForUpdate()
+                ->firstOrFail();
 
             $updateOperator = Operator::findOrFail($dataRequest->operator_id);
 
@@ -59,17 +54,18 @@ class RequestUpdateController extends Controller
                 'contact_person_no' => $dataRequest->contact_person_no,
             ]);
 
-            if (!empty($url_logo_operator)) {
-                $updateOperator->cover()->updateOrCreate([], ['url' => $url_logo_operator]);
+            if (!empty($dataRequest->url_logo_operator)) {
+                $updateOperator->cover()->updateOrCreate([], ['url' => $dataRequest->url_logo_operator]);
             }
 
-            RequestUpdate::where('operator_id', $request_update->operator_id)
-                ->where('status', 'approve')
-                ->delete();
+            $dataRequest->update(['status' => 'approve']);
 
             DB::commit();
 
-            return new RequestUpdateResource($updateOperator);
+            return response()->json([
+                'message' => 'Operator request approved.',
+                'data' => $updateOperator->fresh(['cover', 'user']),
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
@@ -79,22 +75,15 @@ class RequestUpdateController extends Controller
         }
     }
 
-    public function updateTherapist(Request $request, RequestUpdate $request_update)
+    public function updateTherapist(Request $request, RequestUpdate $request_update): JsonResponse
     {
-        $request_update->update(['status' => 'approve']);
-
-        $url_logo_therapist = null;
-        if ($request->hasFile('url_logo_therapist') && $request->file('url_logo_therapist')->isValid()) {
-            $url_logo_therapist = $request->file('url_logo_therapist')->store('therapist-picture', 'public');
-        }
-
-        $dataRequest = RequestUpdate::where('therapist_id', $request_update->therapist_id)
-            ->where('status', 'approve')
-            ->latest()
-            ->firstOrFail();
-
         try {
             DB::beginTransaction();
+
+            $dataRequest = RequestUpdate::whereKey($request_update->id)
+                ->where('status', 'pending')
+                ->lockForUpdate()
+                ->firstOrFail();
 
             $therapist = Therapist::findOrFail($dataRequest->therapist_id);
 
@@ -106,7 +95,8 @@ class RequestUpdateController extends Controller
                 'contact_no_therapist' => $dataRequest->contact_no_therapist,
                 'nationality' => $dataRequest->nationality,
                 'date_of_issue' => $dataRequest->date_of_issue,
-                'address_therapist' => $dataRequest->address_therapist,
+                'address' => $dataRequest->address_therapist,
+                'address_nearest_mrt' => $dataRequest->address_nearest_mrt,
                 'professional_certs' => $dataRequest->professional_certs,
                 'name_cert' => $dataRequest->name_cert,
                 'issuing_organization' => $dataRequest->issuing_organization,
@@ -114,18 +104,17 @@ class RequestUpdateController extends Controller
                 'credential_id' => $dataRequest->credential_id,
             ]);
 
-            if ($url_logo_therapist) {
-                $therapist->cover()->updateOrCreate([], ['url' => $url_logo_therapist]);
+            if ($dataRequest->url_logo_therapist) {
+                $therapist->cover()->updateOrCreate([], ['url' => $dataRequest->url_logo_therapist]);
             }
 
-            RequestUpdate::where('therapist_id', $request_update->therapist_id)
-                ->where('status', 'approve')
-                ->delete();
+            $dataRequest->update(['status' => 'approve']);
 
             DB::commit();
 
             return response()->json([
-                'data' => $therapist,
+                'message' => 'Therapist request approved.',
+                'data' => $therapist->fresh(['cover', 'user']),
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();

@@ -8,11 +8,12 @@ use App\Http\Resources\RequestUpdate\RequestUpdateResource;
 use App\Models\Operator;
 use App\Models\RequestUpdate;
 use App\Models\Therapist;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class RequestUpdateController extends Controller
 {
-    public function requestOperator(StoreRequestUpdateRequest $request): RequestUpdateResource
+    public function requestOperator(StoreRequestUpdateRequest $request): RequestUpdateResource|JsonResponse
     {
         $user = auth()->user();
 
@@ -31,6 +32,8 @@ class RequestUpdateController extends Controller
 
         if ($request->hasFile('url_logo_operator')) {
             $data['url_logo_operator'] = $request->file('url_logo_operator')->store('operator-logo', 'public');
+        } elseif ($operator->cover?->url) {
+            $data['url_logo_operator'] = $operator->cover->url;
         }
 
         $requestUpdate = RequestUpdate::create($data);
@@ -38,7 +41,7 @@ class RequestUpdateController extends Controller
         return RequestUpdateResource::make($requestUpdate);
     }
 
-    public function requestTherapist(StoreRequestUpdateRequest $request): RequestUpdateResource
+    public function requestTherapist(StoreRequestUpdateRequest $request): RequestUpdateResource|JsonResponse
     {
         $user = auth()->user();
 

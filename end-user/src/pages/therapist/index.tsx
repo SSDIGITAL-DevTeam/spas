@@ -15,58 +15,64 @@ import Img4 from "@/assets/therapist-assets/img4.webp";
 import Img5 from "@/assets/therapist-assets/img5.webp";
 import Img6 from "@/assets/therapist-assets/img6.webp";
 import Link from "next/link";
-
-import { Button, Image } from "@nextui-org/react";
 import axios from "axios";
 import { Therapist } from "@/@types";
-import { FaUser } from "react-icons/fa6";
+import { FaUser, FaArrowRight } from "react-icons/fa6";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+};
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
+
+const benefits = [
+  { img: Img1, title: "Gain Professional Image", body: "By becoming SPAS member, you can elevate your personal image and value." },
+  { img: Img2, title: "Accredited Recognition", body: "Gain acknowledgment as a Certified Therapist with accreditation." },
+  { img: Img3, title: "Career Development Opportunities", body: "Access exclusive opportunities to further enhance your skills and expertise." },
+  { img: Img4, title: "Endorsed by Expertise", body: "Receive endorsement of qualifications and competencies as a professional specializing in specific treatment(s)." },
+  { img: Img5, title: "Strategic Marketing Support", body: "Take advantage of SPAS' marketing and promotional initiatives for increased visibility." },
+  { img: Img6, title: "Enhance Visibility", body: "Enable potential customers to locate and authenticate your professional profile." },
+];
+
+const industries = [
+  { img: GroupImg6, title: "Yoga & Physical Training Center" },
+  { img: GroupImg3, title: "Hair Treatment & Beauty Salon" },
+  { img: GroupImg1, title: "Hydrotherapy & Body Treatment Spa" },
+  { img: GroupImg2, title: "Traditional Health Treatment" },
+  { img: GroupImg4, title: "Manicure & Pedicure Salon" },
+  { img: GroupImg5, title: "Massage Center & Reflexology" },
+];
 
 export default function Therapists(): JSX.Element {
   const [role, setRole] = useState<string>("");
-  const [therapists, setTherapists] = useState<[]>([]);
-
-  const me = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`
-            )}`,
-          },
-        }
-      );
-
-      setRole(response.data.data.role);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [therapists, setTherapists] = useState<Therapist[]>([]);
 
   useEffect(() => {
+    const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
+    if (!token) return;
+    const me = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRole(response.data.data.role ?? "");
+      } catch { /* invalid token */ }
+    };
     me();
   }, []);
 
-  const getTherapists = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/therapists`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!
-            )}`,
-          },
-        }
-      );
-      setTherapists(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
+    if (!token) return;
+    const getTherapists = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/therapists`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTherapists(response.data.data);
+      } catch { /* unauthorized */ }
+    };
     getTherapists();
   }, []);
 
@@ -76,379 +82,221 @@ export default function Therapists(): JSX.Element {
         <title>SPAS | Therapist</title>
         <meta name="author" content="SPAS" />
         <link rel="icon" href="/asset-logo.png" />
-
-        <meta
-          name="title"
-          content="Therapist | Gain Recognition for Professional Status"
-        />
-
-        <meta
-          name="description"
-          content="Get accredited recognition and other benefits by registering your professional status with us."
-        />
-
+        <meta name="title" content="Therapist | Gain Recognition for Professional Status" />
+        <meta name="description" content="Get accredited recognition and other benefits by registering your professional status with us." />
         <meta name="keywords" content="spa, services, therapist" />
-
         <meta name="robots" content="index, follow" />
-
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
-
-        <meta
-          property="og:title"
-          content="Therapist | Gain Recognition for Professional Status"
-        />
-
-        <meta
-          property="og:description"
-          content="Get accredited recognition and other benefits by registering your professional status with us."
-        />
-
+        <meta property="og:title" content="Therapist | Gain Recognition for Professional Status" />
+        <meta property="og:description" content="Get accredited recognition and other benefits by registering your professional status with us." />
         <meta property="og:type" content="website" />
-
-        <meta
-          property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
-        />
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`} />
       </Head>
 
-      {/* HERO */}
-      <header className="pb-14 lg:pb-18 pt-24">
-        <div className="container">
-          <div className="flex flex-col md:flex-row md:gap-x-6 md:items-center">
-            <div className="flex flex-col gap-y-4 md:w-1/2">
-              <h1 className="text-center lg:text-start text-4xl font-semibold leading-snug md:leading-normal xl:max-w-xl xl:text-5xl xl:leading-tight">
+      {/* ── HERO ── */}
+      <header className="pt-32 lg:pt-40 pb-16 lg:pb-24 hero-gradient">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="flex flex-col md:flex-row gap-10 md:items-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              className="md:w-1/2 order-2 md:order-1"
+            >
+              <img src={HeroTherapist.src} alt="Therapist" className="w-full rounded-2xl shadow-xl object-cover" />
+            </motion.div>
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger}
+              className="md:w-1/2 space-y-5 order-1 md:order-2"
+            >
+              <motion.span variants={fadeUp} className="inline-block bg-primary/10 text-primary text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Join As Therapist
+              </motion.span>
+              <motion.h1 variants={fadeUp} className="text-4xl font-bold leading-tight text-slate-900 xl:text-5xl">
                 Gain Recognition{" "}
-                <span className="text-black">
-                  By getting a Professional status!
-                </span>
-              </h1>
-              <p className="mr-5 text-secondary md:text-lg text-justify">
-                <strong>SPAS</strong> offers a platform for
-                <strong> Complementary Therapists</strong> to enroll their
-                competencies, demonstrating their expertise and skills in
-                specific treatments and sectors of the Wellness Industry.
-              </p>
-              {!role ? (
-                <div className="w-max mx-auto md:mx-0">
-                  <Link href={"/join-us/spa-therapist"}>
-                    <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                      JOIN SPAS
+                <span className="gradient-text">By getting a Professional status!</span>
+              </motion.h1>
+              <motion.p variants={fadeUp} className="section-subheading">
+                <strong>SPAS</strong> offers a platform for{" "}
+                <strong>Complementary Therapists</strong> to enroll their competencies, demonstrating their expertise and skills in specific treatments and sectors of the Wellness Industry.
+              </motion.p>
+              {!role && (
+                <motion.div variants={fadeUp}>
+                  <Link href="/join-us/spa-therapist">
+                    <span className="inline-flex items-center gap-x-2 btn-1">
+                      JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </Link>
-                </div>
-              ) : (
-                ""
+                </motion.div>
               )}
-            </div>
-
-            <div className="mt-8 md:w-1/2">
-              <img
-                className="w-screen rounded-lg"
-                src={HeroTherapist.src}
-                alt="HeroTherapist"
-              />
-            </div>
+            </motion.div>
           </div>
         </div>
       </header>
 
       <main>
-        {/* THERAPIST BENEFITS */}
-        <section className="pb-14 lg:pb-0 lg:pt-20">
-          <div className="container">
-            <div className="flex flex-col">
-              <header className="flex flex-col gap-y-6 text-center pb-10">
-                <h2 className="mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
+        {/* ── BENEFITS ── */}
+        <section className="py-20 lg:py-28 bg-white">
+          <div className="container mx-auto px-4 lg:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+            >
+              <div className="text-center mb-14 space-y-3">
+                <motion.h2 variants={fadeUp} className="section-heading">
                   Benefits for Registered Therapist
-                </h2>
-
-                <p className="mx-auto md:w-3/4 text-secondary text-sm md:text-lg">
-                  Enjoy these SPAS&prime; benefits if you decide to register
-                  your professional status.
-                </p>
-              </header>
-
-              <div className="flex flex-col lg:flex-row text-center py-6 gap-8 items-center lg:justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6">
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={Img1.src}
-                        alt="Img1"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold">Gain Professional Image</h2>
-                      <p className="text-secondary p-3 max-w-xs mx-auto text-sm md:text-lg">
-                        By becoming SPAS member, you can elevate your personal
-                        image and value.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-6 lg:border-x-2 px-10">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={Img2.src}
-                        alt="Img2"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold">Accredited Recognition</h2>
-                      <p className="text-secondary p-3 max-w-xs mx-auto text-sm md:text-lg">
-                        Gain acknowledgment as a Certified Therapist with
-                        accreditation.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={Img3.src}
-                        alt="Img3"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold">
-                        Career Development Opportunities
-                      </h2>
-                      <p className="text-secondary p-3 max-w-xs text-sm md:text-lg mx-auto">
-                        Access exclusive opportunities to further enhance your
-                        skills and expertise.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={Img4.src}
-                        alt="Img4"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold">Endorsed by Expertise</h2>
-                      <p className="text-secondary p-3 max-w-xs text-sm md:text-lg mx-auto">
-                        Receive endorsement of qualifications and competencies
-                        as a professional specializing in specific treatment(s).
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-6 lg:border-x-2 px-10">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={Img5.src}
-                        alt="Img5"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold">
-                        Strategic Marketing Support
-                      </h2>
-                      <p className="text-secondary p-3 max-w-xs text-sm md:text-lg mx-auto">
-                        Take advantage of SWAS&prime; marketing and promotional
-                        initiatives for increased visibility.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={Img6.src}
-                        alt="Img6"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold">Enhance Visibility</h2>
-                      <p className="text-secondary p-3 max-w-xs text-sm md:text-lg mx-auto">
-                        Enable potential customers to locate and authenticate
-                        your professional profile.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                </motion.h2>
+                <motion.p variants={fadeUp} className="section-subheading max-w-xl mx-auto">
+                  Enjoy these SPAS&prime; benefits if you decide to register your professional status.
+                </motion.p>
               </div>
-            </div>
+
+              <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {benefits.map((b) => (
+                  <motion.div
+                    key={b.title}
+                    variants={fadeUp}
+                    className="group bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <div className="overflow-hidden h-52">
+                      <img
+                        src={b.img.src}
+                        alt={b.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-6 space-y-2">
+                      <h3 className="font-semibold text-slate-900">{b.title}</h3>
+                      <p className="text-slate-500 text-sm leading-relaxed">{b.body}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
-        {/* YOU ARE WELCOME */}
-        <section className="pb-14 lg:pb-0 lg:pt-20 md:mb-20">
-          <div className="container">
-            <div className="flex flex-col">
-              <header className="flex flex-col gap-y-6 text-center pb-10">
-                <h2 className="mx-auto w-fit text-2xl leading-snug md:max-w-md md:leading-normal lg:text-3xl xl:max-w-2xl xl:text-5xl xl:leading-tight text-black font-semibold">
+        {/* ── YOU ARE WELCOME ── */}
+        <section className="py-20 lg:py-28 bg-slate-50">
+          <div className="container mx-auto px-4 lg:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+            >
+              <div className="text-center mb-14 space-y-3">
+                <motion.h2 variants={fadeUp} className="section-heading">
                   You Are Welcome
-                </h2>
-
-                <p className="mx-auto md:w-3/4 text-secondary">
+                </motion.h2>
+                <motion.p variants={fadeUp} className="section-subheading">
                   If you work in one of the following businesses.
-                </p>
-              </header>
-
-              <div className="flex flex-col lg:flex-row text-center py-6 gap-8 items-center lg:justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={GroupImg6.src}
-                        alt="GroupImg6"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold w-1/2 mx-auto">
-                        Yoga & Physical Training Center
-                      </h2>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={GroupImg3.src}
-                        alt="GroupImg3"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold w-1/2 mx-auto">
-                        Hair Treatment & Beauty Salon
-                      </h2>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={GroupImg1.src}
-                        alt="GroupImg1"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="font-semibold w-1/2 mx-auto">
-                        Hydrotherapy & Body Treatment Spa
-                      </h2>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={GroupImg2.src}
-                        alt="GroupImg2"
-                      />
-                    </div>
-                    <div className="space-y-3 w-1/2 mx-auto">
-                      <h2 className="font-semibold">
-                        Traditional Health Treatment
-                      </h2>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={GroupImg4.src}
-                        alt="GroupImg4"
-                      />
-                    </div>
-                    <div className="space-y-3 w-1/2 mx-auto">
-                      <h2 className="font-semibold">
-                        Manicure & Pedicure Salon
-                      </h2>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="">
-                      <img
-                        className="w-md rounded-lg mx-auto"
-                        src={GroupImg5.src}
-                        alt="GroupImg5"
-                      />
-                    </div>
-                    <div className="space-y-3 w-1/2 mx-auto">
-                      <h2 className="font-semibold">
-                        Massage Center & Reflexology
-                      </h2>
-                    </div>
-                  </div>
-                </div>
+                </motion.p>
               </div>
-            </div>
+
+              <motion.div variants={stagger} className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                {industries.map((ind) => (
+                  <motion.div
+                    key={ind.title}
+                    variants={fadeUp}
+                    className="group flex flex-col items-center gap-4 p-6 bg-white rounded-2xl border border-slate-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-center"
+                  >
+                    <div className="w-16 h-16 flex items-center justify-center">
+                      <img src={ind.img.src} alt={ind.title} className="w-full h-full object-contain" />
+                    </div>
+                    <p className="font-semibold text-slate-700 text-sm">{ind.title}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
+        {/* ── CTA (non-operator) ── */}
         {role !== "operator" && (
-          <section className="pb-14 lg:pb-0 mb-10 md:mb-20">
-            <div className="container p-4 md:p-8">
-              <h3 className="md:text-xl lg:text-2xl text-center mb-8">
+          <section className="py-16 bg-white border-t border-slate-100">
+            <div className="container mx-auto px-4 lg:px-8 text-center space-y-4">
+              <h3 className="text-xl font-semibold text-slate-700">
                 Join as member to see all spa therapists
               </h3>
-              <div className="w-max mx-auto">
-                <Link href={"/join-us/spa-operator"}>
-                  <span className="btn-1 block my-4  text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                    JOIN SPAS
-                  </span>
-                </Link>
-              </div>
+              <Link href="/join-us">
+                <span className="inline-flex items-center gap-x-2 btn-1">
+                  JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
             </div>
           </section>
         )}
 
-        {/* Mett Spa Operators */}
-        {role == "operator" ? (
-          <section className="mb-10">
-            <div className="container p-4 md:p-8">
-              <h2 className="text-2xl md:text-4xl lg:text-5xl text-black text-center mb-4 md:mb-8 lg:mb-20 font-bold">
-                Meet All Our Spa Therapists
-              </h2>
-              <div className="grid md:grid-cols-3 gap-4 md:gap-10 mb-4 md:mb-8 lg:mb-20">
-                {therapists.map((therapist: Therapist, index: number) => (
-                  <div key={index} className="shadow-md border p-4 md:p-8">
-                    <div className="flex flex-col items-center gap-4 md:gap-8">
-                      {!therapist?.cover?.url ? (
-                        <FaUser className="text-gray-400 w-40 h-40" />
-                      ) : (
-                        <Image
-                          // src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist?.cover?.url}`}
-                          src={therapist?.cover?.url}
-                          radius="none"
-                          alt="Spa Operators"
-                          className="object-cover md:w-40 md:h-40 aspect-square"
-                        />
-                      )}
+        {/* ── THERAPIST GRID (operator-only) ── */}
+        {role === "operator" && (
+          <section className="py-20 lg:py-28 bg-white">
+            <div className="container mx-auto px-4 lg:px-8">
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.1 }}
+                variants={stagger}
+              >
+                <motion.h2 variants={fadeUp} className="section-heading text-center mb-14">
+                  Meet All Our Spa Therapists
+                </motion.h2>
 
-                      <div className="flex flex-col items-center">
-                        <h3 className="text-lg md:text-2xl text-black font-semibold">
-                          {therapist.name}
-                        </h3>
-                        <Link
-                          href={`/spa-therapists/${therapist.slug}`}
-                          className="text-primary"
-                        >
-                          See Details
-                        </Link>
-                      </div>
-                    </div>
+                {therapists.length === 0 ? (
+                  <div className="text-center py-12 text-slate-400">
+                    <p className="text-lg font-semibold">No therapists found</p>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    {therapists.map((therapist: Therapist, index: number) => (
+                      <motion.div
+                        key={index}
+                        variants={fadeUp}
+                        className="group bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                      >
+                        <div className="flex flex-col items-center gap-4 text-center">
+                          <div className="w-24 h-24 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center">
+                            {!therapist?.cover?.url ? (
+                              <FaUser className="text-slate-300 w-10 h-10" />
+                            ) : (
+                              <img
+                                src={therapist.cover.url.startsWith("http") ? therapist.cover.url : `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${therapist.cover.url}`}
+                                alt={therapist.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-slate-900 group-hover:text-primary transition-colors">
+                              {therapist.name}
+                            </h3>
+                            <Link
+                              href={`/spa-therapists/${therapist.slug}`}
+                              className="inline-flex items-center gap-x-1.5 text-primary text-sm font-medium mt-1 hover:gap-x-2.5 transition-all"
+                            >
+                              See Details <FaArrowRight className="w-3 h-3" />
+                            </Link>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
 
-              <div className="w-max mx-auto">
-                <Link href="/spa-therapists">
-                  <span className="btn-1 block my-4 w-full text-center lg:w-max hover:bg-primary transition-colors ease-out">
-                    View More
-                  </span>
-                </Link>
-              </div>
+                <motion.div variants={fadeUp} className="flex justify-center">
+                  <Link href="/spa-therapists">
+                    <span className="inline-flex items-center gap-x-2 btn-1">
+                      View More <FaArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </Link>
+                </motion.div>
+              </motion.div>
             </div>
           </section>
-        ) : (
-          ""
         )}
       </main>
     </>

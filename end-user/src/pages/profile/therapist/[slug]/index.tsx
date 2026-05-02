@@ -555,45 +555,41 @@ export default function TherapistProfile(): JSX.Element {
         />
       </Head>
 
-      <main className="pt-24">
-        <section className="pb-10 md:pb-20">
-          <div className="container p-4 md:p-8">
-            <div className=" space-y-8">
-              <div className="relative md:w-max mx-auto mb-8 space-y-2">
-                <div className="space-y-4 flex flex-col items-center">
-                  {!profile?.cover?.url.length ? (
-                    <FaUser className="text-gray-400 w-20 h-20 md:w-40 md:h-40" />
-                  ) : (
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
-                      // src={profile?.cover?.url}
-                      alt="Operators"
-                      className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
-                      removeWrapper
-                      radius="full"
-                    />
-                  )}
-
-                  <div className="text-center">
-                    <h2 className="font-bold text-lg md:text-2xl ">
-                      {profile?.name}
-                    </h2>
-                  </div>
-                </div>
-
-                <div className="md:absolute md:-right-64 top-0 flex flex-col gap-y-2 text-[#A3A3A3] text-sm md:text-base text-center">
-                  <Button
-                    onPress={onOpen}
-                    className="bg-white border-2 border-secondary text-secondary rounded-md w-max mx-auto md:w-full hover:bg-secondary hover:text-white"
+      <main className="pt-32">
+        <section className="py-12 bg-slate-50 border-b border-slate-100">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="flex flex-col items-center gap-4 text-center max-w-xs mx-auto">
+              <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg bg-slate-50 flex items-center justify-center">
+                {!profile?.cover?.url.length ? (
+                  <FaUser className="text-slate-300 w-12 h-12" />
+                ) : (
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                    alt={profile?.name}
+                    className="object-cover w-full h-full aspect-square"
+                    removeWrapper
                     radius="none"
-                    size="lg"
-                  >
-                    Edit Profile
-                  </Button>
-                  <span>Last updated on: </span>
-                  <span>Tuesday, Jan 22 2024</span>
-                </div>
+                  />
+                )}
               </div>
+              <div>
+                <h2 className="font-bold text-2xl text-slate-900">{profile?.name}</h2>
+                <p className="text-primary text-sm font-medium mt-1">SPAS Certified Therapist</p>
+              </div>
+              <Button
+                onPress={onOpen}
+                className="bg-white border border-slate-200 text-slate-700 rounded-xl hover:border-primary hover:text-primary transition-colors mt-2"
+                size="sm"
+              >
+                Edit Profile
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 lg:py-20 bg-white">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="space-y-8">
 
               <Tabs className="flex items-center justify-center">
                 <Tab title="Personal Information" key="personal" className="">

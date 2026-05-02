@@ -1,5 +1,5 @@
 import React, { JSX, useState, useEffect } from "react";
-import { IoMenu, IoClose } from "react-icons/io5";
+import { IoMenu, IoClose, IoChevronDown } from "react-icons/io5";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Logo from "@/components/utils/Logo";
@@ -12,18 +12,27 @@ import {
   Image,
 } from "@nextui-org/react";
 import axios from "axios";
-import { FaUser } from "react-icons/fa6";
+import { FaArrowRight, FaUser } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 
-type NavLink = { name: string; path: string };
+type NavLink = { 
+  name: string; 
+  path?: string; 
+  sublinks?: { name: string; path: string }[] 
+};
 
 const navLinks: NavLink[] = [
-  { name: "Spa Therapist", path: "/therapist" },
-  { name: "Spa Operator", path: "/spa-operators" },
-  { name: "Membership", path: "/membership" },
+  { name: "About", path: "/about-us" },
+  { 
+    name: "Program", 
+    sublinks: [
+      { name: "Spa Therapist", path: "/therapist" },
+      { name: "Spa Operator", path: "/spa-operators" },
+      { name: "Membership", path: "/membership" },
+    ]
+  },
   { name: "Event & Media", path: "/event-media" },
   { name: "Value Partners", path: "/value-partners" },
-  { name: "About", path: "/about-us" },
   { name: "Contact", path: "/contact-us" },
 ];
 
@@ -107,11 +116,46 @@ export default function Navbar(): JSX.Element {
             {/* Desktop Nav */}
             <ul className="hidden lg:flex items-center gap-x-1 xl:gap-x-2">
               {navLinks.map((link) => {
+                if (link.sublinks) {
+                  const isActive = link.sublinks.some(sub => router.pathname.startsWith(sub.path));
+                  return (
+                    <li key={link.name}>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <button
+                            className={`relative flex items-center outline-none gap-x-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 group ${
+                              isActive
+                                ? "text-primary"
+                                : "text-slate-700 hover:text-primary hover:bg-primary/5"
+                            }`}
+                          >
+                            {link.name}
+                            <IoChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-transform group-aria-expanded:-rotate-180" />
+                            {isActive && (
+                              <motion.span
+                                layoutId="nav-indicator"
+                                className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"
+                              />
+                            )}
+                          </button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label={`${link.name} sublinks`} itemClasses={{ base: "gap-4" }}>
+                          {link.sublinks.map((sublink) => (
+                            <DropdownItem key={sublink.path} as={Link} href={sublink.path} className="text-slate-700">
+                              {sublink.name}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+                    </li>
+                  );
+                }
+
                 const isActive = router.pathname === link.path;
                 return (
-                  <li key={link.path}>
+                  <li key={link.name}>
                     <Link
-                      href={link.path}
+                      href={link.path!}
                       className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 group ${
                         isActive
                           ? "text-primary"
@@ -171,14 +215,26 @@ export default function Navbar(): JSX.Element {
                   </DropdownMenu>
                 </Dropdown>
               ) : (
-                <Link href="/auth/sign-in">
-                  <Button
-                    size="sm"
-                    className="bg-secondary text-white font-medium px-5 rounded-lg"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
+                <>
+                  <Link href="/join-us">
+                    <Button
+                      size="sm"
+                      className="bg-primary text-white font-semibold px-5 rounded-lg"
+                      endContent={<FaArrowRight className="h-3 w-3" />}
+                    >
+                      Join SPAS
+                    </Button>
+                  </Link>
+                  <Link href="/auth/sign-in">
+                    <Button
+                      size="sm"
+                      variant="bordered"
+                      className="border-secondary text-secondary font-medium px-5 rounded-lg"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                </>
               )}
             </div>
 
@@ -229,16 +285,50 @@ export default function Navbar(): JSX.Element {
               {/* Links */}
               <ul className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
                 {navLinks.map((link, i) => {
+                  if (link.sublinks) {
+                    const isActive = link.sublinks.some(sub => router.pathname.startsWith(sub.path));
+                    return (
+                      <div key={link.name} className="space-y-1">
+                        <div className={`px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider text-slate-400`}>
+                          {link.name}
+                        </div>
+                        {link.sublinks.map((sublink) => {
+                          const subIsActive = router.pathname === sublink.path;
+                          return (
+                            <motion.li
+                              key={sublink.path}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.05 }}
+                            >
+                              <Link
+                                href={sublink.path}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`flex items-center px-4 py-3 ml-4 rounded-xl text-sm font-medium transition-colors ${
+                                  subIsActive
+                                    ? "bg-primary/10 text-primary"
+                                    : "text-slate-700 hover:bg-slate-50 hover:text-primary"
+                                }`}
+                              >
+                                {sublink.name}
+                              </Link>
+                            </motion.li>
+                          );
+                        })}
+                      </div>
+                    );
+                  }
+
                   const isActive = router.pathname === link.path;
                   return (
                     <motion.li
-                      key={link.path}
+                      key={link.name}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
                     >
                       <Link
-                        href={link.path}
+                        href={link.path!}
                         onClick={() => setIsMenuOpen(false)}
                         className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                           isActive
@@ -281,13 +371,22 @@ export default function Navbar(): JSX.Element {
                     </button>
                   </>
                 ) : (
-                  <Link
-                    href="/auth/sign-in"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block w-full text-center px-4 py-3 rounded-xl bg-secondary text-white text-sm font-medium hover:bg-secondary/90 transition-colors"
-                  >
-                    Sign In
-                  </Link>
+                  <>
+                    <Link
+                      href="/join-us"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex w-full items-center justify-center gap-x-2 px-4 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+                    >
+                      Join SPAS <FaArrowRight className="h-3 w-3" />
+                    </Link>
+                    <Link
+                      href="/auth/sign-in"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block w-full text-center px-4 py-3 rounded-xl border border-secondary text-secondary text-sm font-medium hover:bg-secondary/5 transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                  </>
                 )}
               </div>
             </motion.div>

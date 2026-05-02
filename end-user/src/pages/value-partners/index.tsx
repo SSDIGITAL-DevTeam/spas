@@ -6,6 +6,7 @@ import { CiImageOn } from "react-icons/ci";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa6";
+import PageHero from "@/components/ui/PageHero";
 
 type Partner = {
   id: number;
@@ -33,26 +34,26 @@ export default function ValuePartners(): JSX.Element {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
 
   useEffect(() => {
+    const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
+    if (!token) return;
     const me = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`)}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setRole(response.data.data.role);
-      } catch { /* not logged in */ }
+        setRole(response.data.data.role ?? "");
+      } catch { /* invalid token */ }
     };
     me();
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
+    if (!token) return;
     const getValuePartners = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/partners`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(`${process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME}`)}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data: Partner[] = response.data.data;
         setPartners(data);
@@ -82,29 +83,12 @@ export default function ValuePartners(): JSX.Element {
       </Head>
 
       {/* ── HERO ── */}
-      <header className="relative overflow-hidden pt-20">
-        <div className="relative bg-[url('/asset-hero.webp')] bg-center bg-cover min-h-72">
-          <div className="absolute inset-0 bg-secondary/70" />
-          <div className="relative z-10 container mx-auto px-4 lg:px-8 py-28">
-            <motion.span
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-block bg-white/15 text-white text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 mb-4"
-            >
-              Exclusive Benefits
-            </motion.span>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold text-white"
-            >
-              Value Partners
-            </motion.h1>
-          </div>
-        </div>
-      </header>
+      <PageHero
+        badgeText="Exclusive Benefits"
+        title="Value Partners"
+        subtitle="Explore numerous opportunities with our partners. Get the best quality at the best price for your business."
+        imagePath="/asset-hero.webp"
+      />
 
       {role !== "operator" ? (
         <main>
@@ -126,7 +110,7 @@ export default function ValuePartners(): JSX.Element {
                   Are you ready to explore numerous opportunities with our partners? You&rsquo;ll get the best quality at the best price for your business. So, what are you waiting for? Register as a member now!
                 </motion.p>
                 <motion.div variants={fadeUp}>
-                  <Link href="/join-us/spa-operator">
+                  <Link href="/join-us">
                     <span className="inline-flex items-center gap-x-2 btn-1">
                       JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
                     </span>

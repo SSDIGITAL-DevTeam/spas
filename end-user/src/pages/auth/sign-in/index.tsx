@@ -1,20 +1,18 @@
 import Head from "next/head";
 import React, { FormEvent, useState } from "react";
 import Link from "next/link";
-import { Button, Image, Input } from "@nextui-org/react";
 import { LuUser2 } from "react-icons/lu";
 import AssetLogo from "@/assets/logo/spas-logo.png";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { apiModule, ApiRequestError } from "@/modules/apiModule";
 import toast, { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 
-export default function SpaOperators() {
+export default function SignIn() {
   const [isVisible, setIsVisible] = React.useState(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
   const [errMessage, setErrMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -28,12 +26,7 @@ export default function SpaOperators() {
     try {
       const response = await apiModule("/auth/sign-in", "POST", {}, formData);
       const token = response?.data?.token;
-
-      localStorage.setItem(
-        process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || "",
-        token
-      );
-
+      localStorage.setItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME || "", token);
       toast.success("Login successful!");
       router.push("/");
     } catch (error) {
@@ -46,146 +39,128 @@ export default function SpaOperators() {
       setIsLoading(false);
     }
   };
+
   return (
     <>
       <Head>
-        <title>SPAS | Elevate your Spa & Wellness Business with Us!</title>
+        <title>SPAS | Sign In</title>
         <link rel="icon" href="/asset-logo.png" />
         <meta name="author" content="SPAS" />
-
-        <meta
-          name="title"
-          content="SPAS | Elevate your Spa & Wellness Business with Us!"
-        />
-
-        <meta
-          name="description"
-          content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore."
-        />
-
+        <meta name="title" content="SPAS | Elevate your Spa & Wellness Business with Us!" />
+        <meta name="description" content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore." />
         <meta name="keywords" content="spa, services" />
-
         <meta name="robots" content="index, follow" />
-
         <meta property="og:url" content={process.env.NEXT_PUBLIC_BASE_URL} />
-
-        <meta
-          property="og:title"
-          content="SPAS | Elevate your Spa & Wellness Business with Us!"
-        />
-
-        <meta
-          property="og:description"
-          content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore."
-        />
-
+        <meta property="og:title" content="SPAS | Elevate your Spa & Wellness Business with Us!" />
+        <meta property="og:description" content="Promote and protect business entities, practitioners, stakeholders, and consumers of the Beauty, Spa, and Wellness industry in Singapore." />
         <meta property="og:type" content="website" />
-
-        <meta
-          property="og:image"
-          content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
-        />
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`} />
       </Head>
 
       <Toaster position="top-right" />
-      <main>
-        <div className="bg-[url('/hero-sign-in.webp')] bg-center lg:bg-cover bg-no-repeat h-screen">
-          <div className="md:w-1/3 mx-auto">
-            <div className="bg-white/90 backdrop-blur-sm h-screen md:py-10 space-y-4 md:space-y-10">
-              <form onSubmit={handleSubmit} className="container p-4 md:p-8">
-                <div className="flex flex-col items-center gap-y-10">
-                  <Link href={"/"} className="">
-                    <Image
-                      src={AssetLogo.src}
-                      alt="SPAS"
-                      className="object-cover md:w-3/4 mx-auto"
-                      removeWrapper
-                    />
-                  </Link>
 
-                  <div className="md:w-3/4">
-                    <div>
-                      <Input
-                        type="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        variant="underlined"
-                        label="Email"
-                        color="secondary"
-                        size="lg"
-                        endContent={<LuUser2 className="w-6 h-6" />}
-                      />
-                    </div>
+      <main className="min-h-screen relative flex items-center justify-center overflow-hidden">
+        {/* Background */}
+        <div
+          className="absolute inset-0 bg-[url('/hero-sign-in.webp')] bg-center bg-cover"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-secondary/60" aria-hidden />
 
-                    <div>
-                      <Input
-                        name="password"
-                        label="Password"
-                        variant="underlined"
-                        color="secondary"
-                        placeholder="Enter your password"
-                        size="lg"
-                        endContent={
-                          <button
-                            className="focus:outline-none"
-                            type="button"
-                            onClick={toggleVisibility}
-                          >
-                            {isVisible ? (
-                              <FaRegEyeSlash className="text-2xl  pointer-events-none w-6 h-6" />
-                            ) : (
-                              <FaRegEye className="text-2xl  pointer-events-none w-6 h-6" />
-                            )}
-                          </button>
-                        }
-                        type={isVisible ? "text" : "password"}
-                      />
-                    </div>
-                  </div>
+        {/* Decorative blobs */}
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl" aria-hidden />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-quaternary/20 rounded-full blur-3xl" aria-hidden />
 
-                  <div className="w-full  md:w-3/4 mx-auto">
-                    {errMessage && (
-                      <p className="text-center text-red-500 text-sm mb-2">
-                        {errMessage}
-                      </p>
-                    )}
-                    <Button
-                      type="submit"
-                      isLoading={isLoading}
-                      isDisabled={isLoading}
-                      className="w-full bg-secondary text-white"
-                    >
-                      {isLoading ? "Signing in..." : "Sign In"}
-                    </Button>
-                  </div>
+        {/* Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative z-10 w-full max-w-md mx-4"
+        >
+          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20 p-8 md:p-10 space-y-8">
+            {/* Logo */}
+            <div className="flex justify-center">
+              <Link href="/">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={AssetLogo.src} alt="SPAS" className="h-14 object-contain" />
+              </Link>
+            </div>
 
-                  <div className="flex flex-col items-center gap-y-3">
-                    <p className="text-slate-600 text-sm">Don&apos;t have an account?</p>
-                    <Link
-                      href="/join-us"
-                      className="text-secondary font-semibold text-sm hover:underline"
-                    >
-                      Register here
-                    </Link>
-                  </div>
-                  {/* <Link
-                    href="/join-us"
-                    className="font-semibold text-secondary"
-                  >
-                    Don&apos;t have an account?
-                  </Link> */}
+            {/* Heading */}
+            <div className="text-center space-y-1.5">
+              <h1 className="text-2xl font-bold text-slate-900">Welcome back</h1>
+              <p className="text-slate-500 text-sm">Sign in to your SPAS account</p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Email</label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    className="w-full pl-4 pr-11 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white"
+                  />
+                  <LuUser2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 w-4 h-4" />
                 </div>
-              </form>
-
-              <div className="">
-                {/* <Link href="/join-us">Forgot PAssword?</Link> */}
-                {/* <Link href="/join-us" className="font-semibold text-secondary">
-                  Already have an account?
-                </Link> */}
               </div>
+
+              {/* Password */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Password</label>
+                <div className="relative">
+                  <input
+                    name="password"
+                    type={isVisible ? "text" : "password"}
+                    placeholder="Enter your password"
+                    required
+                    className="w-full pl-4 pr-11 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsVisible(!isVisible)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {isVisible ? (
+                      <FaRegEyeSlash className="w-4 h-4" />
+                    ) : (
+                      <FaRegEye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              {errMessage && (
+                <p className="text-red-500 text-sm text-center bg-red-50 border border-red-100 rounded-xl px-4 py-2.5">
+                  {errMessage}
+                </p>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 bg-secondary text-white font-semibold rounded-xl hover:bg-primary transition-colors disabled:opacity-60 text-sm"
+              >
+                {isLoading ? "Signing in..." : "Sign In"}
+              </button>
+            </form>
+
+            {/* Register link */}
+            <div className="text-center space-y-1">
+              <p className="text-slate-500 text-sm">Don&apos;t have an account?</p>
+              <Link href="/join-us" className="text-primary font-semibold text-sm hover:underline">
+                Register here
+              </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </main>
     </>
   );

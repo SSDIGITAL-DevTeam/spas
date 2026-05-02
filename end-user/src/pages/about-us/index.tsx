@@ -8,6 +8,7 @@ import AssetMission2 from "@/assets/about-assets/asset-mission2.webp";
 import AssetMission3 from "@/assets/about-assets/asset-mission3.webp";
 import AssetMission4 from "@/assets/about-assets/asset-mission4.webp";
 import { motion } from "framer-motion";
+import PageHero from "@/components/ui/PageHero";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -80,38 +81,12 @@ export default function AboutUs(): JSX.Element {
 
       <main>
         {/* ── HERO ── */}
-        <header className="pt-20 lg:pt-24">
-          <div className="relative bg-[url('/asset-hero.webp')] bg-center bg-cover">
-            <div className="absolute inset-0 bg-secondary/70" />
-            <div className="relative z-10 text-white text-center py-28 md:py-40 space-y-6 px-4">
-              <motion.span
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-block bg-white/15 text-white text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20"
-              >
-                About SPAS
-              </motion.span>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-3xl md:text-5xl font-bold"
-              >
-                Who We Are
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="md:w-3/5 mx-auto text-white/85 leading-relaxed text-lg"
-              >
-                At SPAS, we&rsquo;re more than just a network - we&rsquo;re a community of passionate
-                professionals shaping the future of Beauty, Spa, and Wellness in Singapore.
-              </motion.p>
-            </div>
-          </div>
-        </header>
+        <PageHero
+          badgeText="About SPAS"
+          title="Who We Are"
+          subtitle="At SPAS, we&rsquo;re more than just a network - we&rsquo;re a community of passionate professionals shaping the future of Beauty, Spa, and Wellness in Singapore."
+          imagePath="/asset-hero.webp"
+        />
 
         {/* ── OUR VISIONS ── */}
         <section className="py-20 lg:py-28 bg-white">

@@ -34,15 +34,15 @@ export default function Membership(): JSX.Element {
   const [role, setRole] = useState("");
 
   useEffect(() => {
+    const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
+    if (!token) return;
     const me = async () => {
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!)}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setRole(res.data.data.role ?? "");
-      } catch { /* not logged in */ }
+      } catch { /* invalid token */ }
     };
     me();
   }, []);
@@ -65,7 +65,7 @@ export default function Membership(): JSX.Element {
       </Head>
 
       {/* ── HERO ── */}
-      <header className="pt-20 lg:pt-24 pb-16 lg:pb-24 hero-gradient">
+      <header className="pt-32 lg:pt-40 pb-16 lg:pb-24 hero-gradient">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row gap-10 md:items-center">
             <motion.div
@@ -90,7 +90,7 @@ export default function Membership(): JSX.Element {
               </motion.h1>
               {!role && (
                 <motion.div variants={fadeUp}>
-                  <Link href="/join-us/spa-operator">
+                  <Link href="/join-us">
                     <span className="inline-flex items-center gap-x-2 btn-1">
                       JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
                     </span>
@@ -219,7 +219,7 @@ export default function Membership(): JSX.Element {
 
               {role !== "operator" && (
                 <motion.div variants={fadeUp} className="mt-12">
-                  <Link href="/join-us/spa-operator">
+                  <Link href="/join-us">
                     <span className="inline-flex items-center gap-x-2 btn-1">
                       JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
                     </span>

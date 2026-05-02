@@ -50,7 +50,7 @@ type ErrorResponse = {
 
 export default function OperatorProfile() {
   // states
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isOpenModalMessage, setIsOpenModalMessage] = useState<boolean>(false);
   const [isOpenModalAddBranch, setIsOpenModalAddBranch] =
     useState<boolean>(false);
@@ -60,6 +60,7 @@ export default function OperatorProfile() {
     useState<boolean>(false);
 
   const [profile, setProfile] = useState<Operator>();
+  const [logoPreview, setLogoPreview] = useState("");
   const [id, setId] = useState<string>("");
   const [errMessage, setErrorMessage] = useState<ErrorResponse>(
     {} as ErrorResponse
@@ -74,6 +75,22 @@ export default function OperatorProfile() {
   // phone css
   const inputStyle = {
     width: "100%",
+  };
+
+  const currentLogoSrc = profile?.cover?.url
+    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile.cover.url}`
+    : "";
+  const editLogoPreviewSrc = logoPreview || currentLogoSrc;
+
+  useEffect(() => {
+    return () => {
+      if (logoPreview) URL.revokeObjectURL(logoPreview);
+    };
+  }, [logoPreview]);
+
+  const handleLogoPreviewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setLogoPreview(file ? URL.createObjectURL(file) : "");
   };
 
   // get profile data
@@ -138,6 +155,8 @@ export default function OperatorProfile() {
         }
       );
 
+      onClose();
+      setLogoPreview("");
       setIsOpenModalMessage(true);
     } catch (error) {
       console.log(error);
@@ -173,12 +192,12 @@ export default function OperatorProfile() {
     setIsLoading(true);
 
     const form: HTMLFormElement = e.currentTarget;
-    // const formData: FormData = new FormData(form);
+    const formData: FormData = new FormData(form);
 
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/branch-offices`,
-        form,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
@@ -187,14 +206,15 @@ export default function OperatorProfile() {
           },
         }
       );
+      toast.success("Branch added successfully");
+      setIsOpenModalAddBranch(false);
+      getProfile();
     } catch (error) {
       console.log(error);
       const errMessage = error as AxiosError;
       setErrorMessage(errMessage.response?.data as ErrorResponse);
     } finally {
       setIsLoading(false);
-      setIsOpenModalAddBranch(false);
-      getProfile();
     }
   };
 
@@ -203,12 +223,12 @@ export default function OperatorProfile() {
     setIsLoading(true);
 
     const form: HTMLFormElement = e.currentTarget;
-    // const formData: FormData = new FormData(form);
+    const formData: FormData = new FormData(form);
 
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/end-user/operator/branch-offices/${branchId}?_method=PUT`,
-        form,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
@@ -217,14 +237,15 @@ export default function OperatorProfile() {
           },
         }
       );
+      toast.success("Branch updated successfully");
+      setIsOpenModalEditBranch(false);
+      getProfile();
     } catch (error) {
       console.log(error);
       const errMessage = error as AxiosError;
       setErrorMessage(errMessage.response?.data as ErrorResponse);
     } finally {
       setIsLoading(false);
-      setIsOpenModalEditBranch(false);
-      getProfile();
     }
   };
 
@@ -304,94 +325,85 @@ export default function OperatorProfile() {
           content={`${process.env.NEXT_PUBLIC_BASE_URL}/asset-logo.png`}
         />
       </Head>
-      <main className="pt-24">
-        <section className="pb-8">
-          <div className="container p-4 md:p-8">
-            <div className="flex flex-col gap-y-8 md:flex-row gap-x-20">
-              <div className="space-y-4 flex flex-col items-center md:items-start md:max-w-64">
-                {!profile?.cover?.url.length ? (
-                  <FaUser className="text-gray-400 w-20 h-20 md:w-40 md:h-40" />
-                ) : (
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
-                    // src={profile?.cover?.url}
-                    alt="Operators"
-                    className="object-cover aspect-square w-1/2 md:w-40 md:h-40"
-                    removeWrapper
-                    radius="full"
-                  />
-                )}
-
-                <div className="">
-                  <span className="font-bold text-lg md:text-2xl">
-                    {profile?.brand_name}
-                  </span>
+      <main className="pt-28 bg-slate-50 min-h-screen">
+        <section className="py-10 lg:py-14">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="flex flex-col gap-8 md:flex-row md:gap-10 items-start rounded-2xl border border-slate-200 bg-white p-5 md:p-8 shadow-sm">
+              {/* Avatar + identity */}
+              <div className="flex flex-col items-center md:items-start gap-3 md:w-56 flex-shrink-0">
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm flex items-center justify-center">
+                  {!profile?.cover?.url.length ? (
+                    <FaUser className="text-slate-300 w-10 h-10" />
+                  ) : (
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${profile?.cover?.url}`}
+                      alt="Operators"
+                      className="object-cover w-full h-full aspect-square"
+                      removeWrapper
+                      radius="none"
+                    />
+                  )}
                 </div>
-
-                <div className="flex flex-col text-center md:text-start md:text-lg">
-                  <span>SINGAPORE</span>
-                  <span>SPAS Community</span>
+                <div className="text-center md:text-start">
+                  <span className="font-bold text-lg text-slate-900">{profile?.brand_name}</span>
+                  <div className="flex flex-col text-slate-500 text-sm mt-1">
+                    <span>{profile?.uen_no || "UEN not set"}</span>
+                    <span>SPAS Operator</span>
+                  </div>
                 </div>
               </div>
 
+              {/* Info card */}
               <div className="flex-1 space-y-8">
-                <div className="border-2 p-4 md:p-8 md:w-3/4 rounded-md">
-                  <h2 className="font-bold text-lg md:text-2xl mb-8 text-center md:text-start">
+                <div className="border border-slate-100 p-5 md:p-7 rounded-2xl bg-slate-50">
+                  <h2 className="font-bold text-xl md:text-2xl mb-6 text-slate-900">
                     {profile?.company_name}
                   </h2>
 
-                  <div className="space-y-8 md:space-y-14">
-                    <div className="flex flex-col gap-y-4 md:items-start">
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuMapPin className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <LuMapPin className="text-primary w-4 h-4" />
                         </div>
-                        <span className="text-lg w-3/4">
-                          {profile?.address}
-                        </span>
+                        <span className="text-slate-700 text-sm">{profile?.address}</span>
                       </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                      <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <LuPhone className="text-primary w-4 h-4" />
                         </div>
-                        <span className="text-lg">{profile?.contact_no}</span>
+                        <span className="text-slate-700 text-sm">{profile?.contact_no}</span>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-y-4 md:items-start">
-                      <h3 className="font-bold text-lg md:text-xl text-center md:text-start">
-                        Person In Charge
-                      </h3>
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuUser2 className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                    <div>
+                      <h3 className="font-semibold text-slate-700 text-sm mb-3">Person In Charge</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <LuUser2 className="text-primary w-4 h-4" />
+                          </div>
+                          <span className="text-slate-700 text-sm">{profile?.contact_person}</span>
                         </div>
-                        <span className="text-lg">
-                          {profile?.contact_person}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div>
-                          <LuPhone className="text-secondary w-6 h-6 md:w-8 md:h-8" />
+                        <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <LuPhone className="text-primary w-4 h-4" />
+                          </div>
+                          <span className="text-slate-700 text-sm">{profile?.contact_person_no}</span>
                         </div>
-                        <span className="text-lg">
-                          {profile?.contact_person_no}
-                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className=" text-[#A3A3A3] text-sm md:text-base text-center">
+              {/* Edit button */}
+              <div className="flex-shrink-0">
                 <Button
                   onPress={onOpen}
-                  startContent={<FaPen />}
-                  className="bg-white border-2 border-secondary text-secondary rounded-md w-max mx-auto md:w-full hover:bg-secondary hover:text-white"
-                  radius="none"
-                  size="lg"
+                  startContent={<FaPen className="w-3.5 h-3.5" />}
+                  className="bg-primary text-white rounded-xl shadow-sm hover:bg-secondary transition-colors"
+                  size="md"
                 >
                   Edit Profile
                 </Button>
@@ -400,21 +412,24 @@ export default function OperatorProfile() {
           </div>
         </section>
 
-        <section className="pb-10 md:pb-20">
-          <div className="container p-4 md:p-8">
-            <div className="md:flex items-center justify-between mb-8">
-              <h2 className="font-bold text-lg md:text-2xl text-center md:text-start">
-                Branches
-              </h2>
-              {/* Add Branches */}
-              <div className="w-max mx-auto md:mx-0 hidden md:block">
+        <section className="pb-12 lg:pb-20 bg-slate-50">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="font-bold text-xl md:text-2xl text-slate-900">
+                  Branches
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  Manage outlet locations and branch contact details.
+                </p>
+              </div>
+              <div className="hidden md:block">
                 <Button
                   type="button"
                   onClick={() => setIsOpenModalAddBranch(true)}
-                  startContent={<IoMdAddCircle className="w-6 h-6" />}
-                  className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white  rounded-md"
-                  radius="none"
-                  size="lg"
+                  startContent={<IoMdAddCircle className="w-5 h-5" />}
+                  className="bg-primary text-white rounded-xl shadow-sm"
+                  size="md"
                 >
                   Add Branch
                 </Button>
@@ -422,21 +437,22 @@ export default function OperatorProfile() {
             </div>
 
             {!profile?.branch_office.length ? (
-              <p className="text-center md:text-lg pb-10 md:pb-20">
-                No Branch Currently
-              </p>
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-14 text-center">
+                <p className="text-slate-500 font-medium">No branches currently</p>
+                <p className="text-sm text-slate-400 mt-1">Add your first branch to complete the operator profile.</p>
+              </div>
             ) : (
-              <div className="grid md:grid-cols-3 lg:grid-cols-3 gap-8 mb-8 md:mb-0">
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
                 {profile?.branch_office?.map((branch: Branch) => (
-                  <div key={branch.id} className="border-2 p-4 rounded-md">
-                    <div className="flex items-center justify-between mb-4 ">
-                      <h2 className="font-bold text-lg text-start">
+                  <div key={branch.id} className="border border-slate-200 p-5 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between gap-3 mb-5">
+                      <h2 className="font-bold text-lg text-start text-slate-900">
                         {branch.branch_name}
                       </h2>
 
                       <Dropdown>
                         <DropdownTrigger>
-                          <Button className="bg-transparent px-0">
+                          <Button isIconOnly size="sm" variant="light" className="text-slate-500">
                             <SlOptionsVertical className="rotate-90 md:rotate-0 w-4 h-4 ml-auto text-secondary" />
                           </Button>
                         </DropdownTrigger>
@@ -468,39 +484,39 @@ export default function OperatorProfile() {
                       </div> */}
                     </div>
 
-                    <div className="space-y-4 ">
-                      <div className="flex flex-col gap-y-4 md:items-start">
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <LuMapPin className="text-secondary w-6 h-6 " />
+                    <div className="space-y-5">
+                      <div className="flex flex-col gap-y-3 md:items-start">
+                        <div className="flex items-start gap-x-3">
+                          <div className="mt-0.5 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <LuMapPin className="text-primary w-4 h-4" />
                           </div>
-                          <span className="w-3/4">{branch.address}</span>
+                          <span className="text-sm text-slate-600 leading-relaxed">{branch.address}</span>
                         </div>
 
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <LuPhone className="text-secondary w-6 h-6" />
+                        <div className="flex items-center gap-x-3">
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <LuPhone className="text-primary w-4 h-4" />
                           </div>
-                          <span>{branch.contact_number}</span>
+                          <span className="text-sm text-slate-600">{branch.contact_number}</span>
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-y-4 md:items-start">
-                        <h3 className="font-bold text-start">
+                      <div className="flex flex-col gap-y-3 md:items-start border-t border-slate-100 pt-4">
+                        <h3 className="font-semibold text-sm text-slate-900">
                           Person In Charge
                         </h3>
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <LuUser2 className="text-secondary w-6 h-6" />
+                        <div className="flex items-center gap-x-3">
+                          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                            <LuUser2 className="text-slate-500 w-4 h-4" />
                           </div>
-                          <span>{branch.person_name}</span>
+                          <span className="text-sm text-slate-600">{branch.person_name}</span>
                         </div>
 
-                        <div className="flex items-center gap-x-4">
-                          <div>
-                            <LuPhone className="text-secondary w-6 h-6" />
+                        <div className="flex items-center gap-x-3">
+                          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                            <LuPhone className="text-slate-500 w-4 h-4" />
                           </div>
-                          <span>{branch.person_contact}</span>
+                          <span className="text-sm text-slate-600">{branch.person_contact}</span>
                         </div>
                       </div>
                     </div>
@@ -509,14 +525,13 @@ export default function OperatorProfile() {
               </div>
             )}
 
-            <div className="w-max mx-auto md:mx-0 md:hidden">
+            <div className="flex justify-center md:hidden">
               <Button
                 type="button"
                 onClick={() => setIsOpenModalAddBranch(true)}
-                startContent={<IoMdAddCircle className="w-6 h-6" />}
-                className="bg-white border-2 border-secondary text-secondary hover:bg-secondary hover:text-white  rounded-md"
-                radius="none"
-                size="lg"
+                startContent={<IoMdAddCircle className="w-5 h-5" />}
+                className="bg-primary text-white rounded-xl"
+                size="md"
               >
                 Add Branch
               </Button>
@@ -541,26 +556,53 @@ export default function OperatorProfile() {
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          size="xl"
+          size="3xl"
           hideCloseButton
         >
-          <ModalContent>
+          <ModalContent className="rounded-2xl overflow-hidden">
             {(onClose) => (
               <form onSubmit={handleRequestEditData}>
-                <ModalHeader className="flex flex-col gap-1">
-                  Edit Profile
+                <ModalHeader className="flex flex-col gap-1 border-b border-slate-100 px-6 py-5">
+                  <span className="text-lg font-semibold text-slate-900">Edit Profile</span>
+                  <span className="text-sm font-normal text-slate-500">
+                    Submit changes for admin review before they go live.
+                  </span>
                 </ModalHeader>
-                <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1 overflow-y-auto max-h-[23rem]">
-                  <div className="md:space-y-2">
-                    <input className="w-full" type="file" name="url" />
-                    <div className="flex items-center gap-x-4">
-                      <FaInfoCircle className="text-[#8D98AA]" />
-                      <p className="text-xs">Image file size max 2 MB</p>
+                <ModalBody className="grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto max-h-[70vh] px-6 py-5">
+                  <div className="md:col-span-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Company Logo
+                    </label>
+                    {editLogoPreviewSrc ? (
+                      <div className="mb-3 h-36 w-full overflow-hidden rounded-xl border border-slate-200 bg-white">
+                        <Image
+                          src={editLogoPreviewSrc}
+                          alt="Company logo preview"
+                          className="h-full w-full object-contain p-3"
+                          removeWrapper
+                          radius="none"
+                        />
+                      </div>
+                    ) : (
+                      <div className="mb-3 flex h-36 w-full items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-400">
+                        Logo preview
+                      </div>
+                    )}
+                    <input
+                      className="w-full text-sm"
+                      type="file"
+                      name="url_logo_operator"
+                      accept="image/*"
+                      onChange={handleLogoPreviewChange}
+                    />
+                    <div className="mt-2 flex items-center gap-x-2 text-slate-500">
+                      <FaInfoCircle className="w-4 h-4" />
+                      <p className="text-xs">Upload only if you want to replace the current logo. Max 2 MB.</p>
                     </div>
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="" className="md:text-base text-sm">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">
                       Company Name
                     </label>
                     <Input
@@ -573,11 +615,12 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="" className="md:text-base text-sm">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">
                       UEN NO
                     </label>
                     <Input
+                      name="uen_no"
                       variant={"bordered"}
                       color="secondary"
                       size="md"
@@ -586,8 +629,8 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="" className="md:text-base text-sm">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">
                       Brand Name
                     </label>
                     <Input
@@ -600,8 +643,8 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Address</label>
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label className="text-sm font-medium text-slate-700">Address</label>
                     <Input
                       variant={"bordered"}
                       color="secondary"
@@ -612,23 +655,20 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Contact No.</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Contact No.</label>
                     <PhoneInput
                       inputProps={{ style: inputStyle }}
                       style={{}}
-                      className="border-2 border-[#E4E4E7] rounded-md"
+                      className="border border-slate-200 rounded-xl overflow-hidden bg-white"
                       defaultCountry="sg"
                       value={profile?.contact_no}
                       name="contact_no"
-                      // placeholder={profile?.contact_no}
-
-                      // onChange={(phone: string) => setPhone(phone)}
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Contact Person Name</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Contact Person Name</label>
                     <Input
                       variant={"bordered"}
                       color="secondary"
@@ -639,37 +679,35 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Contact Person No.</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Contact Person No.</label>
                     <PhoneInput
                       inputProps={{ style: inputStyle }}
                       style={{}}
-                      className="border-2 border-[#E4E4E7] rounded-md"
+                      className="border border-slate-200 rounded-xl overflow-hidden bg-white"
                       defaultCountry="sg"
                       value={profile?.contact_person_no}
                       name="contact_person_no"
-                      // defaultValue={profile?.contact_person_no}
                     />
                   </div>
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter className="border-t border-slate-100 px-6 py-4">
                   <Button
-                    color="danger"
                     variant="light"
-                    onPress={onClose}
-                    radius="none"
-                    className="rounded-md"
+                    onPress={() => {
+                      setLogoPreview("");
+                      onClose();
+                    }}
+                    className="rounded-xl"
                   >
-                    Close
+                    Cancel
                   </Button>
                   <Button
                     color="primary"
                     type="submit"
-                    onPress={onClose}
-                    radius="none"
-                    className="rounded-md"
+                    className="rounded-xl"
                   >
-                    Request
+                    Submit Request
                   </Button>
                 </ModalFooter>
               </form>
@@ -684,15 +722,18 @@ export default function OperatorProfile() {
           size="2xl"
           hideCloseButton
         >
-          <ModalContent>
+          <ModalContent className="rounded-2xl overflow-hidden">
             {(onClose) => (
               <form onSubmit={handleAddBranch}>
-                <ModalHeader className="flex flex-col gap-1">
-                  Add Branch
+                <ModalHeader className="flex flex-col gap-1 border-b border-slate-100 px-6 py-5">
+                  <span className="text-lg font-semibold text-slate-900">Add Branch</span>
+                  <span className="text-sm font-normal text-slate-500">
+                    Add outlet details so members can identify the correct branch contact.
+                  </span>
                 </ModalHeader>
-                <ModalBody className="grid md:grid-cols-2 md:gap-3 gap-1">
-                  <div className="md:space-y-2">
-                    <label htmlFor="" className="md:text-base text-sm">
+                <ModalBody className="grid grid-cols-1 md:grid-cols-2 gap-5 px-6 py-5">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">
                       Branch Name
                     </label>
                     <Input
@@ -704,8 +745,8 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Address</label>
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label className="text-sm font-medium text-slate-700">Address</label>
                     <Input
                       variant={"bordered"}
                       color="secondary"
@@ -715,8 +756,8 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Email (optional)</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Email (optional)</label>
                     <Input
                       variant={"bordered"}
                       color="secondary"
@@ -726,18 +767,18 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Contact No.</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Contact No.</label>
                     <PhoneInput
                       inputProps={{ style: inputStyle }}
-                      className="border border-[#E4E4E7] rounded-md"
+                      className="border border-slate-200 rounded-xl overflow-hidden bg-white"
                       defaultCountry="sg"
                       name="contact_number"
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Contact Person Name</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Contact Person Name</label>
                     <Input
                       variant={"bordered"}
                       color="secondary"
@@ -747,32 +788,29 @@ export default function OperatorProfile() {
                     />
                   </div>
 
-                  <div className="md:space-y-2">
-                    <label htmlFor="">Contact Person No.</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-slate-700">Contact Person No.</label>
                     <PhoneInput
                       inputProps={{ style: inputStyle }}
                       style={{}}
-                      className="border border-[#E4E4E7] rounded-md"
+                      className="border border-slate-200 rounded-xl overflow-hidden bg-white"
                       defaultCountry="sg"
                       name="person_contact"
                     />
                   </div>
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter className="border-t border-slate-100 px-6 py-4">
                   <Button
-                    color="danger"
                     variant="light"
                     onPress={onClose}
-                    radius="none"
-                    className="rounded-md"
+                    className="rounded-xl"
                   >
                     Cancel
                   </Button>
                   <Button
                     color="primary"
                     type="submit"
-                    radius="none"
-                    className="rounded-md"
+                    className="rounded-xl"
                   >
                     {isLoading ? (
                       <Spinner color="white" size="sm" />
@@ -982,7 +1020,7 @@ export default function OperatorProfile() {
                     {isLoading ? (
                       <Spinner color="white" size="sm" />
                     ) : (
-                      <span>Add Branch</span>
+                      <span>Save Branch</span>
                     )}
                   </Button>
                 </ModalFooter>

@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
 import FormInput from "@/components/ui/FormInput";
+import PageHero from "@/components/ui/PageHero";
 
 const topics = [
   { id: 0, name: "Membership" },
@@ -80,29 +81,12 @@ export default function Contact(): JSX.Element {
       <Toaster />
 
       {/* ── HERO ── */}
-      <header className="relative overflow-hidden pt-20">
-        <div className="relative bg-[url('/contact-assets/contact.png')] bg-center bg-cover min-h-72">
-          <div className="absolute inset-0 bg-secondary/65" />
-          <div className="relative z-10 container mx-auto px-4 lg:px-8 py-28">
-            <motion.span
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-block bg-white/15 text-white text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 mb-4"
-            >
-              Get In Touch
-            </motion.span>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold text-white"
-            >
-              Contact Us
-            </motion.h1>
-          </div>
-        </div>
-      </header>
+      <PageHero
+        badgeText="Get In Touch"
+        title="Contact Us"
+        subtitle="Let's build something great together. So please do not hesitate to contact us and we will get back to you shortly."
+        imagePath="/contact-assets/contact.png"
+      />
 
       <main>
         {/* ── CONTACT FORM + INFO ── */}

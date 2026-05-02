@@ -57,7 +57,7 @@ export default function SpaOperators({
       </Head>
 
       {/* ── HERO ── */}
-      <header className="pt-20 lg:pt-24 pb-16 lg:pb-24 hero-gradient">
+      <header className="pt-32 lg:pt-40 pb-16 lg:pb-24 hero-gradient">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial="hidden"
@@ -75,7 +75,7 @@ export default function SpaOperators({
               Thank you for embarking on this path to wellness with us. At SPAS, we&rsquo;re committed to more than just your relaxation. We&rsquo;re fostering a community dedicated to sustainable practices to ensure a healthy future for all.
             </motion.p>
             <motion.div variants={fadeUp}>
-              <Link href="/join-us/spa-operator">
+              <Link href="/join-us">
                 <span className="inline-flex items-center gap-x-2 btn-1">
                   JOIN SPAS <FaArrowRight className="w-3.5 h-3.5" />
                 </span>
@@ -120,7 +120,7 @@ export default function SpaOperators({
                             </div>
                           ) : (
                             <img
-                              src={operator?.cover?.url}
+                              src={operator.cover.url.startsWith("http") ? operator.cover.url : `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${operator.cover.url}`}
                               alt={operator.company_name}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />

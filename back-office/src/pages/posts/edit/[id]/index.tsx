@@ -75,7 +75,7 @@ export default function EditPost(): JSX.Element {
     if (e.key === "Enter") {
       e.preventDefault();
       const tag = e.currentTarget.value.trim();
-      if (tag) setPostTags((prev) => [...prev, tag]);
+      if (tag && !postTags.includes(tag)) setPostTags((prev) => [...prev, tag]);
       e.currentTarget.value = "";
     }
   };

@@ -6,10 +6,9 @@ import img2 from "@/assets/homepage-assets/rectangle-146.webp";
 import img3 from "@/assets/homepage-assets/rectangle-147.webp";
 import img4 from "@/assets/homepage-assets/rectangle-148.webp";
 import KeepBg from "@/assets/homepage-assets/Keep.webp";
-import Ficon1 from "@/assets/homepage-assets/featured-icons.svg";
 import moment from "moment";
 import Link from "next/link";
-import { FaChartLine, FaArrowRight } from "react-icons/fa6";
+import { FaChartLine, FaArrowRight, FaUsers, FaBook, FaIdBadge } from "react-icons/fa6";
 import { RiVoiceRecognitionLine } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoIosPhonePortrait } from "react-icons/io";
@@ -56,14 +55,17 @@ const missions = [
 
 const benefits = [
   {
+    icon: FaUsers,
     title: "Networking Events",
     body: "Attend exclusive events to connect with industry leaders and fellow professionals.",
   },
   {
+    icon: FaBook,
     title: "Resource Hub",
     body: "Access a rich repository of resources, from business insights to the latest wellness trends.",
   },
   {
+    icon: FaIdBadge,
     title: "Profile Showcase",
     body: "Showcase your expertise with a personalized profile, boosting your visibility.",
   },
@@ -76,15 +78,15 @@ export default function Home(): JSX.Element {
   const [role, setRole] = useState("");
 
   useEffect(() => {
+    const token = localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!);
+    if (!token) return;
     const me = async () => {
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/end-user/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(process.env.NEXT_PUBLIC_ACCESS_TOKEN_NAME!)}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setRole(res.data.data.role ?? "");
-      } catch { /* not logged in */ }
+      } catch { /* invalid token */ }
     };
     me();
   }, []);
@@ -128,7 +130,7 @@ export default function Home(): JSX.Element {
       <Toaster />
 
       {/* ── HERO ── */}
-      <header className="relative overflow-hidden pt-20 lg:pt-24 pb-16 lg:pb-24 hero-gradient">
+      <section className="relative overflow-hidden pt-32 lg:pt-40 pb-16 lg:pb-24 hero-gradient">
         {/* Decorative blobs */}
         <div className="pointer-events-none absolute -top-32 -right-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 -left-20 w-80 h-80 rounded-full bg-quaternary/10 blur-3xl" />
@@ -162,7 +164,7 @@ export default function Home(): JSX.Element {
               </motion.p>
               {!role && (
                 <motion.div variants={fadeUp}>
-                  <Link href="/join-us/spa-operator">
+                  <Link href="/join-us">
                     <span className="inline-flex items-center gap-x-2 btn-1">
                       JOIN SPAS
                       <FaArrowRight className="w-3.5 h-3.5" />
@@ -187,7 +189,7 @@ export default function Home(): JSX.Element {
             </motion.div>
           </div>
         </div>
-      </header>
+      </section>
 
       <main>
         {/* ── WHO WE ARE ── */}
@@ -310,7 +312,7 @@ export default function Home(): JSX.Element {
 
                 {!role && (
                   <motion.div variants={fadeUp}>
-                    <Link href="/join-us/spa-operator">
+                    <Link href="/join-us">
                       <span className="inline-flex items-center gap-x-2 btn-1">
                         JOIN SPAS
                         <FaArrowRight className="w-3.5 h-3.5" />
@@ -346,12 +348,9 @@ export default function Home(): JSX.Element {
                       i === 1 ? "bg-secondary text-white" : "bg-slate-50 border border-slate-100"
                     }`}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={Ficon1.src}
-                      alt=""
-                      className={`w-16 h-16 mb-5 ${i === 1 ? "brightness-0 invert" : ""}`}
-                    />
+                    <div className={`mb-5 p-4 rounded-xl flex items-center justify-center ${i === 1 ? "bg-white/10 text-white" : "bg-primary/10 text-primary"}`}>
+                      <b.icon className="w-8 h-8" />
+                    </div>
                     <h3 className={`font-semibold text-lg mb-3 ${i === 1 ? "text-white" : "text-slate-900"}`}>
                       {b.title}
                     </h3>
@@ -416,7 +415,7 @@ export default function Home(): JSX.Element {
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}`}
+                            src={post.cover?.url ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${post.cover.url}` : ""}
                             alt={post.title}
                           />
                         </div>
@@ -449,7 +448,7 @@ export default function Home(): JSX.Element {
 
               <motion.div variants={fadeUp} className="flex justify-center">
                 {role !== "operator" ? (
-                  <Link href="/join-us/spa-operator">
+                  <Link href="/join-us">
                     <span className="btn-1 inline-flex items-center gap-x-2">
                       Join to see all events
                       <FaArrowRight className="w-3.5 h-3.5" />

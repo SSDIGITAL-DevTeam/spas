@@ -33,6 +33,8 @@ export default function MemberRequest(): JSX.Element {
   const operatorColumns = [
     { header: "Logo", className: "w-16" },
     { header: "Company Name" },
+    { header: "UEN No" },
+    { header: "Address" },
     { header: "Contact" },
     { header: "Actions", className: "w-24 text-center" },
   ];
@@ -71,7 +73,14 @@ export default function MemberRequest(): JSX.Element {
                         className="w-10 h-10 rounded-lg object-cover"
                       />
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-slate-700">{op.company_name}</td>
+                    <td className="px-4 py-3">
+                      <p className="text-sm font-medium text-slate-700">{op.company_name || "—"}</p>
+                      <p className="text-xs text-slate-400">{op.brand_name || "No brand name"}</p>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-500">{op.uen_no || "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500 max-w-xs">
+                      <p className="line-clamp-2">{op.address || "—"}</p>
+                    </td>
                     <td className="px-4 py-3 text-sm text-slate-500">{op.contact_no}</td>
                     <td className="px-4 py-3 text-center">
                       <Button
