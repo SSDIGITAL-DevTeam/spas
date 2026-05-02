@@ -71,7 +71,16 @@ class OperatorController extends Controller
      */
     public function show($slug): OperatorResource
     {
-        $operator = Operator::where('slug', $slug)->firstOrFail();
+        $operator = null;
+        $user = auth('sanctum')->user();
+
+        if ($user?->operator_id) {
+            $operator = Operator::whereKey($user->operator_id)
+                ->where('slug', $slug)
+                ->first();
+        }
+
+        $operator ??= Operator::where('slug', $slug)->firstOrFail();
 
         if (!$operator) {
             // Handle not found scenario, for example, return an error response

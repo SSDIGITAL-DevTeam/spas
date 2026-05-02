@@ -34,18 +34,30 @@ import AssetWaitingAnimation from "@/assets/animation/waiting.json";
 
 const Lottie = dynamic(() => import("react-lottie-player"), { ssr: false });
 
+type ErrorField =
+  | "company_name"
+  | "uen_no"
+  | "brand_name"
+  | "address"
+  | "contact_no"
+  | "contact_person"
+  | "contact_person_no"
+  | "url_logo_operator"
+  | "url"
+  | "email";
+
 type ErrorResponse = {
-  errors: {
-    company_name: string[];
-    uen_no: string[];
-    brand_name: string[];
-    address: string[];
-    contact_no: string[];
-    contact_person: string[];
-    contact_person_no: string[];
-    url: string[];
-    email: string[];
-  };
+  message?: string;
+  errors?: Partial<Record<ErrorField, string[]>>;
+};
+
+const getFirstErrorMessage = (errorResponse?: ErrorResponse): string => {
+  const firstFieldError = Object.values(errorResponse?.errors ?? {})[0]?.[0];
+  return firstFieldError ?? errorResponse?.message ?? "Request failed. Please check your form.";
+};
+
+const getFieldErrorMessage = (errorResponse: ErrorResponse, field: ErrorField): string | undefined => {
+  return errorResponse.errors?.[field]?.[0];
 };
 
 export default function OperatorProfile() {
@@ -141,6 +153,7 @@ export default function OperatorProfile() {
     e.preventDefault();
     const form: HTMLFormElement = e.currentTarget;
     const formData: FormData = new FormData(form);
+    setErrorMessage({} as ErrorResponse);
 
     try {
       await axios.post(
@@ -161,7 +174,9 @@ export default function OperatorProfile() {
     } catch (error) {
       console.log(error);
       const errMessage = error as AxiosError;
-      setErrorMessage(errMessage.response?.data as ErrorResponse);
+      const responseData = errMessage.response?.data as ErrorResponse | undefined;
+      setErrorMessage(responseData ?? ({} as ErrorResponse));
+      toast.error(getFirstErrorMessage(responseData));
     }
   };
 
@@ -400,7 +415,10 @@ export default function OperatorProfile() {
               {/* Edit button */}
               <div className="flex-shrink-0">
                 <Button
-                  onPress={onOpen}
+                  onPress={() => {
+                    setErrorMessage({} as ErrorResponse);
+                    onOpen();
+                  }}
                   startContent={<FaPen className="w-3.5 h-3.5" />}
                   className="bg-primary text-white rounded-xl shadow-sm hover:bg-secondary transition-colors"
                   size="md"
@@ -599,6 +617,11 @@ export default function OperatorProfile() {
                       <FaInfoCircle className="w-4 h-4" />
                       <p className="text-xs">Upload only if you want to replace the current logo. Max 2 MB.</p>
                     </div>
+                    {getFieldErrorMessage(errMessage, "url_logo_operator") && (
+                      <p className="mt-2 text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "url_logo_operator")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -613,6 +636,11 @@ export default function OperatorProfile() {
                       radius="sm"
                       defaultValue={profile?.company_name}
                     />
+                    {getFieldErrorMessage(errMessage, "company_name") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "company_name")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -627,6 +655,11 @@ export default function OperatorProfile() {
                       radius="sm"
                       defaultValue={profile?.uen_no}
                     />
+                    {getFieldErrorMessage(errMessage, "uen_no") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "uen_no")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -641,6 +674,11 @@ export default function OperatorProfile() {
                       name="brand_name"
                       defaultValue={profile?.brand_name}
                     />
+                    {getFieldErrorMessage(errMessage, "brand_name") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "brand_name")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5 md:col-span-2">
@@ -653,6 +691,11 @@ export default function OperatorProfile() {
                       name="address"
                       defaultValue={profile?.address}
                     />
+                    {getFieldErrorMessage(errMessage, "address") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "address")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -665,6 +708,11 @@ export default function OperatorProfile() {
                       value={profile?.contact_no}
                       name="contact_no"
                     />
+                    {getFieldErrorMessage(errMessage, "contact_no") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "contact_no")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -677,6 +725,11 @@ export default function OperatorProfile() {
                       name="contact_person"
                       defaultValue={profile?.contact_person}
                     />
+                    {getFieldErrorMessage(errMessage, "contact_person") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "contact_person")}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -689,6 +742,11 @@ export default function OperatorProfile() {
                       value={profile?.contact_person_no}
                       name="contact_person_no"
                     />
+                    {getFieldErrorMessage(errMessage, "contact_person_no") && (
+                      <p className="text-xs font-medium text-red-500">
+                        {getFieldErrorMessage(errMessage, "contact_person_no")}
+                      </p>
+                    )}
                   </div>
                 </ModalBody>
                 <ModalFooter className="border-t border-slate-100 px-6 py-4">
